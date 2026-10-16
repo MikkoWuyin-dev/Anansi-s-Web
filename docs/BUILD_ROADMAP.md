@@ -372,8 +372,8 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ### 10.1 Continuous integration
 
-- **Deliverable:** a GitHub Actions workflow running typecheck, tests, and content validation on every push and pull request.
-- **Done when:** a deliberately broken commit fails the check, and main stays green.
+- **Deliverable:** a GitHub Actions workflow running typecheck, tests, and content validation on every push and pull request. Built ahead of this phase on 2026-10-16 as `.github/workflows/verify.yml`, which runs the whole `npm run verify` gate rather than three of its four steps; it is committed and pushed but has never run on the remote, so it is delivered but not yet proven.
+- **Done when:** a deliberately broken commit fails the check, and main stays green. The failure half was demonstrated locally instead of remotely: the gate exits 2 on an injected type error and 0 on the clean tree.
 
 ### 10.2 Dependency hygiene
 

@@ -1,6 +1,6 @@
 # Memory — Documentation reconciliation and the workflow artifacts
 
-Last updated: 2026-10-16 19:13 local
+Last updated: 2026-10-16 19:23 local
 
 ## What was built
 
@@ -11,13 +11,14 @@ Last updated: 2026-10-16 19:13 local
 - `docs/scope/scope.md` created: 6 enrolled features and 17 planned features across Foundation, five slices, Quality, and Release, with Tracer Bullet as the build approach and Beta as the workflow default.
 - `ui-registry.md` created: the audit baseline plus entries for the shell and the action.
 - `memory.md`, this file, created.
+- `.github/workflows/verify.yml` added: CI running the whole gate on every push and pull request, with `actions/checkout@v7` and `actions/setup-node@v7` on Node 24.x and the npm cache. Its two commands were verified against a pristine clone rather than assumed — `npm ci` and `npm run verify` exit 0, and `npm run verify` exits 2 on an injected type error. It is committed and pushed, and has never run on the remote.
 
 ## Decisions made
 
 - The MCD was reconciled against the implementation, and the teardown corrected to match, so no document contradicts another as of 2026-10-16. Change order follows the MCD's own rule: the MCD changes first and only with the owner's consent.
 - Build approach is **Tracer Bullet**; the project workflow default is **Beta** (after `/develop`, `/check verify` then `/test`); the scope names its project sources but carries no reference links.
 - `Content pool to launch size` needs no spec, because the review gate and promotion steps already exist in `content/review/README.md`.
-- Commits and pushes stay gated operations. The owner approved committing the outstanding work; it is committed locally and unpushed, and pushing remains a separate gated action.
+- Commits and pushes stay gated operations. The owner approved committing the outstanding work and then pushing it; `origin/main` is level with local `main`.
 
 ## Problems solved
 
@@ -29,8 +30,8 @@ Last updated: 2026-10-16 19:13 local
 ## Current state
 
 - **Built:** the scaffold, the DOM shell, the content schema and authoring pipeline (24 of a 300 topic target), and the two engine primitives (the day key and the seeded random source). `npm run verify` exits 0 with 4 test files and 44 tests.
-- **Not built:** every selection rule, state and persistence, the ritual loop, history and progress, the whole 3D world, light mode, and CI.
-- **Working tree:** clean on `main`. The governance files and the state corrections they required are committed locally (`95a8b1e` onward) and unpushed.
+- **Not built:** every selection rule, state and persistence, the ritual loop, history and progress, the whole 3D world, and light mode. CI is written and pushed but has never run there.
+- **Working tree:** clean at this handoff. The CI workflow and the five documents recording it are committed and pushed, on top of the governance work (`95a8b1e` onward) that is already on `origin/main`.
 - A dev server was serving the app on port 5173 earlier in the session.
 
 ## Next session starts with
@@ -39,6 +40,6 @@ Run `/remember restore`. Then take the first unticked box in `docs/scope/scope.m
 
 ## Open questions
 
-- Whether to push the local commits on `main` (`95a8b1e` onward) to `origin/main`; until then the continuity risk R4 closed in the teardown rests on a local history.
+- Whether the first CI run comes back green, and whether a deliberately broken commit fails there as it does locally — the teardown's R5 stays reduced until both are seen.
 - Whether the display face should be self hosted, or the external request consciously accepted.
 - Whether `docs/scope/scope.md` should later be promoted to an index plus per area files, if the feature count keeps growing.

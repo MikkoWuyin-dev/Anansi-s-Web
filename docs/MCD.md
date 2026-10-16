@@ -15,6 +15,7 @@
 
 - **2026-10-16** — §5's `Topic` schema aligned with the implemented schema in `src/content/types.ts`: titles are stored in natural case, and `tags` is a closed union of the PRD §11 characteristics. Both were invited by the schema's own "refine during build" note. §13 rewritten to record what is built and what is not. §3 lists the two documents added since ratification. Made with the product owner's consent, as the preamble requires.
 - **2026-10-16** — §13's weak-points line corrected: the §10 state files are committed (`95a8b1e`), so they are no longer unversioned. A status correction rather than a decision change, made on the product owner's instruction to commit the outstanding work.
+- **2026-10-16** — §13's weak-points line corrected again: a GitHub Actions workflow (`.github/workflows/verify.yml`) now runs the gate on push and pull requests, so "there is no CI" no longer holds; it remains unexercised on the remote, which §13 says. Made on the product owner's instruction, and the mechanism was already the roadmap's Phase 10.1 deliverable.
 
 ---
 
@@ -323,6 +324,6 @@ Recorded so the future is cheap, not to build it now.
 - PRD v1.1 and this MCD are ratified.
 - **Built and verified.** The scaffold (Vite + React 18 + TypeScript strict, one component tree), the DOM shell (hero line, primary action, palette tokens, reduced-motion mode), and the content layer (schema, validation and compile pipeline, a 24-topic seed library, compiled bundle, loader). `npm run verify` — typecheck, content check, tests, build — exits 0, with 44 tests passing.
 - **Not built.** The selection engine (only the day key and the seeded PRNG exist), state and persistence, the ritual loop, history and the 90-day counter, light mode, and the whole 3D world. `src/world/` and `src/state/` do not exist.
-- **Weak points.** Engine purity is a convention that nothing enforces. There is no CI. The §10 state files (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`, all created on 2026-10-16) are committed as `95a8b1e`, so the rituals can run and their output stays versioned.
+- **Weak points.** Engine purity is a convention that nothing enforces. CI is written but unexercised: `.github/workflows/verify.yml` runs the gate on push and pull requests, and it has not yet run there, so nothing on the remote has yet enforced §6's validation. The §10 state files (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`, all created on 2026-10-16) are committed as `95a8b1e`, so the rituals can run and their output stays versioned.
 - The build order for what remains, with its gates and acceptance criteria, is `docs/BUILD_ROADMAP.md`. The verified state of the repository is `docs/SYSTEM_TEARDOWN.md`.
 - Next step: **the selection engine** (§5). It is the product's core value and the shortest path to a product that does its job.

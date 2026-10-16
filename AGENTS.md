@@ -181,7 +181,7 @@ The teardown dated 2026-10-16 recorded the following. **Re-check the live reposi
 - The engine is intended to be a pure TypeScript module: inputs are injected; no DOM, React, or storage; it must not import from app/state/world layers. Preserve this boundary.
 - The content schema lives in `src/content/types.ts`. The MCD's §5 schema and §13 status were reconciled with the implementation on 2026-10-16, so the two documents agree as of that date; verify against both before assuming either is current, and reconcile further drift through the conflict procedure rather than assuming either source is automatically correct.
 - The teardown reported `npm run verify` passing, 44 tests across four files, 24 reviewed topics, and no CI. These are historical counts/statuses, not promises about the current checkout.
-- Dependency advisories, missing CI, incomplete product phases, and other risks in the teardown are not blanket authorization to upgrade dependencies, add infrastructure, or work outside the current task. Address them only when within approved scope.
+- Dependency advisories, the CI workflow's unproven status, incomplete product phases, and other risks in the teardown are not blanket authorization to upgrade dependencies, add infrastructure, or work outside the current task. Address them only when within approved scope.
 
 ## 11. System Teardown Maintenance Protocol
 
