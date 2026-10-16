@@ -1,13 +1,19 @@
 # ANANSI'S WEB
 ## Master Context Document — v1.0
 
-**Date:** 2026-10-11  
+**Date:** 2026-10-11 (amended 2026-10-16)  
 **Companion to:** docs/PRD.md (v1.1)  
 **Status:** Ratified — implementation authorized
 
 ---
 
 > **This is the canonical context file.** Every session that works on Anansi's Web — human or AI — reads this document first. It carries the ratified decisions, the reasoning behind them, the technical contracts, and the workflow rituals. When a session must choose between momentum and this document, this document wins. If a decision here must change, change it here first, with the product owner's consent — nowhere else.
+
+---
+
+**Amendments**
+
+- **2026-10-16** — §5's `Topic` schema aligned with the implemented schema in `src/content/types.ts`: titles are stored in natural case, and `tags` is a closed union of the PRD §11 characteristics. Both were invited by the schema's own "refine during build" note. §13 rewritten to record what is built and what is not. §3 lists the two documents added since ratification. Made with the product owner's consent, as the preamble requires.
 
 ---
 
@@ -92,6 +98,8 @@ No auth, no signup, no profile. All state is per-browser. When accounts eventual
   docs/
     PRD.md            product truth (v1.1)
     MCD.md            this document
+    BUILD_ROADMAP.md  build order: phases, gates, definition of done
+    SYSTEM_TEARDOWN.md  verified state of the repository
   skills/             workflow skills (architect, imprint, recover, remember, review)
   content/
     topics/           curated library source — versioned, human-reviewed
@@ -147,19 +155,29 @@ interface SelectionInput {
 - **Intentional resurfacing:** a rare, weighted event — only topics flagged resurfacing-eligible, only after a long gap, capped frequency (initially: at most one per rolling week, probability tuned so it stays "meaningful"). Resurfaced topics get the *"Anansi has brought this one back."* treatment (§18).
 - **Rerolls:** each reroll asks the engine for the next story of the day, which must differ from all stories offered so far today. Rerolled stories are logged as Explored.
 
-**Topic schema (initial shape — refine during build):**
+**Topic schema.** The runtime source of truth is `src/content/types.ts`; this snippet mirrors it.
 
 ```ts
+// Domain: closed union of the 24 spheres in PRD §12.
+// Tag:    closed union of the 12 characteristics in PRD §11.
+
 interface Topic {
-  id: string;             // stable slug: "the-cobra-effect"
-  title: string;          // display: "THE COBRA EFFECT"
-  domain: Domain;         // one of PRD §12
-  difficulty: 1 | 2 | 3;  // internal only — never surfaced to users
-  tags: string[];         // quality characteristics from PRD §11
-  resurfacing: boolean;   // eligible for intentional resurfacing
-  added: string;          // ISO date it entered the library
+  id: string;              // stable slug, identical to the source file name
+  title: string;           // natural case: "The Cobra Effect"
+  domain: Domain;          // one of the 24 in PRD §12
+  difficulty: 1 | 2 | 3;   // internal only — never surfaced to users
+  tags: Tag[];             // at least one; closed union from PRD §11
+  resurfacing: boolean;    // eligible for intentional resurfacing
+  added: string;           // ISO date, YYYY-MM-DD
 }
 ```
+
+Two refinements were made during the build, both invited by this schema's own "refine during build" note:
+
+- **`title` is stored in natural case**, not display case. The reveal uppercases it in CSS, so casing stays a presentation concern and screen readers are not handed an all-caps string.
+- **`tags` is a closed union** of the twelve PRD §11 characteristics rather than `string[]`, so the validator catches typos and coverage can be measured.
+
+The library source is one file per topic at `content/topics/<id>.json`, and `id` must equal the file name.
 
 **Local state schema (localStorage, namespace `anansi:v1:*` — initial shape):**
 
@@ -301,5 +319,9 @@ Recorded so the future is cheap, not to build it now.
 
 ## 13. Where We Are
 
-- PRD v1.1 and this MCD are ratified. **Nothing has been scaffolded yet.**
-- Next step (from the confirmed implementation plan): **Step 2 — Scaffold** the Vite + React + TS + R3F project, then the data layer, engine, world, and loop in the agreed order.
+- PRD v1.1 and this MCD are ratified.
+- **Built and verified.** The scaffold (Vite + React 18 + TypeScript strict, one component tree), the DOM shell (hero line, primary action, palette tokens, reduced-motion mode), and the content layer (schema, validation and compile pipeline, a 24-topic seed library, compiled bundle, loader). `npm run verify` — typecheck, content check, tests, build — exits 0, with 44 tests passing.
+- **Not built.** The selection engine (only the day key and the seeded PRNG exist), state and persistence, the ritual loop, history and the 90-day counter, light mode, and the whole 3D world. `src/world/` and `src/state/` do not exist.
+- **Weak points.** Engine purity is a convention that nothing enforces. There is no CI. `AGENTS.md` is empty, and `memory.md` and `ui-registry.md` are absent, so the §10 rituals cannot run as written.
+- The build order for what remains, with its gates and acceptance criteria, is `docs/BUILD_ROADMAP.md`. The verified state of the repository is `docs/SYSTEM_TEARDOWN.md`.
+- Next step: **the selection engine** (§5). It is the product's core value and the shortest path to a product that does its job.
