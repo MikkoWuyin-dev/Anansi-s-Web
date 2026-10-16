@@ -78,7 +78,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 **Installed and ready for later phases:** three 0.169, @react-three/fiber 8.18, @react-three/drei 9.122, @react-spring/web and /three 9.7.5, zustand 4.5.7.
 
-**Known debt carried forward:** light mode is unimplemented; six dev only `npm audit` advisories need breaking Vite and Vitest upgrades; the MCD §10 governance files were written later on 2026-10-16 (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`) and are all untracked.
+**Known debt carried forward:** light mode is unimplemented; six dev only `npm audit` advisories need breaking Vite and Vitest upgrades; the MCD §10 governance files were written later on 2026-10-16 (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`) and are now tracked (`95a8b1e`).
 
 ---
 
