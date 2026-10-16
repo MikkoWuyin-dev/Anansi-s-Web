@@ -17,7 +17,7 @@ Last updated: 2026-10-16 19:13 local
 - The MCD was reconciled against the implementation, and the teardown corrected to match, so no document contradicts another as of 2026-10-16. Change order follows the MCD's own rule: the MCD changes first and only with the owner's consent.
 - Build approach is **Tracer Bullet**; the project workflow default is **Beta** (after `/develop`, `/check verify` then `/test`); the scope names its project sources but carries no reference links.
 - `Content pool to launch size` needs no spec, because the review gate and promotion steps already exist in `content/review/README.md`.
-- Commits and pushes stay gated operations. The owner approved committing the outstanding work, which became `95a8b1e`; pushing is a separate gated action and was not requested.
+- Commits and pushes stay gated operations. The owner approved committing the outstanding work; it is committed locally and unpushed, and pushing remains a separate gated action.
 
 ## Problems solved
 
@@ -30,7 +30,7 @@ Last updated: 2026-10-16 19:13 local
 
 - **Built:** the scaffold, the DOM shell, the content schema and authoring pipeline (24 of a 300 topic target), and the two engine primitives (the day key and the seeded random source). `npm run verify` exits 0 with 4 test files and 44 tests.
 - **Not built:** every selection rule, state and persistence, the ritual loop, history and progress, the whole 3D world, light mode, and CI.
-- **Working tree:** clean at `95a8b1e` on `main`, which is local and not yet pushed. `AGENTS.md`, `docs/scope/scope.md`, `ui-registry.md`, and `memory.md` are now tracked.
+- **Working tree:** clean on `main`. The governance files and the state corrections they required are committed locally (`95a8b1e` onward) and unpushed.
 - A dev server was serving the app on port 5173 earlier in the session.
 
 ## Next session starts with
@@ -39,6 +39,6 @@ Run `/remember restore`. Then take the first unticked box in `docs/scope/scope.m
 
 ## Open questions
 
-- Whether to push `95a8b1e` to `origin/main`; the commit is local only, so the continuity risk R4 closed in the teardown rests on a local history.
+- Whether to push the local commits on `main` (`95a8b1e` onward) to `origin/main`; until then the continuity risk R4 closed in the teardown rests on a local history.
 - Whether the display face should be self hosted, or the external request consciously accepted.
 - Whether `docs/scope/scope.md` should later be promoted to an index plus per area files, if the feature count keeps growing.

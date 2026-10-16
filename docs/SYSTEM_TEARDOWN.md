@@ -28,7 +28,7 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 
 **v2.1 — 2026-10-16.** Same-day follow-up. The MCD §10 governance state files were created: `AGENTS.md` was written by the project owner, and `ui-registry.md`, `memory.md`, and `docs/scope/` were produced by the `/imprint`, `/remember`, and `/scope` workflows. Every statement in this document that said those files were missing or empty has been corrected to match, and R4 has been re-graded. The four files remain untracked in Git.
 
-**v2.2 — 2026-10-16.** The four §10 state files were committed as `95a8b1e`, in the same commit as the `AGENTS.md` protocol that now governs their upkeep. Every current-state statement below that described them as untracked has been corrected, and R4 has closed. The v2.1 note above is left as written: it records the state at that check, not now.
+**v2.2 — 2026-10-16.** The four §10 state files were committed as `95a8b1e`, in the same commit as the `AGENTS.md` protocol that now governs their upkeep. Every current-state statement below that described them as untracked has been corrected, and R4 has closed. The two version-control rows also dropped their commit counts, a figure that had already decayed with every commit made since v2.0. The v2.1 note above is left as written: it records the state at that check, not now.
 
 ---
 
@@ -62,7 +62,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | DOM shell | Hero line and primary action, palette tokens, reduced-motion mode |
 | Content layer | 24 reviewed topics, validation and compile pipeline, typed bundle, loader |
 | Engine | Two pure primitives only: the day key and the seeded PRNG |
-| Version control | Git, 3 commits, pushed to GitHub, LF-normalised |
+| Version control | Git history on `main`, LF-normalised, GitHub remote (`origin`) |
 | CI | **None** |
 | Selection engine, state, the loop, history | **Not started** |
 | The 3D world (`src/world/`) | **Not started** |
@@ -498,7 +498,7 @@ Re-statused from v1. Three of the original critical risks are closed, and R4 —
 
 | ID | v1 risk | Resolution |
 |---|---|---|
-| **R1** | No version control; a disk failure loses everything | Git repository, 3 commits, pushed to GitHub, LF normalised via `.gitattributes` |
+| **R1** | No version control; a disk failure loses everything | Git repository on `main`, pushed to GitHub, LF normalised via `.gitattributes` |
 | **R2** | The project cannot build | All four gates exit 0; `dist/` produced and confirmed to render |
 | **R3** | Missing Node types break typecheck | `@types/node@24.19.2`, pinned to the runtime major |
 | **R4** | Process state files untracked; loseable with the working tree | All four committed as `95a8b1e`; upkeep is now an explicit obligation in `AGENTS.md` §11 |
