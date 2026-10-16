@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { getLibrary } from '@/content/loader'
+
 /**
  * The DOM shell of the ritual: the hero line and the primary action, present
  * immediately and independently of the 3D stage (MCD §4 rule 1, §9).
@@ -9,6 +11,14 @@ import { useState } from 'react'
  */
 export function App() {
   const [searched, setSearched] = useState(false)
+  const librarySize = getLibrary().length
+
+  // Temporary until the engine lands (build roadmap Phase 2): the shell can
+  // only report what the web holds, it cannot yet choose from it.
+  const status =
+    librarySize === 0
+      ? 'No stories are woven into the web yet.'
+      : `The web holds ${librarySize} stories. Anansi cannot search it yet.`
 
   return (
     <main className="shell">
@@ -27,7 +37,7 @@ export function App() {
 
         {/* A live region kept in the document so the message is announced. */}
         <p className="status" role="status">
-          {searched ? 'No stories are woven into the web yet.' : ''}
+          {searched ? status : ''}
         </p>
       </div>
     </main>
