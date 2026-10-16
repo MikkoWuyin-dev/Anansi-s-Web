@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-16 (v2.3)
+- **Last updated:** 2026-10-16 (v2.4)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every state claim verified by command execution
 
@@ -31,6 +31,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 **v2.2 — 2026-10-16.** The four §10 state files were committed as `95a8b1e`, in the same commit as the `AGENTS.md` protocol that now governs their upkeep. Every current-state statement below that described them as untracked has been corrected, and R4 has closed. The two version-control rows also dropped their commit counts, a figure that had already decayed with every commit made since v2.0. The v2.1 note above is left as written: it records the state at that check, not now.
 
 **v2.3 — 2026-10-16.** R5 addressed, on the project owner's instruction: `.github/workflows/verify.yml` runs the gate on every push and pull request. Its two commands were run against a pristine clone and the gate was proven to fail a deliberately broken tree (§5.10), but the workflow has never run on the remote, so R5 is reduced rather than closed and roadmap 10.1's "done when" is unmet. The repository map, the present-versus-missing block, the risk register, and the next moves are updated to match.
+
+**v2.4 — 2026-10-16.** The workflow was committed and pushed as `ca1502d`, and its first run came back **green**: run `38947782059`, `completed / success` in 16 seconds, every step passing (§5.10). R5 therefore moves to Resolved and the CI rows, the risk register, the next moves, and the quick reference now describe a gate that runs rather than one that might. What remains unproven is the failure path on the remote: no deliberately broken commit has been pushed, because that would put a red commit on `main`.
 
 ---
 
@@ -65,7 +67,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | Content layer | 24 reviewed topics, validation and compile pipeline, typed bundle, loader |
 | Engine | Two pure primitives only: the day key and the seeded PRNG |
 | Version control | Git history on `main`, LF-normalised, GitHub remote (`origin`) |
-| CI | `.github/workflows/verify.yml` written and committed; commands verified locally, never run on the remote |
+| CI | `.github/workflows/verify.yml` runs on every push and PR; first run green (2026-10-16) |
 | Selection engine, state, the loop, history | **Not started** |
 | The 3D world (`src/world/`) | **Not started** |
 | Light mode | **Not started** |
@@ -73,7 +75,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 
 **Headline state:** the foundation is real and honest. All four gates (`typecheck`, `content:check`, `test`, `build`) exit 0, and the content gate has been *proven to fail* on malformed and drifted input rather than assumed to. The product, however, does not yet do the one thing it exists to do: choose a topic.
 
-**Single biggest risk:** delivery pace against scope. The remaining work — engine, state, loop, history, and an entire procedural 3D stage — is substantially larger than what has been built. A CI workflow now exists but has never run on the remote, so `main` is still unprotected between sessions; the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
+**Single biggest risk:** delivery pace against scope. The remaining work — engine, state, loop, history, and an entire procedural 3D stage — is substantially larger than what has been built. The governance gap has narrowed: CI runs the gate on every push and pull request and its first run was green, so the gate no longer depends on someone remembering, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
 
 ---
 
@@ -109,7 +111,7 @@ C:\dev\Anansi's Web\                        134 tracked files
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
-│   └── workflows/verify.yml    npm ci + npm run verify on push and PR (committed, first run pending)
+│   └── workflows/verify.yml    npm ci + npm run verify on push and PR (green 2026-10-16)
 ├── index.html                  Vite entry; Space Grotesk; favicon
 ├── package.json                scripts (dev/build/typecheck/test/verify/content:*)
 ├── package-lock.json           lockfile v3
@@ -290,14 +292,14 @@ PRESENT  src/app        src/engine        src/content
 PRESENT  content/topics content/review    scripts
 PRESENT  AGENTS.md      ui-registry.md    memory.md
 PRESENT  docs/scope     .gitattributes    .gitignore
-PRESENT  .github/workflows/verify.yml     CI gate (committed)
+PRESENT  .github/workflows/verify.yml     CI gate (runs green)
 MISSING  src/world      src/state         docs/specs
 MISSING  README.md
 ```
 
 `AGENTS.md` is written, and `ui-registry.md`, `memory.md`, and `docs/scope/` were created later on 2026-10-16. All four are tracked: committed as `95a8b1e`. `.github/` followed the same day and is committed with them.
 
-### 5.10 CI workflow — WRITTEN, NEVER RUN ON THE REMOTE
+### 5.10 CI workflow — RUNS ON THE REMOTE, GREEN
 
 `.github/workflows/verify.yml` runs on `ubuntu-latest` on every push and pull request: `actions/checkout@v7`, `actions/setup-node@v7` with Node `24.x` and the npm cache, then `npm ci` and `npm run verify`. The action versions are the current majors as of 2026-10-16, the file parses as valid YAML, and its two commands were executed against a pristine clone of `884746d`:
 
@@ -307,7 +309,9 @@ MISSING  README.md
 | `npm run verify` | exit 0 — 44 tests passed, 4 files, `dist/` produced |
 | `npm run verify` with an injected `TS2322` in `src/app/App.tsx` | exit 2 — the gate fails a broken tree |
 
-That establishes the gate has teeth and that the workflow's steps work from a clean checkout. It does **not** establish that the workflow runs: GitHub Actions cannot be executed locally, so no run has been observed, and the first remote run is the only real proof.
+**Observed on the remote.** Run [38947782059](https://github.com/MikkoWuyin-dev/Anansi-s-Web/actions/runs/38947782059), on `ca1502d` — the push that added the workflow — reports `completed / success` after 16 seconds, with every step green: `actions/checkout@v7`, `actions/setup-node@v7`, `npm ci`, `npm run verify`. Read from the Actions API on 2026-10-16 rather than inferred.
+
+**Still unproven: the failure path.** No deliberately broken commit has been pushed, because doing so would put a red commit on `main`. The remote half of roadmap 10.1's "done when" — a broken commit failing the check while `main` stays green — is therefore demonstrated locally only.
 
 ---
 
@@ -479,7 +483,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `docs/specs/` | **Missing** | `/architect` never run |
 | `docs/scope/` | Present | 6 enrolled and 17 planned features, 2026-10-16; tracked |
 | `README.md` | **Missing** | Repo has a one-line description and no entry point |
-| `.github/workflows/verify.yml` | Present | Runs the gate on push and PR, giving MCD §6's "in CI" expectation a mechanism; unproven on the remote until its first run completes |
+| `.github/workflows/verify.yml` | Present | Runs the gate on push and PR, satisfying MCD §6's "in CI" expectation; first run green 2026-10-16 |
 
 ### 9.2 Capability delta
 
@@ -509,7 +513,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 
 ## 10. Risk register
 
-Re-statused from v1. Three of the original critical risks are closed, and R4 — added in v2 and reduced to LOW — has closed since.
+Re-statused from v1. Three of the original critical risks are closed, and both risks added in v2 have closed since: R4 by committing the state files, R5 by the first green CI run.
 
 ### Resolved
 
@@ -519,11 +523,9 @@ Re-statused from v1. Three of the original critical risks are closed, and R4 —
 | **R2** | The project cannot build | All four gates exit 0; `dist/` produced and confirmed to render |
 | **R3** | Missing Node types break typecheck | `@types/node@24.19.2`, pinned to the runtime major |
 | **R4** | Process state files untracked; loseable with the working tree | All four committed as `95a8b1e`; upkeep is now an explicit obligation in `AGENTS.md` §11 |
+| **R5** | No CI; the gate ran only when someone remembered | `.github/workflows/verify.yml` (committed `ca1502d`) runs it on every push and pull request; run `38947782059` green, 16 s, all steps passing. The failure path is proven locally, not yet on the remote |
 
 ### Open
-
-**R5 — CI written but unexercised (HIGH, reduced to MEDIUM).** `.github/workflows/verify.yml` now runs `npm run verify` on push and pull request, and its commands were verified against a clean clone: `npm ci` and `npm run verify` exit 0, and the gate exits 2 on an injected type error, so it cannot pass a broken tree quietly. The workflow has never run on the remote, however, so `main` is still protected only by whoever remembers to run the gate.
-*Action:* commit and push the workflow, confirm the first run is green, and watch one deliberately broken commit fail — the roadmap 10.1 "done when" — on the remote rather than locally.
 
 **R6 — Engine purity is unenforced (MEDIUM).** The `engine/` boundary is the load-bearing rule for the accounts-era migration, and nothing detects a violating import.
 *Action:* a lint rule or a test asserting `src/engine/**` imports nothing from `app/`, `state/`, or `world/`.
@@ -567,7 +569,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 **Recommended order of the next moves:**
 
 1. **Phase 2, the selection engine.** It is the product's core value, it is pure and therefore cheap to test, and everything downstream depends on it. Determinism per day and the 30-day exclusion window are the two rules to get right first.
-2. **Prove the CI workflow.** `.github/workflows/verify.yml` is committed and pushed, and its commands pass on a clean clone and fail on an injected error; only a first green remote run remains, which is the one claim no local command can settle (R5, roadmap 10.1).
+2. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
 3. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11.
 
 **Definition of done for V1** — the deployed static site renders the hero and the search ritual; a day offers at most three deterministic, reload-stable topics; accepting logs history and advances the 90-day count; the 30-day history is viewable and filterable; the web visibly evolves; both light and dark modes work; reduced motion is fully functional; keyboard and screen-reader paths work; and every performance budget in MCD §8 is met.
@@ -606,7 +608,7 @@ npm run content:report     # coverage, difficulty spread, bundle size
 - Time-on-site is a failure signal. Features that increase session length oppose the product's purpose.
 - AI is used at authoring time only. Nothing AI-generated ships without human review.
 - Node ≥ 22.6 is required: the authoring scripts rely on native type stripping, which forbids `enum` and `namespace` in shared code.
-- The CI workflow is committed and pushed but has never run, so it is still the cheapest risk to close; the §10 governance files are tracked as of `95a8b1e`.
+- CI runs the gate on every push and pull request and the first run was green on 2026-10-16. The one gap left is that no broken commit has yet been seen to fail it on the remote. The §10 governance files are tracked as of `95a8b1e`.
 
 ---
 

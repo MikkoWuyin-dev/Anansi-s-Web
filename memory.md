@@ -1,6 +1,6 @@
 # Memory — Documentation reconciliation and the workflow artifacts
 
-Last updated: 2026-10-16 19:23 local
+Last updated: 2026-10-16 19:32 local
 
 ## What was built
 
@@ -11,7 +11,7 @@ Last updated: 2026-10-16 19:23 local
 - `docs/scope/scope.md` created: 6 enrolled features and 17 planned features across Foundation, five slices, Quality, and Release, with Tracer Bullet as the build approach and Beta as the workflow default.
 - `ui-registry.md` created: the audit baseline plus entries for the shell and the action.
 - `memory.md`, this file, created.
-- `.github/workflows/verify.yml` added: CI running the whole gate on every push and pull request, with `actions/checkout@v7` and `actions/setup-node@v7` on Node 24.x and the npm cache. Its two commands were verified against a pristine clone rather than assumed — `npm ci` and `npm run verify` exit 0, and `npm run verify` exits 2 on an injected type error. It is committed and pushed, and has never run on the remote.
+- `.github/workflows/verify.yml` added: CI running the whole gate on every push and pull request, with `actions/checkout@v7` and `actions/setup-node@v7` on Node 24.x and the npm cache. Its two commands were verified against a pristine clone rather than assumed — `npm ci` and `npm run verify` exit 0, and `npm run verify` exits 2 on an injected type error. It is committed and pushed as `ca1502d`, and its first remote run came back green on 2026-10-16 — run 38947782059, `completed / success` in 16 seconds with every step passing.
 
 ## Decisions made
 
@@ -30,7 +30,7 @@ Last updated: 2026-10-16 19:23 local
 ## Current state
 
 - **Built:** the scaffold, the DOM shell, the content schema and authoring pipeline (24 of a 300 topic target), and the two engine primitives (the day key and the seeded random source). `npm run verify` exits 0 with 4 test files and 44 tests.
-- **Not built:** every selection rule, state and persistence, the ritual loop, history and progress, the whole 3D world, and light mode. CI is written and pushed but has never run there.
+- **Not built:** every selection rule, state and persistence, the ritual loop, history and progress, the whole 3D world, and light mode. CI now runs on every push and is green; what is unproven on the remote is its failure path.
 - **Working tree:** clean at this handoff. The CI workflow and the five documents recording it are committed and pushed, on top of the governance work (`95a8b1e` onward) that is already on `origin/main`.
 - A dev server was serving the app on port 5173 earlier in the session.
 
@@ -40,6 +40,6 @@ Run `/remember restore`. Then take the first unticked box in `docs/scope/scope.m
 
 ## Open questions
 
-- Whether the first CI run comes back green, and whether a deliberately broken commit fails there as it does locally — the teardown's R5 stays reduced until both are seen.
+- Whether a deliberately broken commit fails on the remote as it does locally; the green path is now observed, the failure path only local.
 - Whether the display face should be self hosted, or the external request consciously accepted.
 - Whether `docs/scope/scope.md` should later be promoted to an index plus per area files, if the feature count keeps growing.
