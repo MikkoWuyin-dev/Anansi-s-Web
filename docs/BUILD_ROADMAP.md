@@ -78,7 +78,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 **Installed and ready for later phases:** three 0.169, @react-three/fiber 8.18, @react-three/drei 9.122, @react-spring/web and /three 9.7.5, zustand 4.5.7.
 
-**Known debt carried forward:** light mode is unimplemented; six dev only `npm audit` advisories need breaking Vite and Vitest upgrades; the `AGENTS.md`, `ui-registry.md`, and `memory.md` rituals from MCD §10 are unperformed (`AGENTS.md` exists but is empty).
+**Known debt carried forward:** light mode is unimplemented; six dev only `npm audit` advisories need breaking Vite and Vitest upgrades; the MCD §10 governance files were written later on 2026-10-16 (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`) and are all untracked.
 
 ---
 
@@ -323,7 +323,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ### 7.3 Imprint the registry
 
-- **Deliverable:** `ui-registry.md` capturing the visual patterns of every component built so far, per the MCD §10 `/imprint` ritual.
+- **Deliverable:** `ui-registry.md` capturing the visual patterns of every component built so far, per the MCD §10 `/imprint` ritual. The registry was established early, on 2026-10-16, with an audit baseline and entries for the shell and the action; this phase extends it to everything built in the meantime.
 - **Done when:** a later component can be built from the registry alone and match what came before.
 
 ---
@@ -382,7 +382,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ### 10.3 Project governance files
 
-- **Deliverable:** `AGENTS.md` (currently empty) filled with the ratified stack and conventions, plus `memory.md` for session handoff, per MCD §10.
+- **Deliverable:** `AGENTS.md` filled with the ratified stack and conventions, plus `memory.md` for session handoff, per MCD §10. Both were written on 2026-10-16 and need to stay current and tracked.
 - **Done when:** a fresh session can start from `AGENTS.md` plus the MCD and continue without re-deriving decisions.
 
 ### 10.4 Deploy

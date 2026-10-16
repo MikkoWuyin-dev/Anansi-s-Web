@@ -322,6 +322,6 @@ Recorded so the future is cheap, not to build it now.
 - PRD v1.1 and this MCD are ratified.
 - **Built and verified.** The scaffold (Vite + React 18 + TypeScript strict, one component tree), the DOM shell (hero line, primary action, palette tokens, reduced-motion mode), and the content layer (schema, validation and compile pipeline, a 24-topic seed library, compiled bundle, loader). `npm run verify` — typecheck, content check, tests, build — exits 0, with 44 tests passing.
 - **Not built.** The selection engine (only the day key and the seeded PRNG exist), state and persistence, the ritual loop, history and the 90-day counter, light mode, and the whole 3D world. `src/world/` and `src/state/` do not exist.
-- **Weak points.** Engine purity is a convention that nothing enforces. There is no CI. `AGENTS.md` is empty, and `memory.md` and `ui-registry.md` are absent, so the §10 rituals cannot run as written.
+- **Weak points.** Engine purity is a convention that nothing enforces. There is no CI. The §10 state files now exist (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`, all created on 2026-10-16), but none is tracked in version control yet, so the rituals can run while their output stays unversioned.
 - The build order for what remains, with its gates and acceptance criteria, is `docs/BUILD_ROADMAP.md`. The verified state of the repository is `docs/SYSTEM_TEARDOWN.md`.
 - Next step: **the selection engine** (§5). It is the product's core value and the shortest path to a product that does its job.

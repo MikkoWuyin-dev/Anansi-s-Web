@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-16 (v2.0)
+- **Last updated:** 2026-10-16 (v2.1)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every state claim verified by command execution
 
@@ -25,6 +25,8 @@
 | Next step: "Step 2 — Scaffold" | Scaffold and content layer done; engine is next |
 
 Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are product truth and did not change.
+
+**v2.1 — 2026-10-16.** Same-day follow-up. The MCD §10 governance state files were created: `AGENTS.md` was written by the project owner, and `ui-registry.md`, `memory.md`, and `docs/scope/` were produced by the `/imprint`, `/remember`, and `/scope` workflows. Every statement in this document that said those files were missing or empty has been corrected to match, and R4 has been re-graded. The four files remain untracked in Git.
 
 ---
 
@@ -62,11 +64,12 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | CI | **None** |
 | Selection engine, state, the loop, history | **Not started** |
 | The 3D world (`src/world/`) | **Not started** |
-| Light mode, `ui-registry.md`, `memory.md` | **Not started** |
+| Light mode | **Not started** |
+| `ui-registry.md`, `memory.md`, `docs/scope/` | Present, untracked (2026-10-16) |
 
 **Headline state:** the foundation is real and honest. All four gates (`typecheck`, `content:check`, `test`, `build`) exit 0, and the content gate has been *proven to fail* on malformed and drifted input rather than assumed to. The product, however, does not yet do the one thing it exists to do: choose a topic.
 
-**Single biggest risk:** delivery pace against scope. The remaining work — engine, state, loop, history, and an entire procedural 3D stage — is substantially larger than what has been built. There is no CI to protect `main` between sessions, and the two governance files the adopted workflow depends on (`AGENTS.md`, `memory.md`) are missing or empty, so cross-session continuity rests on documents rather than on an enforced process.
+**Single biggest risk:** delivery pace against scope. The remaining work — engine, state, loop, history, and an entire procedural 3D stage — is substantially larger than what has been built. There is no CI to protect `main` between sessions, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were only written late on 2026-10-16 and are all untracked, so cross-session continuity still rests on documents rather than on an enforced process.
 
 ---
 
@@ -279,12 +282,13 @@ Branch `main` tracks `origin/main` on GitHub. `.gitattributes` enforces `* text=
 ```
 PRESENT  src/app        src/engine        src/content
 PRESENT  content/topics content/review    scripts
-PRESENT  AGENTS.md      .gitattributes    .gitignore
-MISSING  src/world      src/state         docs/specs      docs/scope
-MISSING  ui-registry.md memory.md         README.md       .github
+PRESENT  AGENTS.md      ui-registry.md    memory.md
+PRESENT  docs/scope     .gitattributes    .gitignore
+MISSING  src/world      src/state         docs/specs
+MISSING  README.md      .github
 ```
 
-`AGENTS.md` exists but is **empty**, and is untracked — it was not created by this work and has been deliberately left alone.
+`AGENTS.md` is now written and untracked, and `ui-registry.md`, `memory.md`, and `docs/scope/` were created later on 2026-10-16. All four are untracked, and none has been committed.
 
 ---
 
@@ -366,7 +370,7 @@ None of the ten rules is implemented: no canvas, no on-demand rendering, no came
 | `--anansi-strawberry` | `#FF3E41` | Defined |
 | `--anansi-lavender` | `#885A89` | Defined |
 
-All hex lives in one `:root` block, honouring the "tokens only" rule. Two derived text neutrals (`--anansi-ink`, `--anansi-dim`) were added, because the PRD palette carries no light neutral and text on near-black would otherwise fail contrast. **Light mode is not implemented** (PRD §33 requires both), and `ui-registry.md` does not exist.
+All hex lives in one `:root` block, honouring the "tokens only" rule. Two derived text neutrals (`--anansi-ink`, `--anansi-dim`) were added, because the PRD palette carries no light neutral and text on near-black would otherwise fail contrast. **Light mode is not implemented** (PRD §33 requires both). `ui-registry.md` now exists, established on 2026-10-16 by an audit of these styles.
 
 ### 7.6 Performance budgets (MCD §8) — MEASURED WHERE POSSIBLE
 
@@ -402,7 +406,7 @@ The content budget holds with wide margin. The projection to 300 topics is a lin
 | `sync` | Reconciles `AGENTS.md`, scope, and specs |
 | `test` | Test suite authoring |
 
-The MCD §10 commits the project to five rituals drawn from this toolkit. **None of the state files those rituals depend on exists in usable form:** `AGENTS.md` is empty, `memory.md` and `ui-registry.md` are absent, and `docs/specs/` and `docs/scope/` have never been created. The project has adopted a process whose required state files are missing, which is why continuity currently rests on the four documents in `docs/` rather than on an enforced workflow.
+The MCD §10 commits the project to five rituals drawn from this toolkit. **The state files those rituals depend on now exist:** `AGENTS.md` is written, and `memory.md`, `ui-registry.md`, and `docs/scope/` were created on 2026-10-16. Only `docs/specs/` is still absent, which is expected until a feature passes through `/architect`. All four files are untracked, so continuity still rests on the four documents in `docs/` plus four uncommitted files rather than on an enforced workflow.
 
 ---
 
@@ -450,11 +454,11 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `content/topics/` | Present | 24 of 300+ |
 | `content/review/` | Present | Documented queue |
 | `scripts/` | Present | Validate, compile, report |
-| `ui-registry.md` | **Missing** | `/imprint` never run |
-| `memory.md` | **Missing** | `/remember` never run |
-| `AGENTS.md` | Present but empty | Untracked; not created by this work |
+| `ui-registry.md` | Present | Established 2026-10-16 by `/imprint audit`; untracked |
+| `memory.md` | Present | Written 2026-10-16 by `/remember save`; untracked |
+| `AGENTS.md` | Present | Written by the project owner; untracked |
 | `docs/specs/` | **Missing** | `/architect` never run |
-| `docs/scope/` | **Missing** | `/scope` never run |
+| `docs/scope/` | Present | 6 enrolled and 17 planned features, 2026-10-16; untracked |
 | `README.md` | **Missing** | Repo has a one-line description and no entry point |
 | `.github/` (CI) | **Missing** | MCD §6 expects validation "in CI" |
 
@@ -498,8 +502,8 @@ Re-statused from v1. Three of the original critical risks are closed.
 
 ### Open
 
-**R4 — Process state files missing (HIGH).** `AGENTS.md` is empty, `memory.md` and `ui-registry.md` are absent, and `docs/specs/` and `docs/scope/` were never created. The MCD §10 rituals cannot function without them, so cross-session continuity depends on documents alone.
-*Action:* run `/audit` or hand-write `AGENTS.md` with the ratified stack and conventions.
+**R4 — Process state files (reduced to LOW).** All four files now exist: `AGENTS.md` (written by the project owner), `memory.md`, `ui-registry.md`, and `docs/scope/`. Only `docs/specs/` remains absent, which is expected until a feature passes through `/architect`. The remaining exposure is that none of the four is tracked in Git, so they can still be lost with the working tree.
+*Action:* commit them, then keep them current per MCD §10.
 
 **R5 — No CI (HIGH).** Nothing protects `main`. Every gate is enforced only when a human or agent remembers to run `npm run verify`. `content:check` exists precisely to catch bundle drift, and nothing calls it automatically.
 *Action:* a GitHub Actions workflow running `npm run verify` on push and pull request. The gate is already a single command, so this is small.
@@ -547,7 +551,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 
 1. **Phase 2, the selection engine.** It is the product's core value, it is pure and therefore cheap to test, and everything downstream depends on it. Determinism per day and the 30-day exclusion window are the two rules to get right first.
 2. **CI on `verify`.** One workflow file protects every future session, and the gate already exists as a single command (R5).
-3. **`AGENTS.md`.** Twenty minutes of writing removes the largest continuity risk and makes the MCD §10 rituals usable (R4).
+3. **The governance files.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` now exist but are untracked; committing them removes the last of the continuity risk and makes the MCD §10 rituals durable rather than local (R4).
 
 **Definition of done for V1** — the deployed static site renders the hero and the search ritual; a day offers at most three deterministic, reload-stable topics; accepting logs history and advances the 90-day count; the 30-day history is viewable and filterable; the web visibly evolves; both light and dark modes work; reduced motion is fully functional; keyboard and screen-reader paths work; and every performance budget in MCD §8 is met.
 
@@ -585,7 +589,7 @@ npm run content:report     # coverage, difficulty spread, bundle size
 - Time-on-site is a failure signal. Features that increase session length oppose the product's purpose.
 - AI is used at authoring time only. Nothing AI-generated ships without human review.
 - Node ≥ 22.6 is required: the authoring scripts rely on native type stripping, which forbids `enum` and `namespace` in shared code.
-- There is no CI, and `AGENTS.md` is empty. Those are the two cheapest risks to close.
+- There is no CI, and the governance files are untracked. Those are the two cheapest risks to close.
 
 ---
 
