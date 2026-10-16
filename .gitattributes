@@ -1,0 +1,16 @@
+# Normalize line endings: LF in the repository and in the working tree.
+# Prevents the whole tree from being rewritten to CRLF on Windows checkouts.
+* text=auto eol=lf
+
+# Binary assets are never text-normalized.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.glb   binary
+*.hdr   binary
+*.ktx2  binary

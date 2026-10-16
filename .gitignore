@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+
+# Local tooling state (not part of the project)
+.freebuff/
+
+# Generated preview rendering of docs/SYSTEM_TEARDOWN.md
+# Regenerate with: node .freebuff/render-md.mjs docs/SYSTEM_TEARDOWN.md docs/system-teardown.html
+docs/system-teardown.html
+
+# Logs
+*.log
