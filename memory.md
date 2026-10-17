@@ -1,43 +1,48 @@
-# Memory — The engine shipped, then the documentation was walked end to end
+# Memory — The state layer: decided, built, and gated
 
-Last updated: 2026-10-17 18:05 local
+Last updated: 2026-10-17 19:05 local
 
 ## What was built
 
-- **Phase 2, the selection engine (committed as `9c3cc2d`).** `src/engine/types.ts` (contract), `tuning.ts` (one frozen `ENGINE_TUNING`, each number with its reasoning), `offer.ts` (`offerNextStory`: day cap, day exclusions, rarity roll, 60 day return, 30 day window, thin pool, then scoring and a weighted pick). Forty-four engine tests, 109 in the suite across eight files; the purity test reads the module's own source and fails an import that crosses into app, state or world.
-- **Spec 0001** (`docs/specs/0001-selection-engine.md`, 252 lines), `In Progress`, with an implementation note recording the three rules the build chose: a repeated-domain guard, a 1.5 dominance ratio, and the rarity roll read from the caller's per-day stream.
-- **The documentation reconciliation (2026-10-17, this session).** The owner rewrote `AGENTS.md` and added `KNOWLEDGE INDEX.md` at the root; both were walked against the repository and corrected, along with every document that still described the project as it was before the engine existed.
+- **Spec 0002** (`docs/specs/0002-local-state-and-persistence.md`, 246 lines), from `/architect` in `feature` mode across three rounds of questions: four keys under `anansi:v1:*`, each value carrying `version: 1` and validated on read; a corrupt key resets only its own slice; a permanent accepted day tally beside the pruned history; the day rolls on access rather than on a timer; storage events rehydrate the other tab; storage that throws leaves the ritual running in memory with `persistent: false`.
+- **Phase 3, the state layer** (`src/state/`, seven modules, 50 tests):
+  - `shapes.ts` — the four shapes, validators, safe defaults, client id generator.
+  - `journeyStore.ts` — `createJourneyStore` on `zustand/vanilla`, with `ensureToday`, `offer`, `accept`, `setStatus`, `rehydrate`, plus `watchStorageEvents`.
+  - `retention.ts` — day arithmetic and the 30 day prune.
+  - `progress.ts` — the tally, idempotent per day, and the 90 day roll.
+  - `storage.ts` — the adapter seam (`localStorage` or memory).
+  - `dayRng.ts` — `createRng(`${clientId}:${dayKey}`)`, the stream contract the engine leaves to its caller.
+  - `purity.test.ts` — the module boundary: only `@/state`, `@/engine`, `@/content`, `zustand/vanilla`; browser storage only in `storage.ts`.
+- **Suite:** 159 tests in 13 files (was 109 in 8); engine 44, state 50, scripts 65.
 
 ## Decisions made
 
-- The owner's standing instruction, recorded in `AGENTS.md` §5: **commit at the end of each implementation task once the gate passes.** Pushing, rewriting history, and committing unverified work still need explicit approval.
-- The knowledge index stays at the repository root under its original name, which is where the owner placed it; its own header claimed `docs/KNOWLEDGE_INDEX.md`, so the claim was corrected to the file, not the file to the claim.
-- Discrepancies were corrected without changing any approved decision: engine status, test counts, gate composition, and stale "missing artifact" lists are status corrections, and each is logged in the MCD's amendments block or this document's amendment history rather than silently edited.
+- The owner's answers: permanent tally beside pruned history; reset only the failed slice; follow storage events; in memory with a flag when storage is blocked; four small stores; discard a mismatched schema version; check the day key on every access; roll the journey on the next access; keep the day stream helper in the state layer.
+- Four build choices recorded in the spec's implementation notes: zustand's vanilla store rather than the React binding; `today` and `now` injected with real defaults; accepting a later story clears the earlier accepted flag so a day has one accepted record; the journey rolls on the next access, not on the acceptance that fills it.
+- **MCD §5 corrected, not overridden:** its progress shape gained `acceptedDayKeys` and its schema gained `Identity` and the version envelope. A 30 day history cannot carry a 90 day count, which is the same class of correction as the engine's withdrawn weekly cap.
 
 ## Problems solved
 
-- **The index contradicted itself and understated the repository.** It declared an intended location in `docs/` while sitting at the root, listed eight verification scripts and omitted `npm run docs:check`, called the skill count unverified (it is 13), and listed six artifacts as missing that all exist.
-- **`AGENTS.md` was a full rewrite that predated the build.** It still described a four-step gate, 44 tests, "no CI", an unenforced engine boundary, and a content-schema divergence that was closed on 2026-10-16. Each was corrected against the live repository, and the owner's commit-per-task rule was added to the approval gates.
-- **MCD §13 still said the engine was "not built", "only the day key and the seeded PRNG exist", 79 tests, and "engine purity is a convention that nothing enforces."** Rewritten; an amendment entry records it as a status correction, not a decision change.
-- **The teardown claimed to list every tracked file while omitting four of them** — `AGENTS.md`, `memory.md`, `ui-registry.md`, `docs/scope/` — and its deep-dive still said `docs/specs/` was absent and Phases 2 onward unbuilt. The map, the path table, the deep-dive, the capability delta and the quick reference now match; teardown is **v2.8**.
-- **The roadmap's Phase 2 was marked complete without saying what that means for gate G3.** A note now records that every engine rule has a test and three deliberate breakages fail the suite, and that G3's reload half belongs to Phase 3, which must rebuild the per-day stream.
-- One structural constraint learned and respected: the teardown's "present" list is split on whitespace, so a path containing a space cannot be listed there; `KNOWLEDGE INDEX.md` is named in the map, the path table and the deep-dive instead.
+- The tally versus history duplication: the tally is the only value that outlives the prune, and only the store's actions write either, so they cannot drift through the public API.
+- The day key is read on every access, so a tab left open past midnight starts the new day on its next action rather than needing a timer.
+- A corrupt slice is proved by hand editing the day key to `{ not json` and to `version: 2` while history and progress stay intact.
+- Mutation checks (roadmap 3's equivalent of Phase 2's): accepting any version, never pruning, ignoring a stale day key, and allowing a fourth offer each fail the suite on the test that pins the rule; all reverted, sources byte-identical.
+- Documentation kept in step: MCD §5 and §13 with an amendment entry, roadmap Phase 3 marked complete with 3.1 rewritten to match the build (no `persist` middleware), scope feature 2 `in-progress` with its milestones ticked and the planned count at 15, teardown **v2.9** (map, present list, path table, weights, test transcript, §7.3, capability delta, phase table, next moves, quick reference), and the knowledge index's technical table gained `src/state/`.
 
 ## Current state
 
-- `npm run verify` exits 0: typecheck, content check, **109 tests in 8 files**, `docs:check` (**157 claims, no drift**), build.
-- **Working tree before this session's commit:** `AGENTS.md` modified, `KNOWLEDGE INDEX.md` newly staged, the docs edited (`docs/MCD.md`, `docs/BUILD_ROADMAP.md`, `docs/SYSTEM_TEARDOWN.md`, `docs/scope/scope.md`), and `memory.md`.
-- Document versions: teardown **v2.8**, MCD amended 2026-10-17, roadmap status "Phases 0 to 2 complete", scope feature 1 in progress with its four build milestones ticked, spec 0001 `In Progress`.
-- CI runs the five-step gate in the workflow, but the removal of the space in the index filename was not attempted; the committed gate is what ran locally.
+- `npm run verify` exits 0: typecheck, content check, **159 tests in 13 files**, `docs:check` (**168 claims, no drift**), build.
+- Working tree: `src/state/` and `docs/specs/0002-local-state-and-persistence.md` are new, plus edits to `docs/MCD.md`, `docs/BUILD_ROADMAP.md`, `docs/SYSTEM_TEARDOWN.md`, `docs/scope/scope.md`, `KNOWLEDGE INDEX.md` and this file.
+- Nothing in `src/app/` calls the store yet; `src/world/` still does not exist.
 
 ## Next session starts with
 
-Run `/remember restore`. The next justified step is the scope's feature 2, `Local state and persistence`, which is still marked `needs a decision`: `/architect local state and persistence`. It must store the engine's shapes, survive a corrupt store, roll the day at local midnight, prune 30-day history, and rebuild the per-day stream identically — that last one is the only determinism guarantee no engine test can reach, and it is what clears gate G3.
+Run `/remember restore`. The next justified step is the scope's feature 4, `The daily ruling and the reveal`, but feature 2's `Verify it: /check verify` and `Test it: /test` boxes are still unticked, as are feature 1's; the roadmap's Phase 4 (the ritual loop) is the first build a person can use, and it must call the engine through the store's actions and never touch `localStorage` directly.
 
 ## Open questions
 
-- Whether `KNOWLEDGE INDEX.md`'s name with a space should become `KNOWLEDGE_INDEX.md` so it can appear in the teardown's present list; the owner chose the name, so it stands until they say otherwise.
-- Whether the docs checker should learn the index's path and its counts, so the index is policed mechanically the way the teardown is.
+- Whether the engine's per day stream should be passed as a function or consumed through `dayRng` at the call site; the helper exists, and Phase 4 must use it rather than rebuild the seed by hand.
+- Whether the history drawer (feature 7) needs the status field to distinguish learned and explored beyond what `setStatus` already records.
 - Whether a deliberately broken commit fails on the remote as it does locally; the green path is observed, the failure path only local.
-- Whether the display face should be self hosted, or the external request consciously accepted.
-- Whether the engine's thin pool should stop repeating topics once the library passes 100, where the spec's derivable weekly cap becomes worth adopting.
+- Whether `KNOWLEDGE INDEX.md`'s name with a space should become `KNOWLEDGE_INDEX.md` so it can appear in the teardown's present list.
+- Whether the state layer should later grow an export and import, which V1 deliberately excludes (MCD D6).

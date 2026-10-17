@@ -17,10 +17,10 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | B | Build scaffold | Enrolled | existing |
 | C | DOM shell | Enrolled | existing |
 | D | Content schema and authoring pipeline | Enrolled | in-progress |
-| E | Engine primitives | Enrolled | in-progress |
+| E | Engine primitives | Enrolled | existing |
 | F | Session and governance rituals | Enrolled | in-progress |
 | 1 | Selection engine | Foundation | in-progress |
-| 2 | Local state and persistence | Foundation | planned |
+| 2 | Local state and persistence | Foundation | in-progress |
 | 3 | Content pool to launch size | Foundation | planned |
 | 4 | The daily ruling and the reveal | Slice 1 | planned |
 | 5 | Taking a story, and the journey count | Slice 1 | planned |
@@ -74,10 +74,20 @@ spec [0001](../specs/0001-selection-engine.md)
 - [ ] Verify it: `/check verify`
 - [ ] Test it: `/test`
 
-### 2. Local state and persistence · needs a decision
+### 2. Local state and persistence · in-progress
 Keep the journey in the browser under the `anansi:v1:*` namespace so a reload, a restart, or a damaged store never loses the ritual or breaks it.
 **Done when:** state written in one session returns identical after a reload; a hand edited store containing garbage starts a fresh day instead of crashing; a stale day key rolls over at local midnight; and history older than 30 days prunes itself.
-- [ ] Design it (spec): `/architect local state and persistence`
+
+spec [0002](../specs/0002-local-state-and-persistence.md)
+
+- [x] Design it (spec): `/architect local state and persistence`
+- [x] Build it: `/develop local state and persistence`
+  - [x] The four validated stores and the storage seam
+  - [x] The day's rollover, the 30 day prune, the tally and the journey roll
+  - [x] The generated client id and the per day stream
+  - [x] Cross tab rehydration, and a storage failure that never throws
+- [ ] Verify it: `/check verify`
+- [ ] Test it: `/test`
 
 ### 3. Content pool to launch size
 Grow the reviewed pool from the current 24 topics to the launch target, with the spread across domains and difficulty that the engine needs to feel like serendipity.

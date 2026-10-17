@@ -3,7 +3,7 @@
 
 **Date:** 2026-10-16
 **Companions:** `docs/PRD.md` (v1.1 product truth), `docs/MCD.md` (v1.0 technical truth)
-**Status:** Phases 0 to 2 complete; the library is at 24 of 300 topics. Phases 3 onward are planned, not built.
+**Status:** Phases 0 to 3 complete; the library is at 24 of 300 topics. Phases 4 onward are planned, not built.
 **Audience:** any engineer or coding agent picking up the build.
 
 ---
@@ -161,13 +161,15 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 3 — State and persistence
+## Phase 3 — State and persistence (COMPLETE, 2026-10-17)
 
 **Goal:** a journey that survives reloads, restarts, and a corrupt store.
 
+**Spec:** `docs/specs/0002-local-state-and-persistence.md` (captured 2026-10-17) settles the four keys, the version envelope, the per slice reset, the accepted day tally, the rollover and the stream helper. Step 3.1 is written to match it.
+
 ### 3.1 Stores and middleware
 
-- **Deliverable:** `src/state/` with small zustand stores persisting through the localStorage middleware, namespaced `anansi:v1:*` per MCD §5.
+- **Deliverable:** `src/state/` with four small zustand stores (vanilla, no React), namespaced `anansi:v1:*` per MCD §5, each persisting through one validating storage adapter. Spec 0002 deliberately does not use zustand's `persist` middleware: it binds to `window` and replaces state wholesale, which is the opposite of resetting one damaged slice.
 - **Done when:** state written in one session reappears after a reload with identical values.
 
 ### 3.2 Load validation
@@ -194,6 +196,8 @@ src/engine/*.test.ts      14 tests in the node environment
 
 - **Deliverable:** a generated, persisted `clientId` used only to seed the engine.
 - **Done when:** the id survives reloads and is never transmitted anywhere.
+
+**Built 2026-10-17.** Seven modules under `src/state/` and 50 tests: a round trip through one store, midnight rollover, a 45 day log pruning to 30, a corrupt slice resetting alone, a blocked storage running in memory with `persistent: false`, a 90th acceptance rolling the journey on the next access, the per day stream reproducing a day, and cross tab rehydration. Four deliberate breakages (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer) each fail the suite. Spec 0002 is `In Progress` until the feature's verify and test steps are ticked.
 
 ---
 

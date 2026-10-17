@@ -17,6 +17,7 @@
 - **2026-10-16** — §13's weak-points line corrected: the §10 state files are committed (`95a8b1e`), so they are no longer unversioned. A status correction rather than a decision change, made on the product owner's instruction to commit the outstanding work.
 - **2026-10-16** — §13's weak-points line corrected again: a GitHub Actions workflow (`.github/workflows/verify.yml`) now runs the gate on push and pull requests, so "there is no CI" no longer holds. The runner's first result came back green on 2026-10-16 (run 38947782059), so §13 states it as running; the failure path has been demonstrated only locally. Made on the product owner's instruction, and the mechanism was already the roadmap's Phase 10.1 deliverable.
 - **2026-10-16** — §13's verified line updated: `npm run verify` now runs five steps, the added one being `npm run docs:check`, which compares the current-state claims in `docs/SYSTEM_TEARDOWN.md` against the repository and fails the gate when they disagree. A status correction rather than a decision change; it executes the verification half of the maintenance protocol in `AGENTS.md` §11, and the figures it cannot reach are recorded as such in the teardown.
+- **2026-10-17** — §5's local state schema extended to match spec 0002 as built: `Identity` added for the generated client id, and `Progress` gains `acceptedDayKeys`, because a 30 day history cannot carry a 90 day count. The schema now also states the `version: 1` envelope and per key validation. A schema correction, not a change to the day rules, made with the product owner's consent.
 - **2026-10-17** — §13 rewritten again: the selection engine is built and verified against §5 and spec 0001, so it moves from "not built" to "built", the purity convention is now enforced by a test, and the next step becomes state and persistence. A status correction rather than a decision change; no rule, contract or tuning value in §5 changed.
 
 ---
@@ -183,9 +184,15 @@ Two refinements were made during the build, both invited by this schema's own "r
 
 The library source is one file per topic at `content/topics/<id>.json`, and `id` must equal the file name.
 
-**Local state schema (localStorage, namespace `anansi:v1:*` — initial shape):**
+**Local state schema (localStorage, namespace `anansi:v1:*`)**:
+
+Each value is stored under its own key, carries `version: 1`, and is validated when read, so one damaged key resets that store alone (spec 0002).
 
 ```ts
+interface Identity {             // anansi:v1:identity
+  clientId: string;              // generated once, seeds the engine, never sent
+}
+
 interface TopicRecord {          // one per presented topic
   topicId: string;
   dayKey: string;                // day it was presented
@@ -203,10 +210,11 @@ interface DayState {             // anansi:v1:today — validated on load
 interface Progress {             // anansi:v1:progress
   journeyStart: string;          // day key the current journey began
   journeysCompleted: number;     // full 90s already finished
+  acceptedDayKeys: string[];     // the current journey's accepted days, at most 90
 }
 ```
 
-Days completed = count of distinct day keys with an accepted topic in the current journey. A completed journey rolls into the next one gracefully (§19 has no failure state).
+Days completed = the length of `acceptedDayKeys`, one per distinct day with an accepted topic in the current journey. The tally is kept because the 30 day history it is drawn from prunes long before a 90 day journey ends. A completed journey rolls into the next one gracefully (§19 has no failure state).
 
 ---
 
@@ -324,8 +332,8 @@ Recorded so the future is cheap, not to build it now.
 ## 13. Where We Are
 
 - PRD v1.1 and this MCD are ratified.
-- **Built and verified.** The scaffold (Vite + React 18 + TypeScript strict, one component tree), the DOM shell (hero line, primary action, palette tokens, reduced-motion mode), the content layer (schema, validation and compile pipeline, a 24-topic seed library, compiled bundle, loader), and the selection engine of §5: `offerNextStory`, the contract shapes, the frozen tuning object, the day key and the seeded PRNG, with the thin pool, the rolling spread and the tuned return rule that spec 0001 fixes. `npm run verify` — typecheck, content check, tests, documentation drift check, build — exits 0, with 109 tests passing.
-- **Not built.** State and persistence, the ritual loop, history and the 90-day counter, light mode, and the whole 3D world. `src/world/` and `src/state/` do not exist, and nothing in `src/app/` calls the engine yet.
+- **Built and verified.** The scaffold (Vite + React 18 + TypeScript strict, one component tree), the DOM shell (hero line, primary action, palette tokens, reduced-motion mode), the content layer (schema, validation and compile pipeline, a 24-topic seed library, compiled bundle, loader), the selection engine of §5 (`offerNextStory`, the contract shapes, the frozen tuning object, the day key and the seeded PRNG), and the state layer of spec 0002: four validated stores under `anansi:v1:*`, the day rollover, the 30 day prune, the accepted day tally with the journey roll, the generated client id, the per day stream helper, and cross tab rehydration. `npm run verify` — typecheck, content check, tests, documentation drift check, build — exits 0, with 159 tests passing.
+- **Not built.** The ritual loop and its screens, the history drawer, the visible 90-day counter, light mode, and the whole 3D world. `src/world/` does not exist, and nothing in `src/app/` calls the store yet.
 - **Weak points.** Engine purity is enforced in the suite rather than by convention: `src/engine/purity.test.ts` fails when an import crosses into the app, state or world layers, or when a source reads a clock, storage, the DOM or the network. CI runs the gate on push and pull requests — `.github/workflows/verify.yml`, committed as `ca1502d`, first run green on 2026-10-16 — so §6's validation is enforced on the remote rather than by memory; its failure path is still proven only locally. The §10 state files (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`, all created on 2026-10-16) are committed as `95a8b1e`, so the rituals can run and their output stays versioned. The teardown's current-state claims are enforced mechanically by `npm run docs:check`, a gate step since 2026-10-16, while its network and live-install figures remain on trust.
 - The build order for what remains, with its gates and acceptance criteria, is `docs/BUILD_ROADMAP.md`. The verified state of the repository is `docs/SYSTEM_TEARDOWN.md`.
-- Next step: **state and persistence** (roadmap Phase 3), the store the engine reads from: one `anansi:v1:*` namespace, a day key that rolls at local midnight, history that prunes at 30 days, and a rebuilt per-day random stream that reproduces the day exactly. The engine's decisions are fixed by `docs/specs/0001-selection-engine.md`; the state layer must store its shapes and honour that stream contract.
+- Next step: **the ritual loop** (roadmap Phase 4), the first build a person can use: ask for a story through `offerNextStory`, offer a reroll, record what was shown, and accept the day's story, all through the state layer's actions so the tally and the history cannot drift. The engine is fixed by `docs/specs/0001-selection-engine.md` and the store by `docs/specs/0002-local-state-and-persistence.md`.

@@ -152,6 +152,7 @@ The following locations were identified in the project's documented structure. V
 |---|---|---|
 | `src/app/` | Application layer | UI composition, application behavior, and orchestration |
 | `src/engine/` | Core engine | Deterministic logic, selection rules, and behavior that should remain independent of UI concerns |
+| `src/state/` | Local journey state and persistence | The four `anansi:v1:*` stores, day rollover, 30 day prune, the accepted day tally, and the per day stream |
 | `src/content/` | Content types and content-related logic | Topic schema, content validation, and interfaces between content and application logic |
 | `content/topics/` | Topic content | Authored topic records and content available to the application |
 | `content/review/` | Content review area | Topic review and validation workflow |
