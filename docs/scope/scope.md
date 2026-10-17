@@ -40,7 +40,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 ## Enrolled
 
 ### A. Product and technical specification · existing
-The four documents that govern everything: product truth, technical truth, build order, and the dated state assessment. code in `docs/`
+The four documents that govern everything — product truth, technical truth, build order, and the dated state assessment — plus the selection engine's spec, the scope record, and the root navigation index. code in `docs/`, `KNOWLEDGE INDEX.md`
 
 ### B. Build scaffold · existing
 A Vite, React, and TypeScript single page app in strict mode that typechecks, tests, and builds, with the palette carried as CSS custom properties. code in `package.json`, `vite.config.ts`, `tsconfig.json`
@@ -55,7 +55,7 @@ Types, schema validation, near duplicate detection, coverage reporting, bundle c
 The pure engine holds the selection entry point, the frozen tuning object, the contract shapes, the local day key and the seeded random source, with 44 tests including the purity boundary. code in `src/engine/`
 
 ### F. Session and governance rituals · in-progress
-The rituals from the master context document: `AGENTS.md` is written, and `ui-registry.md` and `memory.md` were created alongside this scope. code in `AGENTS.md`, `ui-registry.md`, `memory.md`
+The rituals from the master context document: `AGENTS.md` is written, `ui-registry.md` and `memory.md` were created alongside this scope, and `KNOWLEDGE INDEX.md` was added at the root on 2026-10-17 as the navigation map. code in `AGENTS.md`, `ui-registry.md`, `memory.md`, `KNOWLEDGE INDEX.md`
 
 ## Foundation
 

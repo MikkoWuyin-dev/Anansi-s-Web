@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-16 (v2.7)
+- **Last updated:** 2026-10-17 (v2.8)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -39,6 +39,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 **v2.6 — 2026-10-16.** The selection engine's decision record was captured. `docs/specs/0001-selection-engine.md` (241 lines) is the repository's first spec, produced by `/architect` from the product owner's answers across three rounds of questions. Two authoritative documents were reconciled with it in the same task, because the owner's decision to trade the guaranteed weekly cap on returns for a tuned chance made both stale: MCD §5's resurfacing bullet and roadmap 2.6's done-when line. Also reconciled: MCD §5's `HistoryEvent` input, now `TopicRecord`, and MCD §5 and roadmap 2.2's excluded-domain rule, which lives at authoring rather than inside the engine. The map, the present-versus-missing block, the path table, §7.2, and the next moves follow; R6's action now names the spec task that closes it.
 
 **v2.7 — 2026-10-16.** Phase 2 was built against spec 0001. `src/engine/` gained the contract (`types.ts`), the frozen tuning object (`tuning.ts`) and the entry point (`offer.ts`), with 30 new tests: 20 rule tests, 6 statistical simulations over 100 and 365 days, and the purity test that reads the module's own source and fails when an import crosses into `app/`, `state/` or `world/`. R6 therefore closes, the suite stands at 8 files and 109 tests, and §7.2 describes the rules rather than the plan. Three deliberate breakages — a widened exclusion window, a shortened return absence, a neutered difficulty spread — each failed the suite, which is the mutation check roadmap 2.7 asks for. The documents that described the engine as unbuilt are corrected: roadmap 2.1 drops `Progress` from the engine's schema, which spec 0001 puts in the state layer; the scope's four engine milestones are ticked and the engine primitives row is `existing`; and the spec moves to *In Progress* with a note recording the three rules the build had to choose (a repeated-domain guard, a dominance ratio, and the rarity roll read from a per-day stream).
+
+**v2.8 — 2026-10-17.** The documentation architecture was walked end to end on the project owner's instruction, and the discrepancies it exposed were reconciled. `KNOWLEDGE INDEX.md` (483 lines, at the root) is the new navigation map; the map below, the present block, the documentation deep-dive and the quick reference now name it. Its own draft hedges were resolved: it declared an intended location in `docs/` while sitting at the root, omitted `npm run docs:check` from its verification entry points, called the skill count unverified, and listed six artifacts as missing that have all since landed. Stale status claims elsewhere were corrected: MCD §13 still said the engine was unbuilt, 79 tests, and purity unenforced; this document's deep-dive still said Phases 2 onward were unbuilt and `docs/specs/` absent; and its repository map claimed to list every tracked file while omitting `AGENTS.md`, `memory.md`, `ui-registry.md` and `docs/scope/`. `AGENTS.md` was reconciled with the five-step gate, the current counts, the enforced engine boundary, and the owner's standing instruction to commit at the end of each implementation task.
 
 ---
 
@@ -114,24 +116,30 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 Every tracked file, by area.
 
 ```
-C:\dev\Anansi's Web\                        145 tracked files
+C:\dev\Anansi's Web\                        146 tracked files
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
 │   └── workflows/verify.yml    npm ci + npm run verify on push and PR (green 2026-10-16)
+├── AGENTS.md                   operating rules, onboarding, approval gates, verification
 ├── index.html                  Vite entry; Space Grotesk; favicon
-├── package.json                scripts (dev/build/typecheck/test/verify/content:*)
+├── KNOWLEDGE INDEX.md          navigation map: what to read, where knowledge lives
+├── memory.md                   session handoff
+├── ui-registry.md              captured visual patterns
+├── package.json                scripts (dev/build/typecheck/test/verify/content:/docs:check)
 ├── package-lock.json           lockfile v3
 ├── tsconfig.json               strict TS 5.6; includes src, scripts, vite.config
 ├── vite.config.ts              React plugin; @/* alias; vitest node env
 │
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
-│   ├── MCD.md                  330 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        496 lines   Phases 0 to 11, the build sequence
+│   ├── MCD.md                  331 lines   Master Context Document v1.0 (amended)
+│   ├── BUILD_ROADMAP.md        498 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
 │   ├── specs/
 │   │   └── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
+│   ├── scope/
+│   │   └── scope.md            212 lines   living scope record
 │   └── system-teardown.html                Generated rendering (gitignored)
 │
 ├── content/                    the library source of truth
@@ -176,7 +184,7 @@ C:\dev\Anansi's Web\                        145 tracked files
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 75 | 6,403 |
-| Project documentation | 4 | 2,451 |
+| Project documentation | 4 | 2,468 |
 | Authoring scripts | 11 | 2,603 |
 | Application source | 17 | 2,243 |
 | Content (24 JSON + 1 README) | 25 | 335 |
@@ -338,7 +346,7 @@ MISSING  README.md
 
 ```
 $ npm run docs:check
-docs/SYSTEM_TEARDOWN.md: 154 claims compared against the repository, no drift
+docs/SYSTEM_TEARDOWN.md: 157 claims compared against the repository, no drift
 exit 0
 ```
 
@@ -353,7 +361,7 @@ Four probes were run to show the gate fails rather than merely passes:
 | The map's file count set to `137` | **exit 1** — line 113, "documented: 137 / repository: 138" |
 | The closing line's version set back to `v2.4` | **exit 1** — the header version disagrees with the closing version |
 | `AGENTS.md` taken off the disk while both lists still call it present | **exit 1** — the present list and the path table both report "not on disk" |
-| The document restored | **exit 0**, 154 claims compared |
+| The document restored | **exit 0**, 157 claims compared |
 
 **What it does not cover.** The network and live-install figures listed above. The repository map's tree is read for its per-area test totals only; whether a specific tracked file still appears in the tree is left to the file count on its first line. And a fact this document states in a shape the rules do not recognise is simply not compared — which is why each shape carries a minimum and a vanished claim is itself a failure.
 
@@ -361,7 +369,7 @@ Four probes were run to show the gate fails rather than merely passes:
 
 ## 6. Documentation deep-dive
 
-Four documents in `docs/`, in a clear authority order.
+Four documents in `docs/`, in a clear authority order, plus the selection-engine spec under `docs/specs/`, the scope record under `docs/scope/`, and the root `KNOWLEDGE INDEX.md` that navigates all of them.
 
 ### 6.1 `docs/PRD.md` — Product Requirements Document v1.1
 
@@ -371,17 +379,21 @@ Four documents in `docs/`, in a clear authority order.
 
 *"Ratified — implementation authorized"*, 2026-10-11. Its governance rule matters most: **"Every session that works on Anansi's Web — human or AI — reads this document first."** Where momentum and the MCD conflict, the MCD wins, and changing a decision requires the product owner's consent plus an update to both documents.
 
-It was amended on 2026-10-16 so that its contracts match the code: §13 now records what is built and what is not, §5's schema mirrors `src/content/types.ts`, and §3 lists the documents added since ratification. An "Amendments" block records what changed and why. It remains the canonical document, and should be amended again before any further decision changes.
+It was amended on 2026-10-16 so that its contracts match the code: §13 now records what is built and what is not, §5's schema mirrors `src/content/types.ts`, and §3 lists the documents added since ratification. It was amended again on 2026-10-17, when §13 moved the selection engine from unbuilt to built and named state and persistence as the next step. An "Amendments" block records what changed and why. It remains the canonical document, and should be amended again before any further decision changes.
 
 ### 6.3 `docs/BUILD_ROADMAP.md` — Build Roadmap v1.0
 
-Written to own the build order: 12 phases (0 Foundations through 11 the accounts era), roughly 85 numbered steps each with a **Deliverable** and a **done when** acceptance line, plus a dependency graph, a gate table, a V1 definition of done, and a standing-risk register. Phase 0 is marked complete; Phase 1 records the content layer. Phases 2 onward are unbuilt.
+Written to own the build order: 12 phases (0 Foundations through 11 the accounts era), roughly 85 numbered steps each with a **Deliverable** and a **done when** acceptance line, plus a dependency graph, a gate table, a V1 definition of done, and a standing-risk register. Phase 0 is marked complete, Phase 1 records the content layer (24 of 300 topics), and Phase 2 is marked complete as of 2026-10-16. Phases 3 onward are unbuilt.
 
 Its ordering argument is the useful part: *content feeds the engine, the engine feeds the loop, the loop feeds the world* — which is why the 3D stage is last and the DOM has to carry the product on its own first.
 
 ### 6.4 `docs/SYSTEM_TEARDOWN.md` — this document
 
-The state assessment. v1 recorded a documentation-complete, code-empty project; v2 records a building, tested, version-controlled foundation with the content layer live. Since v2.5 its current-state claims are checked mechanically by `npm run docs:check` (§5.11), so the numbers here are compared against the repository on every run of the gate rather than trusted.
+The state assessment. v1 recorded a documentation-complete, code-empty project; v2 records a building, tested, version-controlled foundation with the content layer and the selection engine live. Since v2.5 its current-state claims are checked mechanically by `npm run docs:check` (§5.11), so the numbers here are compared against the repository on every run of the gate rather than trusted.
+
+### 6.5 `KNOWLEDGE INDEX.md` — the navigation map
+
+Added at the repository root on 2026-10-17, in answer to `AGENTS.md` §3.2: it names the onboarding route, every authoritative artifact and what question each answers, the technical locations, the bundled skills, the session-handoff rules, and the gaps that were once listed as missing. It is a navigation layer, not an authority: where it and an authoritative document disagree, the document wins, and its own path and script claims were corrected against this repository on 2026-10-17.
 
 ---
 
@@ -484,7 +496,7 @@ The content budget holds with wide margin. The projection to 300 topics is a lin
 | `sync` | Reconciles `AGENTS.md`, scope, and specs |
 | `test` | Test suite authoring |
 
-The MCD §10 commits the project to five rituals drawn from this toolkit. **The state files those rituals depend on now exist:** `AGENTS.md` is written, and `memory.md`, `ui-registry.md`, and `docs/scope/` were created on 2026-10-16. Only `docs/specs/` is still absent, which is expected until a feature passes through `/architect`. All four files are tracked as of `95a8b1e`, so continuity rests on the four documents in `docs/` plus four versioned state files rather than on an enforced workflow.
+The MCD §10 commits the project to five rituals drawn from this toolkit. **The state files those rituals depend on all exist:** `AGENTS.md`, `memory.md`, `ui-registry.md`, and `docs/scope/` were created on 2026-10-16 and committed as `95a8b1e`, `docs/specs/` followed with the selection engine's spec, and `KNOWLEDGE INDEX.md` was added on 2026-10-17. Continuity therefore rests on the four documents in `docs/`, the spec and scope records, and five versioned state files, with `npm run docs:check` policing the mechanical half of their upkeep.
 
 ---
 
@@ -523,10 +535,11 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Planned (MCD §3) | Status | Notes |
 |---|---|---|
 | `docs/PRD.md` | Present | v1.1, 950 lines |
-| `docs/MCD.md` | Present | v1.0, 330 lines, amended 2026-10-16 to match the code |
+| `docs/MCD.md` | Present | v1.0, 331 lines, amended 2026-10-16 to match the code and 2026-10-17 to record the engine as built |
+| `KNOWLEDGE INDEX.md` | Present | Added at the root 2026-10-17; the navigation map, verified against the repository |
 | `src/app/` | Present | Shell only: hero, action, tokens, styles |
 | `src/world/` | **Missing** | The entire 3D stage |
-| `src/engine/` | Partial | Day key and PRNG only |
+| `src/engine/` | Present | Contract, frozen tuning, `offerNextStory`, day key, PRNG; 44 tests including the purity boundary |
 | `src/state/` | **Missing** | No zustand stores, no persistence |
 | `src/content/` | Present | Types, generated bundle, loader |
 | `content/topics/` | Present | 24 of 300+ |
@@ -547,7 +560,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Build, typecheck, test | **Working** |
 | Content validation gate | **Working, and proven to fail correctly** |
 | Serve the shell | **Working** |
-| Choose a topic for today | Not built |
+| Choose a topic for today | Engine built and tested; not yet called by the app |
 | Accept or reroll | Not built |
 | Persist a journey across reloads | Not built |
 | Show 30-day history | Not built |
@@ -558,9 +571,9 @@ content/topics/<id>.json          human reviewed, one entry per topic
 
 ### 9.3 Documentation consistency
 
-- **The MCD and this teardown agree as of 2026-10-16.** The MCD's §13 status and its §5 schema were reconciled with the code in the same pass that produced this document, so no document now contradicts another.
+- **The MCD and this teardown agree as of 2026-10-17.** The MCD's §13 status and its §5 schema were reconciled with the code on 2026-10-16, and §13 was updated again on 2026-10-17 to record the engine as built, so no document now contradicts another.
 - **This document's current-state claims are now enforced.** `npm run docs:check` fails the gate when a count, a file list, a tracked-state statement, a version, or the gate's own composition no longer matches the repository. What remains on trust is what the gate cannot reach: the network and live-install figures, the amendment history, and any fact phrased in a shape the rules do not know.
-- **Roadmap Phase 1 is now complete** and could be ticked, and its `done when` for the 300-topic target is deliberately unmet.
+- **Roadmap Phases 0 to 2 are now marked complete**, and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
 - **The teardown v1 is superseded** by this document but remains in the git history.
 - **`skills/` has no license or attribution** and is published publicly, a decision made knowingly.
 - **The display font is fetched from Google Fonts**, an external request mildly against PRD §35. Recorded in the roadmap as a decision still to make.
@@ -639,10 +652,11 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 
 **Start here when picking up this project:**
 
-1. `docs/MCD.md` — canonical technical truth (decisions §2, engine contract §5, tokens §7).
-2. `docs/PRD.md` — product truth (loop §5, Daily Ruling §9, serendipity §17, non-goals §38).
-3. `docs/BUILD_ROADMAP.md` — the build sequence and what to do next.
-4. `docs/SYSTEM_TEARDOWN.md` — this document; the state.
+1. `KNOWLEDGE INDEX.md` — the navigation map: what to read, for which question, in what order.
+2. `docs/MCD.md` — canonical technical truth (decisions §2, engine contract §5, tokens §7).
+3. `docs/PRD.md` — product truth (loop §5, Daily Ruling §9, serendipity §17, non-goals §38).
+4. `docs/BUILD_ROADMAP.md` — the build sequence and what to do next.
+5. `docs/SYSTEM_TEARDOWN.md` — this document; the state.
 
 **Commands**
 
@@ -672,4 +686,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v2.7. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v2.8. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*

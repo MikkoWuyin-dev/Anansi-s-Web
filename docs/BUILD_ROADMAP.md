@@ -157,6 +157,8 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Deliverable:** tests for every rule above, in the `node` environment the Vitest config already assumes.
 - **Done when:** `npm run test` covers exclusions, determinism, diversity, reroll uniqueness, resurfacing cadence, and the difficulty spread, and a deliberately broken rule fails the suite.
 
+**Gate G3, in part.** Every engine rule has a test, and three deliberate breakages — a widened window, a shortened return absence, a neutered spread — each fail the suite. The reload half of G3 is not reachable from the engine alone: determinism across a reload depends on the state layer rebuilding the per-day stream, which is Phase 3's responsibility, so G3 clears when that lands with a rebuild test.
+
 ---
 
 ## Phase 3 — State and persistence
