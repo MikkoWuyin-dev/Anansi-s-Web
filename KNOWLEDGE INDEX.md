@@ -119,7 +119,7 @@ The following table defines where knowledge belongs and which questions each art
 | Approved architecture decision records | Context, alternatives, rationale, consequences, and status of significant decisions | Making architectural changes or investigating why a technical choice was made |
 | `docs/BUILD_ROADMAP.md` | Planned phases, implementation sequence, and progress | Selecting the next justified task or assessing milestone completion |
 | `docs/SYSTEM_TEARDOWN.md` | Actual implementation state, verification evidence, gaps, and risks | Starting implementation, debugging, auditing, or completing a meaningful change |
-| `docs/specs/` | Detailed requirements and acceptance criteria for a feature | Implementing a specifically defined feature (spec 0001 governs the selection engine) |
+| `docs/specs/` | Detailed requirements and acceptance criteria for a feature | Implementing a specifically defined feature (spec 0001 governs the selection engine, 0002 the local state, 0003 the ritual loop) |
 | `docs/scope/scope.md` | Boundaries and status of bounded work | Preventing scope creep or understanding approved changes |
 | `skills/` | Reusable engineering procedures | Performing a workflow covered by a bundled skill |
 | `memory.md` | Temporary working state and session continuity | Resuming unfinished work from a previous session |
@@ -150,7 +150,7 @@ The following locations were identified in the project's documented structure. V
 
 | Location | Documented responsibility | Investigation focus |
 |---|---|---|
-| `src/app/` | Application layer | UI composition, application behavior, and orchestration |
+| `src/app/` | Application layer | UI composition, application behavior, and orchestration. The ritual loop lives here: `ritual.ts` (the controller and the screen view), `RitualScreen.tsx` (the semantic markup), `useJourney.ts` (the store subscription), and `store.ts` (the app's store instance) |
 | `src/engine/` | Core engine | Deterministic logic, selection rules, and behavior that should remain independent of UI concerns |
 | `src/state/` | Local journey state and persistence | The four `anansi:v1:*` stores, day rollover, 30 day prune, the accepted day tally, and the per day stream |
 | `src/content/` | Content types and content-related logic | Topic schema, content validation, and interfaces between content and application logic |

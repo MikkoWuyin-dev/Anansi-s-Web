@@ -1,48 +1,57 @@
-# Memory — The state layer: decided, built, and gated
+# Session memory
 
-Last updated: 2026-10-17 19:05 local
+Handoff for the next agent. Read `AGENTS.md` and `KNOWLEDGE INDEX.md` first; this file records
+working state, not requirements.
 
-## What was built
+## Where the project is
 
-- **Spec 0002** (`docs/specs/0002-local-state-and-persistence.md`, 246 lines), from `/architect` in `feature` mode across three rounds of questions: four keys under `anansi:v1:*`, each value carrying `version: 1` and validated on read; a corrupt key resets only its own slice; a permanent accepted day tally beside the pruned history; the day rolls on access rather than on a timer; storage events rehydrate the other tab; storage that throws leaves the ritual running in memory with `persistent: false`.
-- **Phase 3, the state layer** (`src/state/`, seven modules, 50 tests):
-  - `shapes.ts` — the four shapes, validators, safe defaults, client id generator.
-  - `journeyStore.ts` — `createJourneyStore` on `zustand/vanilla`, with `ensureToday`, `offer`, `accept`, `setStatus`, `rehydrate`, plus `watchStorageEvents`.
-  - `retention.ts` — day arithmetic and the 30 day prune.
-  - `progress.ts` — the tally, idempotent per day, and the 90 day roll.
-  - `storage.ts` — the adapter seam (`localStorage` or memory).
-  - `dayRng.ts` — `createRng(`${clientId}:${dayKey}`)`, the stream contract the engine leaves to its caller.
-  - `purity.test.ts` — the module boundary: only `@/state`, `@/engine`, `@/content`, `zustand/vanilla`; browser storage only in `storage.ts`.
-- **Suite:** 159 tests in 13 files (was 109 in 8); engine 44, state 50, scripts 65.
+Phase 4 (the ritual loop) was designed and built on 2026-10-17, after Phase 3 (the state layer).
+The product is usable end to end without any 3D: ask for a story, watch a short search, receive a
+title alone, reroll twice, take the day's story, mark it learned, and find the day unchanged after
+a reload.
 
-## Decisions made
+- Spec: `docs/specs/0003-ritual-loop.md` (`In Progress`; scope features 4, 5 and 6 are
+  `in-progress` with it linked).
+- Code: `src/app/` — `ritual.ts` (controller and screen view), `RitualScreen.tsx` (semantic
+  markup), `useJourney.ts` (`useSyncExternalStore`), `store.ts` (the app's store instance),
+  `styles.css` (palette plus the new motion tokens).
+- Tests: 31 across `src/app/ritual.test.ts` and `src/app/RitualScreen.test.tsx`; `vite.config.ts`
+  now collects `.test.tsx` as well as `.test.ts`.
 
-- The owner's answers: permanent tally beside pruned history; reset only the failed slice; follow storage events; in memory with a flag when storage is blocked; four small stores; discard a mismatched schema version; check the day key on every access; roll the journey on the next access; keep the day stream helper in the state layer.
-- Four build choices recorded in the spec's implementation notes: zustand's vanilla store rather than the React binding; `today` and `now` injected with real defaults; accepting a later story clears the earlier accepted flag so a day has one accepted record; the journey rolls on the next access, not on the acceptance that fills it.
-- **MCD §5 corrected, not overridden:** its progress shape gained `acceptedDayKeys` and its schema gained `Identity` and the version envelope. A 30 day history cannot carry a 90 day count, which is the same class of correction as the engine's withdrawn weekly cap.
+## Decisions that a reader cannot infer from the code alone
 
-## Problems solved
+- The search beat is a 900 ms pause, injected and skipped under reduced motion; Phase 6 replaces it
+  with the world's search. Do not grow it into a loading screen.
+- Taking a story ends the ruling: the app hides the reroll once `day.acceptedTopicId` is set. The
+  store still permits an offer, so the interface is the gate.
+- The reason an offer was resurfaced is not stored; it is reproduced on load by replaying the
+  engine for the day just before that offer. If the engine's rule order changes, this derivation
+  must be checked again.
+- The learned confirm is inline and moves focus both ways (open and close) because the pressed
+  button disappears in each direction.
+- A stored story that has left the library is a dead end until midnight and the app says so; the
+  repair needs a store action and is a Follow-up in spec 0003.
 
-- The tally versus history duplication: the tally is the only value that outlives the prune, and only the store's actions write either, so they cannot drift through the public API.
-- The day key is read on every access, so a tab left open past midnight starts the new day on its next action rather than needing a timer.
-- A corrupt slice is proved by hand editing the day key to `{ not json` and to `version: 2` while history and progress stay intact.
-- Mutation checks (roadmap 3's equivalent of Phase 2's): accepting any version, never pruning, ignoring a stale day key, and allowing a fourth offer each fail the suite on the test that pins the rule; all reverted, sources byte-identical.
-- Documentation kept in step: MCD §5 and §13 with an amendment entry, roadmap Phase 3 marked complete with 3.1 rewritten to match the build (no `persist` middleware), scope feature 2 `in-progress` with its milestones ticked and the planned count at 15, teardown **v2.9** (map, present list, path table, weights, test transcript, §7.3, capability delta, phase table, next moves, quick reference), and the knowledge index's technical table gained `src/state/`.
+## Verified on 2026-10-17
 
-## Current state
+- `npm run verify` → exit 0 (190 tests in 15 files; content and documentation checks clean; build).
+- Browser pass by keyboard on the running dev server: title alone on the reveal, two rerolls
+  without a repeat, the third story sealed with the reroll gone, take closing the ruling, the
+  inline confirm holding focus, learned surviving a reload with the same story, and the DOM
+  carrying no `domain`, `difficulty`, or `tags`.
+- Three mutation probes in `src/app/ritual.ts` (never recording an offer, leaving the reroll open
+  at three offers, dropping the learned state) each failed the suite and were reverted byte for
+  byte.
 
-- `npm run verify` exits 0: typecheck, content check, **159 tests in 13 files**, `docs:check` (**168 claims, no drift**), build.
-- Working tree: `src/state/` and `docs/specs/0002-local-state-and-persistence.md` are new, plus edits to `docs/MCD.md`, `docs/BUILD_ROADMAP.md`, `docs/SYSTEM_TEARDOWN.md`, `docs/scope/scope.md`, `KNOWLEDGE INDEX.md` and this file.
-- Nothing in `src/app/` calls the store yet; `src/world/` still does not exist.
+## Not verified, and why
 
-## Next session starts with
+The resurfaced treatment (needs a 60 day absence), the empty and failed states, the blocked
+storage line, the reduced motion path, and the midnight rollover are covered by controller and
+markup tests but were not reproduced in a live browser. The dev-only state switch an agent
+suggested is not built.
 
-Run `/remember restore`. The next justified step is the scope's feature 4, `The daily ruling and the reveal`, but feature 2's `Verify it: /check verify` and `Test it: /test` boxes are still unticked, as are feature 1's; the roadmap's Phase 4 (the ritual loop) is the first build a person can use, and it must call the engine through the store's actions and never touch `localStorage` directly.
+## Next justified action
 
-## Open questions
-
-- Whether the engine's per day stream should be passed as a function or consumed through `dayRng` at the call site; the helper exists, and Phase 4 must use it rather than rebuild the seed by hand.
-- Whether the history drawer (feature 7) needs the status field to distinguish learned and explored beyond what `setStatus` already records.
-- Whether a deliberately broken commit fails on the remote as it does locally; the green path is observed, the failure path only local.
-- Whether `KNOWLEDGE INDEX.md`'s name with a space should become `KNOWLEDGE_INDEX.md` so it can appear in the teardown's present list.
-- Whether the state layer should later grow an export and import, which V1 deliberately excludes (MCD D6).
+Phase 5: the history drawer and the quiet `37 / 90` count (spec 0003's Follow-up also asks for the
+count on the taken state). It owes a decision, so start with `/architect history drawer`, then
+`/develop`. No approval gate is open; nothing is pushed beyond the commit that records this work.

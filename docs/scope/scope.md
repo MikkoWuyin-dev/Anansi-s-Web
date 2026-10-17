@@ -22,9 +22,9 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 1 | Selection engine | Foundation | in-progress |
 | 2 | Local state and persistence | Foundation | in-progress |
 | 3 | Content pool to launch size | Foundation | planned |
-| 4 | The daily ruling and the reveal | Slice 1 | planned |
-| 5 | Taking a story, and the journey count | Slice 1 | planned |
-| 6 | An accessible loop with honest states | Slice 1 | planned |
+| 4 | The daily ruling and the reveal | Slice 1 | in-progress |
+| 5 | Taking a story, and the journey count | Slice 1 | in-progress |
+| 6 | An accessible loop with honest states | Slice 1 | in-progress |
 | 7 | The history drawer | Slice 2 | planned |
 | 8 | The canvas and the web graph | Slice 3 | planned |
 | 9 | The authored camera and the search | Slice 3 | planned |
@@ -100,20 +100,52 @@ The review gate and promotion steps already exist, so this needs execution rathe
 
 The walking skeleton. This is the thin real thread through content, engine, state, and interface, and it is the whole product promise: it must work with no 3D at all, which is why it is built before the stage.
 
-### 4. The daily ruling and the reveal · needs a decision
+### 4. The daily ruling and the reveal · in-progress
 Ask for a story, watch the search resolve, and receive one title with nothing attached to it.
 **Done when:** a search offers a title only, with no definition, summary, category, or difficulty anywhere in the DOM; up to two rerolls never repeat a story already offered today; the third story becomes the day's story and stays identical until local midnight; and every story shown, rerolled or not, is recorded as Explored.
-- [ ] Design it (spec): `/architect daily ruling and reveal`
+code in `src/app/`
 
-### 5. Taking a story, and the journey count · needs a decision
+spec [0003](../specs/0003-ritual-loop.md)
+
+- [x] Design it (spec): `/architect daily ruling and reveal`
+- [ ] Build it: `/develop daily ruling and reveal`
+  - [ ] The thin thread: subscribe to the store, the search beat, and the title alone (AC-1, AC-2, AC-5, AC-15)
+  - [ ] The ruling: two rerolls, no repeat, and the sealed third story (AC-3, AC-4)
+  - [ ] The resurfacing line and its lavender accent, including after a reload (AC-8)
+  - [ ] Markup tests that fail if domain, difficulty, or tags reach the DOM (AC-2, AC-16)
+- [ ] Verify it: `/check verify daily ruling and reveal`
+- [ ] Test it: `/test daily ruling and reveal`
+
+### 5. Taking a story, and the journey count · in-progress
 Let the person take the story and later mark it understood, and show a quiet count of how far the journey has come.
 **Done when:** taking a story records the day and advances the count exactly once; the counter reads from taken days only and shows no streak, warning, or penalty for a missed day; and marking a story Learned persists and appears in the history filters.
-- [ ] Design it (spec): `/architect taking a story and the journey count`
+code in `src/app/`, `src/state/`
 
-### 6. An accessible loop with honest states · needs a decision
+spec [0003](../specs/0003-ritual-loop.md)
+
+- [x] Design it (spec): `/architect taking a story and the journey count`
+- [ ] Build it: `/develop taking a story and the journey count`
+  - [ ] Taking a story, closing the day's ruling, and counting the day once (AC-6)
+  - [ ] The inline learned mark, and its state after a reload (AC-7)
+  - [ ] The quiet journey count on the taken state, built in Phase 5.2, not in spec 0003
+- [ ] Verify it: `/check verify taking a story and the journey count`
+- [ ] Test it: `/test taking a story and the journey count`
+
+### 6. An accessible loop with honest states · in-progress
 The ritual has to complete by keyboard alone, and it must never show a blank screen when the pool is empty, a load fails, or the search is still running.
 **Done when:** the whole loop completes with the keyboard alone and with reduced motion set; focus is always visible; the reveal and each reroll are announced in a live region; and the empty, error, and loading states each say what happened and what to do next.
-- [ ] Design it (spec): `/architect accessible loop and honest states`
+code in `src/app/`
+
+spec [0003](../specs/0003-ritual-loop.md)
+
+- [x] Design it (spec): `/architect accessible loop and honest states`
+- [ ] Build it: `/develop accessible loop and honest states`
+  - [ ] The empty pool, the failed search with Try again, and the blocked storage line (AC-9, AC-10, AC-11)
+  - [ ] Keyboard, focus, and live region across the whole loop (AC-12)
+  - [ ] Reduced motion parity, and the midnight rollover while open (AC-13, AC-14)
+  - [ ] The node suite and the real browser pass (AC-16)
+- [ ] Verify it: `/check verify accessible loop and honest states`
+- [ ] Test it: `/test accessible loop and honest states`
 
 ## Slice 2: continuity
 

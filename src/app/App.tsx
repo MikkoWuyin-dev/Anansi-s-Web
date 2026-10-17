@@ -1,45 +1,127 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { Ritual } from '@/app/RitualScreen'
+import {
+  announcementOf,
+  checkDay,
+  findStory,
+  INITIAL_UI,
+  learnStory,
+  ritualView,
+  takeStory,
+  type RitualUi,
+} from '@/app/ritual'
+import { journeyStore } from '@/app/store'
+import { useJourney } from '@/app/useJourney'
 import { getLibrary } from '@/content/loader'
+import { watchStorageEvents, type JourneyStore } from '@/state'
+
+/** The search beat is skipped when the person asked for less motion (AC-13). */
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
 
 /**
- * The DOM shell of the ritual: the hero line and the primary action, present
- * immediately and independently of the 3D stage (MCD §4 rule 1, §9).
+ * The ritual, wired to the journey store (spec 0003).
  *
- * The web behind it is decoration, so it is hidden from assistive technology;
- * everything the product requires is in the semantic layer below.
+ * This component owns only the transient phase (searching, failed) and the
+ * new day flag; the view itself is derived from the store, so every rule lives
+ * in `ritual.ts` and the markup lives in `Ritual.tsx`.
  */
-export function App() {
-  const [searched, setSearched] = useState(false)
-  const librarySize = getLibrary().length
+export function App({ store = journeyStore }: { readonly store?: JourneyStore } = {}) {
+  const state = useJourney(store)
+  const [ui, setUi] = useState<RitualUi>(INITIAL_UI)
+  const [newDay, setNewDay] = useState(false)
+  const busy = useRef(false)
+  const library = getLibrary()
 
-  // Temporary until the engine lands (build roadmap Phase 2): the shell can
-  // only report what the web holds, it cannot yet choose from it.
-  const status =
-    librarySize === 0
-      ? 'No stories are woven into the web yet.'
-      : `The web holds ${librarySize} stories. Anansi cannot search it yet.`
+  // Another tab writing the day rehydrates this one (spec 0002).
+  useEffect(() => watchStorageEvents(store), [store])
+
+  // Local midnight arrives while the page is open: focus, tab return, or a
+  // minute check rolls the day and returns to the hero (AC-14).
+  useEffect(() => {
+    const check = (): void => {
+      if (checkDay(store)) {
+        setUi(INITIAL_UI)
+        setNewDay(true)
+      }
+    }
+
+    const onVisibilityChange = (): void => {
+      if (document.visibilityState === 'visible') {
+        check()
+      }
+    }
+
+    const interval = window.setInterval(check, 60_000)
+    window.addEventListener('focus', check)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', check)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
+    }
+  }, [store])
+
+  const search = useCallback(async (): Promise<void> => {
+    if (busy.current) {
+      return
+    }
+
+    busy.current = true
+    setUi({ phase: 'searching', failure: null, sealed: false })
+
+    const outcome = await findStory({
+      store,
+      library,
+      reducedMotion: prefersReducedMotion,
+    })
+
+    busy.current = false
+
+    if (!outcome.ok) {
+      setUi({ phase: 'failed', failure: outcome.message, sealed: false })
+      return
+    }
+
+    setNewDay(false)
+    setUi({
+      phase: 'ready',
+      failure: null,
+      sealed: outcome.kind === 'none' && outcome.reason === 'no-candidate',
+    })
+  }, [library, store])
+
+  const view = ritualView({ state, library, ui, newDay })
 
   return (
     <main className="shell">
       <Web />
 
-      <div className="ritual">
-        <h1 className="hero">What story do you want to tell today?</h1>
-
-        <button
-          className="action"
-          type="button"
-          onClick={() => setSearched(true)}
-        >
-          Find me a story
-        </button>
-
-        {/* A live region kept in the document so the message is announced. */}
-        <p className="status" role="status">
-          {searched ? status : ''}
-        </p>
-      </div>
+      <Ritual
+        view={view}
+        persistent={state.persistent}
+        announcement={announcementOf(view)}
+        onFind={search}
+        onReroll={search}
+        onRetry={search}
+        onTake={() => {
+          if (view.kind === 'story') {
+            takeStory(store, view.topic.id)
+          }
+        }}
+        onMarkLearned={() => {
+          if (view.kind === 'story') {
+            learnStory(store, view.topic.id)
+          }
+        }}
+      />
     </main>
   )
 }

@@ -201,9 +201,11 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 4 — The ritual loop
+## Phase 4 — The ritual loop (COMPLETE, 2026-10-17)
 
 **Goal:** the core product experience, fully operable without any 3D.
+
+**Spec:** `docs/specs/0003-ritual-loop.md` (captured 2026-10-17) settles the one second search beat, the sealed third story, taking a story closing the day's ruling, the inline learned check, the resurfacing line and its lavender cue, the honest states, the midnight rollover, and the keyboard and reduced motion path. Steps 4.1 to 4.7 are written to match it.
 
 ### 4.1 The topic card
 
@@ -239,6 +241,8 @@ src/engine/*.test.ts      14 tests in the node environment
 
 - **Deliverable:** full keyboard operation, visible focus, semantic controls, live region announcements for the reveal and the rerolls, and reduced-motion parity.
 - **Done when:** the whole loop completes with the keyboard alone and with `prefers-reduced-motion` set.
+
+**Built 2026-10-17.** Four modules and 31 tests in `src/app/`: a controller (`ritual.ts`) that derives the whole screen from the store and calls the engine, a semantic markup layer (`RitualScreen.tsx`), a `useSyncExternalStore` hook, and the app's one store instance. No dependency was added: the controller runs under the node environment and the markup is checked through `react-dom/server`, which is why `vite.config.ts` now collects `.test.tsx` too. Verified in a browser by keyboard: a title alone on the reveal, two rerolls without a repeat, the third story sealed with the reroll gone, taking closing the ruling and marking the day, the inline learned confirm holding focus, and learned surviving a reload with the story unchanged. Three deliberate breakages (never recording an offer, leaving the reroll open at the third story, dropping the learned state) each fail the suite and were reverted. The resurfaced treatment, the empty and failed states, the blocked storage line, the reduced motion path, and the midnight rollover rest on controller and markup tests rather than a live session; the spec's Follow-up records what that leaves open.
 
 ---
 
