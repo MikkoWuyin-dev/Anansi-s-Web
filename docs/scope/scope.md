@@ -19,7 +19,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | D | Content schema and authoring pipeline | Enrolled | in-progress |
 | E | Engine primitives | Enrolled | in-progress |
 | F | Session and governance rituals | Enrolled | in-progress |
-| 1 | Selection engine | Foundation | planned |
+| 1 | Selection engine | Foundation | in-progress |
 | 2 | Local state and persistence | Foundation | planned |
 | 3 | Content pool to launch size | Foundation | planned |
 | 4 | The daily ruling and the reveal | Slice 1 | planned |
@@ -51,18 +51,28 @@ The hero line, the primary action, the live region, and the first procedural str
 ### D. Content schema and authoring pipeline · in-progress
 Types, schema validation, near duplicate detection, coverage reporting, bundle compilation, and the loader, with 24 reviewed topics of a 300 topic target. code in `src/content/`, `scripts/`, `content/topics/`
 
-### E. Engine primitives · in-progress
-The pure engine exists but holds only its two lowest pieces: the local day key and the seeded random source, with 14 tests. Every selection rule is still to come. code in `src/engine/`
+### E. Engine primitives · existing
+The pure engine holds the selection entry point, the frozen tuning object, the contract shapes, the local day key and the seeded random source, with 44 tests including the purity boundary. code in `src/engine/`
 
 ### F. Session and governance rituals · in-progress
 The rituals from the master context document: `AGENTS.md` is written, and `ui-registry.md` and `memory.md` were created alongside this scope. code in `AGENTS.md`, `ui-registry.md`, `memory.md`
 
 ## Foundation
 
-### 1. Selection engine · needs a decision
+### 1. Selection engine · in-progress
 The heart of controlled serendipity: from the pool, the day, and the history log, choose the day's story and any rerolls, deterministically, and without ever feeling mechanical.
-**Done when:** two calls for the same day return identical offers; no topic offered in the last 30 days can be offered again; a long generated sequence shows no run of three same domain topics and no visible rotation; and a resurfacing appears at most once in any rolling week.
-- [ ] Design it (spec): `/architect selection engine`
+**Done when:** two calls for the same day return identical offers; no topic offered in the last 30 days can be offered again; a long generated sequence shows no run of three same domain topics and no visible rotation; and a return is confined to flagged topics after a 60 day absence at about one day in seven, the guaranteed weekly cap having been traded for that tuned chance (spec 0001, 2026-10-16).
+
+spec [0001](../specs/0001-selection-engine.md)
+
+- [x] Design it (spec): `/architect selection engine`
+- [x] Build it: `/develop selection engine`
+  - [x] The contract and the frozen tuning object
+  - [x] The day's guards, purity, and one reproducible story per call
+  - [x] The 30 day window, the day's own exclusions, and the thin pool fallback
+  - [x] Scoring, the rolling difficulty spread, and the return rule with its rarity roll
+- [ ] Verify it: `/check verify`
+- [ ] Test it: `/test`
 
 ### 2. Local state and persistence · needs a decision
 Keep the journey in the browser under the `anansi:v1:*` namespace so a reload, a restart, or a damaged store never loses the ritual or breaks it.

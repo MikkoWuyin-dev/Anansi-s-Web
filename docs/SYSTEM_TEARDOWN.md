@@ -3,9 +3,9 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-16 (v2.4)
+- **Last updated:** 2026-10-16 (v2.7)
 - **Auditor:** Buffy (automated code agent)
-- **Status:** Complete — every state claim verified by command execution
+- **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
 ---
 
@@ -34,6 +34,12 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 
 **v2.4 — 2026-10-16.** The workflow was committed and pushed as `ca1502d`, and its first run came back **green**: run `38947782059`, `completed / success` in 16 seconds, every step passing (§5.10). R5 therefore moves to Resolved and the CI rows, the risk register, the next moves, and the quick reference now describe a gate that runs rather than one that might. What remains unproven is the failure path on the remote: no deliberately broken commit has been pushed, because that would put a red commit on `main`.
 
+**v2.5 — 2026-10-16.** The document's own factual claims were made self-checking. `npm run docs:check`, a new step in the gate ahead of the build, measures the repository and compares the result against the claims below — counts, file lists, tracked-state statements, the gate's composition, and the toolchain — failing `npm run verify` when they disagree. The first run found nineteen stale claims, three of them older than this change: the header version disagreed with the closing line, the map's file count had drifted, and the documentation weight in §3 was two lines out. §5.11 records the gate and its limits; §10 carries it as R13 with R14 for what it cannot reach; §5.1 and §5.3 carry the current gate and suite numbers.
+
+**v2.6 — 2026-10-16.** The selection engine's decision record was captured. `docs/specs/0001-selection-engine.md` (241 lines) is the repository's first spec, produced by `/architect` from the product owner's answers across three rounds of questions. Two authoritative documents were reconciled with it in the same task, because the owner's decision to trade the guaranteed weekly cap on returns for a tuned chance made both stale: MCD §5's resurfacing bullet and roadmap 2.6's done-when line. Also reconciled: MCD §5's `HistoryEvent` input, now `TopicRecord`, and MCD §5 and roadmap 2.2's excluded-domain rule, which lives at authoring rather than inside the engine. The map, the present-versus-missing block, the path table, §7.2, and the next moves follow; R6's action now names the spec task that closes it.
+
+**v2.7 — 2026-10-16.** Phase 2 was built against spec 0001. `src/engine/` gained the contract (`types.ts`), the frozen tuning object (`tuning.ts`) and the entry point (`offer.ts`), with 30 new tests: 20 rule tests, 6 statistical simulations over 100 and 365 days, and the purity test that reads the module's own source and fails when an import crosses into `app/`, `state/` or `world/`. R6 therefore closes, the suite stands at 8 files and 109 tests, and §7.2 describes the rules rather than the plan. Three deliberate breakages — a widened exclusion window, a shortened return absence, a neutered difficulty spread — each failed the suite, which is the mutation check roadmap 2.7 asks for. The documents that described the engine as unbuilt are corrected: roadmap 2.1 drops `Progress` from the engine's schema, which spec 0001 puts in the state layer; the scope's four engine milestones are ticked and the engine primitives row is `existing`; and the spec moves to *In Progress* with a note recording the three rules the build had to choose (a repeated-domain guard, a dominance ratio, and the rarity roll read from a per-day stream).
+
 ---
 
 ## 0. How to read this document
@@ -46,7 +52,7 @@ A whole-repo teardown written for a human engineer or a coding agent arriving co
 
 Every claim about the current state was produced by running commands in the repository, not by trusting the documentation. The commands and their raw results are in §5 so they can be re-run and reproduced.
 
-**The one-line state:** the project builds, typechecks, and tests cleanly; the content pipeline and its gate are proven end to end; the selection engine, the ritual loop, the history surface, and the entire 3D stage are not yet written. The plan that sequences them lives in `docs/BUILD_ROADMAP.md`.
+**The one-line state:** the project builds, typechecks, and tests cleanly; the content pipeline and its gate are proven end to end; the selection engine now exists as a pure, tested module; the ritual loop, the history surface, and the entire 3D stage are not yet written. The plan that sequences them lives in `docs/BUILD_ROADMAP.md`.
 
 ---
 
@@ -68,12 +74,13 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | Engine | Two pure primitives only: the day key and the seeded PRNG |
 | Version control | Git history on `main`, LF-normalised, GitHub remote (`origin`) |
 | CI | `.github/workflows/verify.yml` runs on every push and PR; first run green (2026-10-16) |
+| Documentation gate | `npm run docs:check` compares this document's counts, file lists, and tracked-state claims against the repository |
 | Selection engine, state, the loop, history | **Not started** |
 | The 3D world (`src/world/`) | **Not started** |
 | Light mode | **Not started** |
 | `ui-registry.md`, `memory.md`, `docs/scope/` | Present and tracked (2026-10-16) |
 
-**Headline state:** the foundation is real and honest. All four gates (`typecheck`, `content:check`, `test`, `build`) exit 0, and the content gate has been *proven to fail* on malformed and drifted input rather than assumed to. The product, however, does not yet do the one thing it exists to do: choose a topic.
+**Headline state:** the foundation is real and honest. All five gates (`typecheck`, `content:check`, `test`, `docs:check`, `build`) exit 0; the content gate has been *proven to fail* on malformed and drifted input, and the documentation gate on a state claim that no longer holds, rather than assumed to. The product, however, does not yet do the one thing it exists to do: choose a topic.
 
 **Single biggest risk:** delivery pace against scope. The remaining work — engine, state, loop, history, and an entire procedural 3D stage — is substantially larger than what has been built. The governance gap has narrowed: CI runs the gate on every push and pull request and its first run was green, so the gate no longer depends on someone remembering, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
 
@@ -107,7 +114,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 Every tracked file, by area.
 
 ```
-C:\dev\Anansi's Web\                        134 tracked files
+C:\dev\Anansi's Web\                        145 tracked files
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -120,9 +127,11 @@ C:\dev\Anansi's Web\                        134 tracked files
 │
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
-│   ├── MCD.md                  329 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        494 lines   Phases 0 to 11, the build sequence
+│   ├── MCD.md                  330 lines   Master Context Document v1.0 (amended)
+│   ├── BUILD_ROADMAP.md        496 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
+│   ├── specs/
+│   │   └── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
 │   └── system-teardown.html                Generated rendering (gitignored)
 │
 ├── content/                    the library source of truth
@@ -133,11 +142,13 @@ C:\dev\Anansi's Web\                        134 tracked files
 │   ├── validate-content.ts     schema, dedupe, coverage; exits non-zero on error
 │   ├── compile-content.ts      writes the bundle; --check detects drift
 │   ├── report-content.ts       coverage, difficulty spread, bundle size
+│   ├── check-docs.ts           measures the repository; fails on documented drift
 │   └── lib/
 │       ├── validate.ts         pure rules
 │       ├── compile.ts          pure bundle renderer
 │       ├── load.ts             file IO, workspace root resolution
-│       └── *.test.ts           30 tests
+│       ├── claims.ts           pure rules for the claims in this document
+│       └── *.test.ts           65 tests
 │
 ├── src/
 │   ├── main.tsx                mounts React into #root
@@ -149,10 +160,13 @@ C:\dev\Anansi's Web\                        134 tracked files
 │   │   ├── types.ts            THE schema: Domain, Tag, Difficulty, Topic
 │   │   ├── topics.generated.ts GENERATED bundle (committed, drift checked)
 │   │   └── loader.ts           getLibrary() seam for the engine
-│   └── engine/                 PURE. Imports nothing from app/ or state/
+│   └── engine/                 PURE. Imports nothing from app/, state/ or world/
+│       ├── types.ts            the contract: TopicRecord, DayState, Offer, SelectionInput
+│       ├── tuning.ts           the frozen numbers, each with the reasoning behind it
+│       ├── offer.ts            offerNextStory: eligibility, ranking, the return rule
 │       ├── dayKey.ts           local YYYY-MM-DD day key
 │       ├── rng.ts              FNV-1a seed hash + mulberry32 PRNG
-│       └── *.test.ts           14 tests
+│       └── *.test.ts           44 tests, including the purity boundary
 │
 └── skills/                     75 files, ~6,400 lines — the workflow toolkit
 ```
@@ -162,9 +176,9 @@ C:\dev\Anansi's Web\                        134 tracked files
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 75 | 6,403 |
-| Project documentation | 4 | 2,386 |
-| Authoring scripts | 8 | 897 |
-| Application source | 10 | 828 |
+| Project documentation | 4 | 2,451 |
+| Authoring scripts | 11 | 2,603 |
+| Application source | 17 | 2,243 |
 | Content (24 JSON + 1 README) | 25 | 335 |
 | Build config | 6 | ~160 |
 
@@ -205,7 +219,7 @@ Run in the repository root on 2026-10-16. Exit codes are the real status, captur
 ### 5.1 The single gate — PASSES
 
 ```
-$ npm run verify      # typecheck && content:check && test && build
+$ npm run verify      # typecheck && content:check && test && docs:check && build
 exit 0
 ```
 
@@ -218,18 +232,24 @@ exit 0
 
 Covers `src/`, `scripts/`, and `vite.config.ts`. `@types/node@24.19.2` is installed, pinned to the runtime major (Node 24.13), which fixed the v1 failure on `node:url`.
 
-### 5.3 Tests — PASS, 44 of them
+### 5.3 Tests — PASS, 109 of them
 
 ```
 $ npm run test        # vitest run
- ✓ scripts/lib/compile.test.ts    ( 9 tests)
- ✓ src/engine/dayKey.test.ts      ( 5 tests)
- ✓ src/engine/rng.test.ts         ( 9 tests)
- ✓ scripts/lib/validate.test.ts   (21 tests)
- Test Files  4 passed (4)
-      Tests  44 passed (44)
+ ✓ src/engine/purity.test.ts             ( 4 tests)
+ ✓ scripts/lib/compile.test.ts           ( 9 tests)
+ ✓ src/engine/rng.test.ts                ( 9 tests)
+ ✓ scripts/lib/validate.test.ts          (21 tests)
+ ✓ src/engine/offer.test.ts              (20 tests)
+ ✓ scripts/lib/claims.test.ts            (35 tests)
+ ✓ src/engine/dayKey.test.ts             ( 5 tests)
+ ✓ src/engine/offer.statistical.test.ts  ( 6 tests)
+ Test Files  8 passed (8)
+      Tests  109 passed (109)
 exit 0
 ```
+
+The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives. Three mutations were run against the tuning object to show the rules are load-bearing: `exclusionWindowDays` 30 to 60 failed the 29/30 boundary test, `resurfaceAbsenceDays` 60 to 30 failed the one-day-early test, and clamping the spread factor to 1 failed the over-represented-level test. Each was reverted; `src/engine/tuning.ts` is byte-identical to the committed intent.
 
 ### 5.4 Content gate — PASSES, and fails correctly
 
@@ -279,7 +299,7 @@ $ git ls-remote origin
 f7b5095886d22739801355b171b39c22836f88f9  HEAD   (matches local HEAD)
 ```
 
-Branch `main` tracks `origin/main` on GitHub and is level with it as of v2.3; the governance commits `95a8b1e` through `884746d` are on the remote, pushed from this checkout. `.gitattributes` enforces `* text=auto eol=lf`, and `git ls-files --eol` reports LF for every tracked file, so the CRLF churn that v1 flagged is gone.
+Branch `main` tracks `origin/main` on GitHub and is level with it as of v2.5; the governance and CI commits `95a8b1e` through `3a00c9a` are on the remote, pushed from this checkout. The documentation gate added in v2.5 is in the working tree and not committed yet. `.gitattributes` enforces `* text=auto eol=lf`, and `git ls-files --eol` reports LF for every tracked file, so the CRLF churn that v1 flagged is gone.
 
 ### 5.8 Dependency installation — HEALTHY
 
@@ -291,27 +311,51 @@ Branch `main` tracks `origin/main` on GitHub and is level with it as of v2.3; th
 PRESENT  src/app        src/engine        src/content
 PRESENT  content/topics content/review    scripts
 PRESENT  AGENTS.md      ui-registry.md    memory.md
-PRESENT  docs/scope     .gitattributes    .gitignore
-PRESENT  .github/workflows/verify.yml     CI gate (runs green)
-MISSING  src/world      src/state         docs/specs
+PRESENT  docs/scope     docs/specs        .gitattributes
+PRESENT  .gitignore     .github/workflows/verify.yml   CI gate (runs green)
+MISSING  src/world      src/state
 MISSING  README.md
 ```
 
-`AGENTS.md` is written, and `ui-registry.md`, `memory.md`, and `docs/scope/` were created later on 2026-10-16. All four are tracked: committed as `95a8b1e`. `.github/` followed the same day and is committed with them.
+`AGENTS.md` is written, and `ui-registry.md`, `memory.md`, and `docs/scope/` were created later on 2026-10-16. All four are tracked: committed as `95a8b1e`. `.github/` followed the same day and is committed with them. `docs/specs/` followed on 2026-10-16, when `/architect` captured the selection engine's spec there.
 
 ### 5.10 CI workflow — RUNS ON THE REMOTE, GREEN
 
-`.github/workflows/verify.yml` runs on `ubuntu-latest` on every push and pull request: `actions/checkout@v7`, `actions/setup-node@v7` with Node `24.x` and the npm cache, then `npm ci` and `npm run verify`. The action versions are the current majors as of 2026-10-16, the file parses as valid YAML, and its two commands were executed against a pristine clone of `884746d`:
+`.github/workflows/verify.yml` runs on `ubuntu-latest` on every push and pull request: `actions/checkout@v7`, `actions/setup-node@v7` with Node `24.x` and the npm cache, then `npm ci` and `npm run verify`. The action versions are the current majors as of 2026-10-16, the file parses as valid YAML, and its two commands were run against a pristine clone of `884746d` when the workflow was introduced, then again against the working tree on 2026-10-16 for the figures below:
 
 | Command | Result |
 |---|---|
 | `npm ci` | exit 0, 221 packages |
-| `npm run verify` | exit 0 — 44 tests passed, 4 files, `dist/` produced |
+| `npm run verify` | exit 0 — 109 tests passed, 8 files, `dist/` produced |
 | `npm run verify` with an injected `TS2322` in `src/app/App.tsx` | exit 2 — the gate fails a broken tree |
+| `npm run docs:check` with a claim edited to be false | exit 1 — the gate fails a drifted document |
 
 **Observed on the remote.** Run [38947782059](https://github.com/MikkoWuyin-dev/Anansi-s-Web/actions/runs/38947782059), on `ca1502d` — the push that added the workflow — reports `completed / success` after 16 seconds, with every step green: `actions/checkout@v7`, `actions/setup-node@v7`, `npm ci`, `npm run verify`. Read from the Actions API on 2026-10-16 rather than inferred.
 
 **Still unproven: the failure path.** No deliberately broken commit has been pushed, because doing so would put a red commit on `main`. The remote half of roadmap 10.1's "done when" — a broken commit failing the check while `main` stays green — is therefore demonstrated locally only.
+
+### 5.11 Documentation gate — CHECKS THIS DOCUMENT
+
+```
+$ npm run docs:check
+docs/SYSTEM_TEARDOWN.md: 154 claims compared against the repository, no drift
+exit 0
+```
+
+`scripts/check-docs.ts` measures the repository — the tracked files and the working set, line counts, the topics, the suite as `vitest list --json` collects it, `package.json`, the lockfile, the workflow file, and the scope — and hands those numbers to the pure rules in `scripts/lib/claims.ts`. Those rules compare them against the claims this document makes, and the gate fails when the document and the repository disagree. Counts and sizes are measured over the working set — the tracked files plus anything untracked that is not ignored — so a number holds both before and after the commit that adds a file; a local scratch file that is neither committed nor ignored will change a count and fail the gate until it is dealt with.
+
+Some claims are deliberately left alone, and `claims.ts` records why. The amendment history above records the past, so it is skipped. Claims that need the network or a live install — the CI run id, `npm ci`'s package count, `npm audit`'s advisories — cannot be reproduced inside the gate. One weight-table cell, `Build config`, names a set of files the document never defines and gives an approximate line count, so it is left alone rather than guessed at. And every rule also reports a claim that has *disappeared*, so a check cannot be dropped by deleting the sentence it guarded.
+
+Four probes were run to show the gate fails rather than merely passes:
+
+| Probe | Result |
+|---|---|
+| The map's file count set to `137` | **exit 1** — line 113, "documented: 137 / repository: 138" |
+| The closing line's version set back to `v2.4` | **exit 1** — the header version disagrees with the closing version |
+| `AGENTS.md` taken off the disk while both lists still call it present | **exit 1** — the present list and the path table both report "not on disk" |
+| The document restored | **exit 0**, 154 claims compared |
+
+**What it does not cover.** The network and live-install figures listed above. The repository map's tree is read for its per-area test totals only; whether a specific tracked file still appears in the tree is left to the file count on its first line. And a fact this document states in a shape the rules do not recognise is simply not compared — which is why each shape carries a minimum and a vanished claim is itself a failure.
 
 ---
 
@@ -337,7 +381,7 @@ Its ordering argument is the useful part: *content feeds the engine, the engine 
 
 ### 6.4 `docs/SYSTEM_TEARDOWN.md` — this document
 
-The state assessment. v1 recorded a documentation-complete, code-empty project; v2 records a building, tested, version-controlled foundation with the content layer live.
+The state assessment. v1 recorded a documentation-complete, code-empty project; v2 records a building, tested, version-controlled foundation with the content layer live. Since v2.5 its current-state claims are checked mechanically by `npm run docs:check` (§5.11), so the numbers here are compared against the repository on every run of the gate rather than trusted.
 
 ---
 
@@ -356,15 +400,26 @@ The MCD's contracts, each with what the code actually does today.
 | Build | Vite, single-page, static output | In use |
 | Language | TypeScript, strict | In use |
 
-### 7.2 The engine — PARTIALLY IMPLEMENTED
+### 7.2 The engine — IMPLEMENTED (spec 0001, 2026-10-16)
 
-The contract is unchanged: `src/engine/` must be a pure TypeScript module taking `SelectionInput` (`library`, `history`, `day`, `rng`) with no DOM, no React, no storage, dependencies injected.
+The contract: `src/engine/` is a pure TypeScript module taking `SelectionInput` (`library`, `history`, `day`, `rng`) with no DOM, no React, no storage, no clock read, dependencies injected.
 
-**Built:** the two primitives that underpin it — `getDayKey()`, the user's local `YYYY-MM-DD`, and `createRng(seed)`, a deterministic mulberry32 seeded through an FNV-1a hash, tested for same-seed determinism and cross-seed difference.
+**Built:**
 
-**Not built:** exclusions, diversity weighting, rerolls, resurfacing, difficulty spread, and the `SelectionInput` entry point itself.
+- `types.ts` — `TopicRecord`, `DayState`, `SelectionInput`, and the `Offer` union (a story with `because: 'new' | 'resurfaced' | 'thin-pool'`, or `none` with `day-complete`, `empty-library`, `no-candidate`). `HistoryEvent` is retired.
+- `tuning.ts` — one frozen `ENGINE_TUNING` object carrying every number, each with the reasoning behind it, so tuning is a one line change with a test behind it. The three scoring weights are 0.6 domain recency, 0.25 tag overlap, 0.15 time since exposure.
+- `offer.ts` — `offerNextStory()`, the single entry point. Rules in fixed order: the day's three-story cap, the empty library, the day's own exclusions, the rarity roll, the 60 day absence for a return, the 30 day exclusion window, and the thin pool.
+- `dayKey.ts` and `rng.ts`, the primitives it is built on, unchanged.
 
-**Purity is a convention, not a constraint.** `src/engine/` currently imports nothing from `app/` or `state/`, but nothing enforces that. One careless import breaks the accounts-era migration story, and no lint rule or test would catch it.
+**Three rules the build had to choose**, because the spec fixed the behaviour rather than the mechanism, and each is documented in the source:
+
+1. **A repeated-domain guard.** Domain recency alone could not deliver "no three consecutive offers from one domain" at 0.6 weight, so a third story in a row from the same domain is ruled out whenever anything else is available. A pool with only one domain still offers a story, so the guard can never strand the day.
+2. **A dominance ratio.** When the best candidate scores at least 1.5 times the second, it wins outright and the draw is not consulted; only a close call is left to the seeded draw. This is what makes AC-11's domain-recency test deterministic rather than probabilistic.
+3. **The rarity roll read from a per-day stream.** The contract builds a fresh stream from `(clientId, dayKey)` for every call, so all three offers of a day read the same first value. The chance is therefore 1 in 7 *per day*, which is what keeps the measured share of days carrying a return inside AC-15's 8 to 20 percent band. AC-15's "first 61 days" was read against AC-14's "at least 60 days": the first legal return is day 61, and the test asserts none in days 1 to 60.
+
+**Measured, not asserted.** The statistical suite runs the real engine over 100 and 365 simulated days, three seeds each: no three consecutive same-domain offers, no period 3 or 4 rotation inside a 40 offer window, each difficulty level between 25 and 42 percent of 300 offers, returns on 8 to 20 percent of days, and no return before a 60 day absence. The numbers are the engine's actual output, and the tuning values were left as designed once the bands held.
+
+**Purity is now a constraint.** `src/engine/purity.test.ts` reads the module's own source: every import must resolve to `@/engine/*` or `@/content/*`, no source may read a clock, storage, the DOM or the network (`dayKey.ts`'s default argument is the one documented exception), and `offer.ts` may not import or call `getDayKey`. This closes R6.
 
 ### 7.3 The content schema — IMPLEMENTED, with two documented refinements
 
@@ -468,7 +523,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Planned (MCD §3) | Status | Notes |
 |---|---|---|
 | `docs/PRD.md` | Present | v1.1, 950 lines |
-| `docs/MCD.md` | Present | v1.0, 329 lines, amended 2026-10-16 to match the code |
+| `docs/MCD.md` | Present | v1.0, 330 lines, amended 2026-10-16 to match the code |
 | `src/app/` | Present | Shell only: hero, action, tokens, styles |
 | `src/world/` | **Missing** | The entire 3D stage |
 | `src/engine/` | Partial | Day key and PRNG only |
@@ -476,12 +531,12 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `src/content/` | Present | Types, generated bundle, loader |
 | `content/topics/` | Present | 24 of 300+ |
 | `content/review/` | Present | Documented queue |
-| `scripts/` | Present | Validate, compile, report |
+| `scripts/` | Present | Validate, compile, report, and check this document against the repository |
 | `ui-registry.md` | Present | Established 2026-10-16 by `/imprint audit`; tracked |
 | `memory.md` | Present | Written 2026-10-16 by `/remember save`; tracked |
 | `AGENTS.md` | Present | Written by the project owner; tracked |
-| `docs/specs/` | **Missing** | `/architect` never run |
-| `docs/scope/` | Present | 6 enrolled and 17 planned features, 2026-10-16; tracked |
+| `docs/specs/` | Present | `0001-selection-engine.md`, the engine decision, captured 2026-10-16 |
+| `docs/scope/` | Present | 6 enrolled and 16 planned features, 1 in progress, 2026-10-16; tracked |
 | `README.md` | **Missing** | Repo has a one-line description and no entry point |
 | `.github/workflows/verify.yml` | Present | Runs the gate on push and PR, satisfying MCD §6's "in CI" expectation; first run green 2026-10-16 |
 
@@ -504,6 +559,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 ### 9.3 Documentation consistency
 
 - **The MCD and this teardown agree as of 2026-10-16.** The MCD's §13 status and its §5 schema were reconciled with the code in the same pass that produced this document, so no document now contradicts another.
+- **This document's current-state claims are now enforced.** `npm run docs:check` fails the gate when a count, a file list, a tracked-state statement, a version, or the gate's own composition no longer matches the repository. What remains on trust is what the gate cannot reach: the network and live-install figures, the amendment history, and any fact phrased in a shape the rules do not know.
 - **Roadmap Phase 1 is now complete** and could be ticked, and its `done when` for the 300-topic target is deliberately unmet.
 - **The teardown v1 is superseded** by this document but remains in the git history.
 - **`skills/` has no license or attribution** and is published publicly, a decision made knowingly.
@@ -513,7 +569,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 
 ## 10. Risk register
 
-Re-statused from v1. Three of the original critical risks are closed, and both risks added in v2 have closed since: R4 by committing the state files, R5 by the first green CI run.
+Re-statused from v1. Three of the original critical risks are closed, and the risks added since have closed as they were addressed: R4 by committing the state files, R5 by the first green CI run, R6 by the engine's purity test, R13 by the documentation gate.
 
 ### Resolved
 
@@ -524,11 +580,10 @@ Re-statused from v1. Three of the original critical risks are closed, and both r
 | **R3** | Missing Node types break typecheck | `@types/node@24.19.2`, pinned to the runtime major |
 | **R4** | Process state files untracked; loseable with the working tree | All four committed as `95a8b1e`; upkeep is now an explicit obligation in `AGENTS.md` §11 |
 | **R5** | No CI; the gate ran only when someone remembered | `.github/workflows/verify.yml` (committed `ca1502d`) runs it on every push and pull request; run `38947782059` green, 16 s, all steps passing. The failure path is proven locally, not yet on the remote |
+| **R6** | Engine purity was unenforced; one violating import breaks the accounts-era migration story | `src/engine/purity.test.ts` (2026-10-16) reads the module's own imports and fails on any crossing into `app/`, `state/` or `world/`, on a clock, DOM, storage or network reference, and on a call to `getDayKey` |
+| **R13** | The state assessment's numbers aged silently; nothing re-read them | `npm run docs:check`, a gate step since 2026-10-16, compares its counts, file lists, tracked-state statements, and toolchain claims against the repository and fails on drift (§5.11) |
 
 ### Open
-
-**R6 — Engine purity is unenforced (MEDIUM).** The `engine/` boundary is the load-bearing rule for the accounts-era migration, and nothing detects a violating import.
-*Action:* a lint rule or a test asserting `src/engine/**` imports nothing from `app/`, `state/`, or `world/`.
 
 **R7 — Content quality per topic is unguarded (MEDIUM).** The validator checks shape, not substance. Nothing stops 300 thin topics from clearing the gate and shipping. MCD §6 calls quality more important than quantity, but only human review enforces it.
 *Action:* accept this as a human gate, and keep the review checklist beside the authoring scripts as MCD §6 intends.
@@ -536,14 +591,17 @@ Re-statused from v1. Three of the original critical risks are closed, and both r
 **R8 — The 3D stage is the whole remaining risk (MEDIUM).** Ten MCD §4 rules, a procedural object generator per family, a choreographed camera, and a ≤ 350 kB scene budget are all unbuilt and unmeasured. This is the largest and least certain body of work in the project.
 *Action:* build it in the roadmap's order (graph, camera, families, Anansi, choreography) and measure the budget as it grows.
 
-**R9 — Scope versus delivery (MEDIUM).** The product's core value — choosing a topic — does not exist yet. Valuable groundwork is done, but the ritual is not.
-*Action:* Phase 2, the selection engine, is the shortest path to a product that does its job.
+**R9 — Scope versus delivery (MEDIUM).** The engine now decides the day's story, but nothing in the app calls it: there is no state layer, no ritual loop and no reveal, so the product still cannot be used.
+*Action:* Phase 3 (persistence) and Phase 4 (the loop that consumes `offerNextStory`) are the shortest path now.
 
 **R10 — No linting or formatting (LOW).** No ESLint, Prettier, or EditorConfig. TypeScript strict mode covers some ground, but the MCD §4 rule 7 "no hardcoded hex" and React hooks rules are unenforced.
 
 **R11 — Dev-only advisory debt (LOW).** `npm audit` reports 6 advisories (3 moderate, 1 high, 2 critical) in `esbuild` via Vite 5 and `tinypool` via Vitest 2. All are dev dependencies, none ship to production, and the fixes require breaking major upgrades (Vite 8, Vitest 5).
 
 **R12 — Peer-version fragility (LOW).** React 18 with R3F 8, drei 9, and three 0.169 is consistent today, but R3F 9 targets React 19. Upgrading React without R3F would break the scene layer before it is even written.
+
+**R14 — Claims the documentation gate cannot reach (LOW).** The gate covers the mechanical claims in this document only. The CI run id, `npm ci`'s package count, and `npm audit`'s advisories need the network or a live install, and any fact phrased in a shape `claims.ts` does not recognise is not compared.
+*Action:* extend the rules when a claim shape recurs, and keep the unreachable figures stamped with the date, commit, and source that produced them.
 
 ---
 
@@ -555,7 +613,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 |---|---|
 | 0 — Foundations | **Complete** |
 | 1 — Content layer | **Complete**, except growing the library to 300 |
-| 2 — Selection engine | Next |
+| 2 — Selection engine | **Complete** (2.1 to 2.7), 44 tests |
 | 3 — State and persistence | Not started |
 | 4 — The ritual loop | Not started |
 | 5 — History and progress | Not started |
@@ -568,9 +626,10 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 
 **Recommended order of the next moves:**
 
-1. **Phase 2, the selection engine.** It is the product's core value, it is pure and therefore cheap to test, and everything downstream depends on it. Determinism per day and the 30-day exclusion window are the two rules to get right first.
-2. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
-3. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11.
+1. **Phase 3, local state and persistence.** The engine exists but nothing stores a day, so `/architect local state and persistence` is the next decision: one `anansi:v1:*` store, a corrupt store that fails safe, a day key that rolls over, and history that prunes at 30 days. It must also build the random source as a fresh stream per call from the client identifier and the day key, and test that a rebuilt stream yields the same day, which is the one determinism guarantee no engine test can reach.
+2. **Phase 4, the ritual loop.** Once a day can be stored, the shell can ask the engine for a story, offer a reroll, and record what was shown. That is the first build where a person can use the product.
+3. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
+4. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
 
 **Definition of done for V1** — the deployed static site renders the hero and the search ritual; a day offers at most three deterministic, reload-stable topics; accepting logs history and advances the 90-day count; the 30-day history is viewable and filterable; the web visibly evolves; both light and dark modes work; reduced motion is fully functional; keyboard and screen-reader paths work; and every performance budget in MCD §8 is met.
 
@@ -590,9 +649,10 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 ```bash
 npm install            # 221 packages
 npm run dev            # serves http://127.0.0.1:5173/
-npm run verify         # THE gate: typecheck + content:check + test + build
+npm run verify         # THE gate: typecheck + content:check + test + docs:check + build
 npm run typecheck      # tsc --noEmit, covers src/, scripts/, vite.config.ts
-npm run test           # vitest run — 44 tests
+npm run test           # vitest run — 109 tests
+npm run docs:check     # fail if this document has drifted from the repository
 npm run build          # vite build → dist/
 npm run content:validate   # validate the library; exits non-zero on error
 npm run content:build      # compile the bundle
@@ -603,7 +663,7 @@ npm run content:report     # coverage, difficulty spread, bundle size
 **Key facts to carry forward**
 
 - The project builds, typechecks, tests, and serves cleanly. The content gate is real and proven to fail correctly.
-- The engine is pure by contract and must stay that way; nothing enforces it yet.
+- The engine is pure by contract, and `src/engine/purity.test.ts` now fails the suite when an import crosses the boundary.
 - The DOM carries the product; the canvas enhances it. No 3D exists yet, and the shell works without it.
 - Time-on-site is a failure signal. Features that increase session length oppose the product's purpose.
 - AI is used at authoring time only. Nothing AI-generated ships without human review.
@@ -612,4 +672,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v2.2. All state claims verified against the repository on 2026-10-16.*
+*End of System Teardown v2.7. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*

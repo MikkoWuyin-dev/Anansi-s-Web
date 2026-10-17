@@ -12,11 +12,12 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "verify": "npm run typecheck && npm run content:check && npm run test && npm run build",
+    "verify": "npm run typecheck && npm run content:check && npm run test && npm run docs:check && npm run build",
     "content:validate": "node --experimental-strip-types scripts/validate-content.ts",
     "content:build": "node --experimental-strip-types scripts/compile-content.ts",
     "content:check": "node --experimental-strip-types scripts/compile-content.ts --check",
-    "content:report": "node --experimental-strip-types scripts/report-content.ts"
+    "content:report": "node --experimental-strip-types scripts/report-content.ts",
+    "docs:check": "node --experimental-strip-types scripts/check-docs.ts"
   },
   "dependencies": {
     "@react-spring/three": "^9.7.4",

@@ -1,45 +1,46 @@
-# Memory — Documentation reconciliation and the workflow artifacts
+# Memory — The selection engine: decided, then built
 
-Last updated: 2026-10-16 19:32 local
+Last updated: 2026-10-16 22:12 local
 
 ## What was built
 
-- `docs/SYSTEM_TEARDOWN.md` rewritten to **v2.0** with an amendment history mapping each v1 claim to its current reality, plus sections rewritten against fresh evidence (repository map with real line counts, verified state, contracts, gap analysis, risk register).
-- `docs/MCD.md` reconciled with the code: the §5 `Topic` snippet now matches `src/content/types.ts` exactly, §13 records what is built and what is not, §3 lists the documents added since ratification, and an Amendments block records the change and the consent for it.
-- Both documents committed and pushed as `7d134b6` on `main` (2 files, 438 insertions, 638 deletions). Remote `origin/main` matches local `HEAD`.
-- `AGENTS.md` written by the project owner (188 lines, 11 sections, measured with `wc -l`). Read and reported on; one stale claim corrected at line 182. A mandatory System Teardown Maintenance Protocol was added on the owner's instruction as §11, which made the file 201 lines and 12 sections.
-- `docs/scope/scope.md` created: 6 enrolled features and 17 planned features across Foundation, five slices, Quality, and Release, with Tracer Bullet as the build approach and Beta as the workflow default.
-- `ui-registry.md` created: the audit baseline plus entries for the shell and the action.
-- `memory.md`, this file, created.
-- `.github/workflows/verify.yml` added: CI running the whole gate on every push and pull request, with `actions/checkout@v7` and `actions/setup-node@v7` on Node 24.x and the npm cache. Its two commands were verified against a pristine clone rather than assumed — `npm ci` and `npm run verify` exit 0, and `npm run verify` exits 2 on an injected type error. It is committed and pushed as `ca1502d`, and its first remote run came back green on 2026-10-16 — run 38947782059, `completed / success` in 16 seconds with every step passing.
+- **`docs/specs/0001-selection-engine.md` (252 lines)** — the repository's first spec, from `/architect` in `feature` mode across four rounds of questions, now `In Progress` with an implementation note. It fixes one entry point, `offerNextStory(input)`, returning either a story with `because: 'new' | 'resurfaced' | 'thin-pool'` or a reason there is none, and puts every number in one frozen `ENGINE_TUNING`.
+- **Phase 2, the engine itself (2026-10-16):**
+  - `src/engine/types.ts` — `TopicRecord`, `DayState`, `SelectionInput`, the `Offer` union. `HistoryEvent` retired; `Progress` deliberately left to the state layer.
+  - `src/engine/tuning.ts` — one frozen object with the reasoning beside each number: 3 stories a day, 30 day window, 60 day absence, 1 in 7 return chance, a 12 offer spread window, weights 0.6 / 0.25 / 0.15, sharpness 3, dominance 1.5.
+  - `src/engine/offer.ts` — the rules in fixed order: day cap, empty library, the day's own exclusions, the rarity roll, the return, the window, the thin pool; then scoring and a weighted pick.
+  - Tests: `offer.test.ts` (20), `offer.statistical.test.ts` (6 simulations over 100 and 365 days), `purity.test.ts` (4). The engine went from 14 tests to 44; the suite from 79 to 109 across 8 files.
 
 ## Decisions made
 
-- The MCD was reconciled against the implementation, and the teardown corrected to match, so no document contradicts another as of 2026-10-16. Change order follows the MCD's own rule: the MCD changes first and only with the owner's consent.
-- Build approach is **Tracer Bullet**; the project workflow default is **Beta** (after `/develop`, `/check verify` then `/test`); the scope names its project sources but carries no reference links.
-- `Content pool to launch size` needs no spec, because the review gate and promotion steps already exist in `content/review/README.md`.
-- Commits and pushes stay gated operations. The owner approved committing the outstanding work and then pushing it; `origin/main` is level with local `main`.
+- The owner's answers shaped the spec: relax by age on a thin pool, soft weighting for the spread, a capped chance rather than a schedule for returns, and the engine owning the day's cap and reroll uniqueness through one entry point. One record type, one result union, one exported tuning object, sources only in References, domain recency decisive between close candidates.
+- **The trade recorded rather than smoothed over:** the guaranteed weekly cap on returns was dropped for a tuned chance, because the input cannot tell a return from a first showing. MCD §5 and roadmap 2.6 were corrected in the same task; the spec's Follow-up keeps the derivation that would restore the cap.
+- **Three rules the build chose**, because the spec fixed behaviour rather than mechanism, and all three are documented in the source and in teardown §7.2: a repeated-domain guard (the only way AC-12 holds at 0.6 weight), a 1.5 dominance ratio (so a decisive domain-recency gap is deterministic and only a close call goes to the draw), and the rarity roll read from the caller's per-day stream (which makes the chance per day, and keeps AC-15's band honest).
+- AC-15's "first 61 days" versus AC-14's "at least 60": AC-14 wins, first legal return is day 61, test asserts none in days 1 to 60. Recorded in the spec.
 
 ## Problems solved
 
-- Reconciling the MCD made the teardown that had been written minutes earlier stale in five places. All five were corrected so the two documents agree rather than contradict.
-- The claim that the MCD lagged behind the implementation became false once the MCD was reconciled; corrected at `AGENTS.md:182`, with the count of 44 tests re-confirmed by running the suite.
-- Counting the topic pool by importing the loader failed under `node --experimental-strip-types` from a one line script; the topic files were counted directly instead (24).
-- `imprint` audit mode requires the baseline to be confirmed before anything is written; the owner confirmed it, so the baseline records existing practice rather than an assumption.
+- The 24 topic pool against a 30 day window made the empty window the second week of use, so the thin pool path is part of the decision, not an edge case.
+- The purity risk (R6) is closed by a test that reads the module's own source: imports must resolve to `@/engine/*` or `@/content/*`; no clock, DOM, storage, network; `offer.ts` may not call `getDayKey`. The clock regexes are matched as code (`/\bnew Date\(/`) because a comment legitimately ends a sentence with "window.".
+- The mutation check roadmap 2.7 asks for: widening the window to 60 failed the 29/30 boundary test, shortening the absence to 30 failed the one-day-early test, clamping the spread factor to 1 failed the over-represented-level test. All three reverted; `tuning.ts` byte-identical to the backup.
+- Statistical results measured, not assumed: with the tuning as designed, 3 seeds × 100 days show no three consecutive same-domain offers, no period 3/4 rotation, each level between 25 and 42 percent; 3 seeds × 365 days show returns on 8 to 20 percent of days and none before day 60.
+- The docs gate caught every count it should: 145 tracked files, 109 tests in 8 files, 17 application files and 2,243 lines, and the spec's new line count. `npm run docs:check` reports **154 claims, no drift**.
 
 ## Current state
 
-- **Built:** the scaffold, the DOM shell, the content schema and authoring pipeline (24 of a 300 topic target), and the two engine primitives (the day key and the seeded random source). `npm run verify` exits 0 with 4 test files and 44 tests.
-- **Not built:** every selection rule, state and persistence, the ritual loop, history and progress, the whole 3D world, and light mode. CI now runs on every push and is green; what is unproven on the remote is its failure path.
-- **Working tree:** clean at this handoff. The CI workflow and the five documents recording it are committed and pushed, on top of the governance work (`95a8b1e` onward) that is already on `origin/main`.
-- A dev server was serving the app on port 5173 earlier in the session.
+- `npm run verify` exits 0: typecheck, content:check, 109 tests, docs:check (154 claims), build.
+- **Working tree: uncommitted.** Modified: `package.json`, `AGENTS.md`, `docs/MCD.md`, `docs/BUILD_ROADMAP.md`, `docs/SYSTEM_TEARDOWN.md`, `docs/scope/scope.md`, `memory.md`; staged: `docs/specs/0001-selection-engine.md`; untracked: `scripts/check-docs.ts`, `scripts/lib/claims.ts`, `scripts/lib/claims.test.ts`, `src/engine/{types,tuning,offer,offer.test,offer.statistical.test,purity.test}.ts`.
+- Documents updated: teardown **v2.7** (map, weights, §5.3, §5.10, §7.2 rewritten as implemented, R6 resolved, R9 reworded, phase table, next moves, quick reference); roadmap status line and Phase 2 marked complete, 2.1 no longer claims `Progress` lives in the engine; scope feature 1's four build milestones ticked and the engine primitives row is `existing`; spec `In Progress`.
+- CI still runs the four-step gate: the fifth step and all of this are on disk, not in history.
 
 ## Next session starts with
 
-Run `/remember restore`. Then take the first unticked box in `docs/scope/scope.md`, which is `/architect selection engine`.
+Run `/remember restore`. Then commit everything — the checker's numbers describe the tree they land in — so CI picks up the fifth gate step and `docs/specs/` becomes tracked rather than staged. The next unticked scope box is feature 1's `Verify it: /check verify`, then `Test it: /test`; after that the scope's feature 2 (`Local state and persistence`) is still `needs a decision`, so `/architect local state and persistence` is the next design, and it must carry the one determinism guarantee no engine test can reach: a rebuilt per-day stream yields the same day.
 
 ## Open questions
 
-- Whether a deliberately broken commit fails on the remote as it does locally; the green path is now observed, the failure path only local.
+- Whether the untracked-directory case should keep needing a `git add` to satisfy the checker's "present and tracked" lists, or whether those lists should learn a "present but untracked" phrasing.
+- Whether a deliberately broken commit fails on the remote as it does locally; the green path is observed, the failure path only local.
 - Whether the display face should be self hosted, or the external request consciously accepted.
-- Whether `docs/scope/scope.md` should later be promoted to an index plus per area files, if the feature count keeps growing.
+- Whether `docs/scope/scope.md` should later be promoted to an index plus per area files.
+- Whether the engine's thin pool should eventually stop repeating topics at all once the library passes 100 topics, where the follow-up's derivable weekly cap becomes worth adopting.

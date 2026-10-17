@@ -3,7 +3,7 @@
 
 **Date:** 2026-10-16
 **Companions:** `docs/PRD.md` (v1.1 product truth), `docs/MCD.md` (v1.0 technical truth)
-**Status:** Phase 0 complete. Phases 1 onward are planned, not built.
+**Status:** Phases 0 to 2 complete; the library is at 24 of 300 topics. Phases 3 onward are planned, not built.
 **Audience:** any engineer or coding agent picking up the build.
 
 ---
@@ -116,18 +116,20 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 2 — Selection engine
+## Phase 2 — Selection engine (COMPLETE, 2026-10-16)
 
 **Goal:** controlled serendipity that is deterministic per day and feels random.
 
+**Spec:** `docs/specs/0001-selection-engine.md` (captured 2026-10-16) settles the entry point, the rules, the tuning values and the thin pool fallback. Steps 2.6 and 2.2 below were amended to match it.
+
 ### 2.1 Fix the schemas in code
 
-- **Deliverable:** `src/engine/schema.ts` (or equivalent) implementing `HistoryEvent`, `TopicRecord`, `DayState`, and `Progress` from MCD §5, and the `SelectionInput` contract: `library`, `history`, `day`, `rng`.
+- **Deliverable:** `src/engine/types.ts` (or equivalent) implementing `TopicRecord` and `DayState` from MCD §5, and the `SelectionInput` contract: `library`, `history: TopicRecord[]`, `day`, `rng`. `HistoryEvent` is retired: one record type covers it. `Progress` is deliberately not an engine input; spec 0001 leaves it to the state layer, which step 3.5 owns.
 - **Done when:** the engine's entry point takes `SelectionInput` and returns data only. No DOM, no React, no storage, no clock read inside the engine (the date arrives through the input).
 
 ### 2.2 Hard exclusions
 
-- **Deliverable:** rules that remove any topic presented within the last 30 days, and any topic in an excluded domain.
+- **Deliverable:** rules that remove any topic presented within the last 30 days. Excluded domains (PRD §14) are enforced upstream at authoring, so the pool never contains one and the engine carries no exclusion list.
 - **Done when:** a topic presented yesterday can never be offered today, proven by test.
 
 ### 2.3 Determinism per day
@@ -147,8 +149,8 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ### 2.6 Intentional resurfacing
 
-- **Deliverable:** a rare, weighted event restricted to `resurfacing: true` topics, only after a long absence, capped at **at most one per rolling week**, carrying the *"Anansi has brought this one back."* treatment flag.
-- **Done when:** a simulation over a year produces at most one resurfacing per rolling week and never resurfaces a topic inside the 30-day window.
+- **Deliverable:** a rare, weighted event restricted to `resurfacing: true` topics and to a long absence of at least 60 days, rare by chance rather than by schedule, carrying the *"Anansi has brought this one back."* treatment flag.
+- **Done when:** a simulation over a year never resurfaces a topic inside its 60-day absence gap or its 30-day exclusion window, and keeps the rate near one day in seven. The guaranteed weekly cap is deliberately dropped: the input cannot tell a return from a first showing, so the cap is unenforceable as specified. Spec 0001 records the trade and the derivation that would restore it.
 
 ### 2.7 The engine test suite
 
@@ -372,7 +374,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ### 10.1 Continuous integration
 
-- **Deliverable:** a GitHub Actions workflow running typecheck, tests, and content validation on every push and pull request. Built ahead of this phase on 2026-10-16 as `.github/workflows/verify.yml`, which runs the whole `npm run verify` gate rather than three of its four steps; it is committed and pushed, and its first remote run came back green on 2026-10-16 (run 38947782059), so it is delivered and running.
+- **Deliverable:** a GitHub Actions workflow running typecheck, tests, and content validation on every push and pull request. Built ahead of this phase on 2026-10-16 as `.github/workflows/verify.yml`, which runs the whole `npm run verify` gate rather than a subset of its steps; it is committed and pushed, and its first remote run came back green on 2026-10-16 (run 38947782059), so it is delivered and running. The gate gained a fifth step on 2026-10-16 — `npm run docs:check`, which fails when the current-state claims in `docs/SYSTEM_TEARDOWN.md` no longer match the repository — and the same workflow runs it.
 - **Done when:** a deliberately broken commit fails the check, and main stays green. The green half now holds on the remote. The failure half holds locally only — the gate exits 2 on an injected type error and 0 on the clean tree — because pushing a broken commit to `main` in order to watch it fail would leave a red commit on `main`.
 
 ### 10.2 Dependency hygiene
