@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-18 (v3.2)
+- **Last updated:** 2026-10-18 (v3.3)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -49,6 +49,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 **v3.1 — 2026-10-18.** Phase 5 was designed and built, so the journey is now legible. `docs/specs/0004-history-drawer-and-journey-count.md` (241 lines) is the fourth spec, from four rounds of questions, and `src/app/` holds the drawer: `history.ts` (the pure view: visible rows joined to titles, day groups, the filter partition, the folded title and date search, the `Intl` day labels, and the count), `HistoryPanel.tsx` (the semantic markup), and the wiring in `App.tsx` (the corner control, the open state, the query, and the filter for the session). 25 new tests bring the app to 56 and the suite to 17 files and 215 tests. The drawer was verified in a real browser by keyboard: open and close with focus placed and returned, the filter partition, case and accent folding, the ISO and locale written date search, the clear control, the query surviving an Escape close, a live history rewrite from another tab updating the open panel, and no `domain`, `difficulty`, or `tag` in the DOM. Four deliberate breakages (opening Explored to learned rows, titling a missing topic with its id, removing accent folding, showing the count at zero) each fail the suite and were reverted byte for byte. Roadmap 5.3, the optional domain filter, is deferred until the pool covers the domains. The count now appears on the taken story and in the drawer header, so the loop's own follow-up is closed.
 
 **v3.2 — 2026-10-18.** Phase 6 was designed and its first two steps were built. `docs/specs/0005-the-3d-stage.md` (253 lines) is the fifth spec, from four questions about the stage's art direction, and `src/world/` now exists: `graph.ts` (the seeded, density mapped graph), `palette.ts` (colours read from the stylesheet tokens), `stage.ts` (the five beats and the accessible description), `Scene.tsx` (the lazy canvas) and `Web.tsx` (one strand buffer and one instanced bead mesh), with 28 tests. `src/app/WorldLayer.tsx` arms the scene after the first paint, guards it with an error boundary and a WebGL probe, and carries the description. 34 new tests bring the app to 62 and the suite to 22 files and 249 tests. Verified in a browser: the canvas mounted after the first contentful paint, an idle page drew no frames in two seconds, a search advanced the frame count as its beats changed, the drawn geometry matched 11 beads and 20 strands on desktop and 9 and 16 on the phone tier, nothing in the world captured a pointer event, and no hex literal exists in `src/world/`. Two deliberate breakages (ignoring the graph seed, giving two beats one sentence) each fail the suite; the first probe also exposed a weak assertion, because the determinism test compared the returned seed label rather than the drawn geometry, which it now compares. The camera, the object families, Anansi, the search choreography, the springs, and the measured frame time are still unbuilt.
+
+**v3.3 — 2026-10-18.** Step 6.3, the authored camera, was built. `src/world/camera.ts` holds the five beat frames and the parallax bound as plain data, `src/world/CameraRig.tsx` eases between them with explicit invalidation and stops when framed, and `WorldLayer` now passes the reduced motion media query down. 17 new tests bring the world to 45 and the suite to 23 files and 266 tests. Verified in a browser: the idle frame was `[0, 0.35, 7.6]` on desktop and the phone tier pulled the same frame to `z × 1.45`, a search moved the camera from the idle frame to the revealing frame (`z 6.5`) and stopped there, the parallax never left its 0.14 unit bound, the scroll event changed nothing, and an idle page still drew zero frames. One deliberate breakage (dropping the pointer clamp) fails the suite. What is still unverified: the camera's reduced motion branch has not been exercised live (R17), and the pointer tests ran against a real cursor rather than a scripted one.
 
 ---
 
@@ -126,7 +128,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 Every tracked file, by area.
 
 ```
-C:\dev\Anansi's Web\                        183 tracked files
+C:\dev\Anansi's Web\                        186 tracked files
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -144,7 +146,7 @@ C:\dev\Anansi's Web\                        183 tracked files
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
 │   ├── MCD.md                  339 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        518 lines   Phases 0 to 11, the build sequence
+│   ├── BUILD_ROADMAP.md        519 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
 │   ├── specs/
 │   │   ├── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
@@ -208,10 +210,12 @@ C:\dev\Anansi's Web\                        183 tracked files
 │   └── world/                  the 3D stage (spec 0005, in progress)
 │       ├── Scene.tsx           the lazy chunk: one canvas, on demand rendering
 │       ├── Web.tsx             the graph as one strand buffer and one bead mesh
+│       ├── CameraRig.tsx       the authored camera: ease, stop, bounded parallax
 │       ├── graph.ts            the seeded, density mapped graph generator
+│       ├── camera.ts           the five beat frames and the parallax rules
 │       ├── palette.ts          colours read from the stylesheet tokens
 │       ├── stage.ts            the five beats and the accessibility description
-│       └── *.test.ts           28 tests: the graph, the palette, the beats, the boundary
+│       └── *.test.ts           45 tests: the graph, the camera, the palette, the beats, the boundary
 │
 └── skills/                     75 files, ~6,400 lines — the workflow toolkit
 ```
@@ -221,9 +225,9 @@ C:\dev\Anansi's Web\                        183 tracked files
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 75 | 6,403 |
-| Project documentation | 4 | 2,608 |
+| Project documentation | 4 | 2,616 |
 | Authoring scripts | 11 | 2,603 |
-| Application source | 50 | 7,378 |
+| Application source | 53 | 7,762 |
 | Content (24 JSON + 1 README) | 25 | 335 |
 | Build config | 6 | ~160 |
 
@@ -277,7 +281,7 @@ exit 0
 
 Covers `src/`, `scripts/`, and `vite.config.ts`. `@types/node@24.19.2` is installed, pinned to the runtime major (Node 24.13), which fixed the v1 failure on `node:url`.
 
-### 5.3 Tests — PASS, 249 of them
+### 5.3 Tests — PASS, 266 of them
 
 ```
 $ npm run test        # vitest run
@@ -289,6 +293,7 @@ $ npm run test        # vitest run
  ✓ src/app/RitualScreen.test.tsx         ( 16 tests)
  ✓ scripts/lib/validate.test.ts          ( 21 tests)
  ✓ src/state/shapes.test.ts              ( 14 tests)
+ ✓ src/world/camera.test.ts             ( 17 tests)
  ✓ src/world/graph.test.ts               ( 13 tests)
  ✓ src/app/HistoryPanel.test.tsx         ( 10 tests)
  ✓ src/world/purity.test.ts              (  6 tests)
@@ -303,12 +308,12 @@ $ npm run test        # vitest run
  ✓ src/world/stage.test.ts               (  4 tests)
  ✓ src/app/WorldLayer.test.tsx           (  4 tests)
  ✓ src/engine/offer.statistical.test.ts  (  6 tests)
- Test Files  22 passed (22)
-      Tests  249 passed (249)
+ Test Files  23 passed (23)
+      Tests  266 passed (266)
 exit 0
 ```
 
-The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 50 arrive with it in v2.9; the app's 62 arrive with the ritual loop in v3.0, the history drawer in v3.1, and the stage layer in v3.2 (18 controller tests, 16 markup for the ritual, 14 and 10 for the drawer, 4 for the layer; all markup through `react-dom/server`, which needs no DOM environment); the world's 28 arrive with steps 6.1 and 6.2 in v3.2 (13 graph, 5 palette, 6 boundary, 4 beats). Sixteen mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero), and two against the stage (ignoring the graph seed, and giving two beats one sentence). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
+The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 50 arrive with it in v2.9; the app's 62 arrive with the ritual loop in v3.0, the history drawer in v3.1, and the stage layer in v3.2 (18 controller tests, 16 markup for the ritual, 14 and 10 for the drawer, 4 for the layer; all markup through `react-dom/server`, which needs no DOM environment); the world's 45 arrive with steps 6.1 to 6.3 (13 graph, 17 camera, 5 palette, 6 boundary, 4 beats). Seventeen mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero), two against the stage (ignoring the graph seed, and giving two beats one sentence), and one against the camera (dropping the pointer clamp). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
 
 ### 5.4 Content gate — PASSES, and fails correctly
 
@@ -332,13 +337,13 @@ Proven to reject bad input rather than assumed to. Three probes were run:
 $ npm run build       # vite build
 dist/index.html                   1.24 kB │ gzip:  0.66 kB
 dist/assets/index-BV1ASFkN.css    9.55 kB │ gzip:  2.41 kB
-dist/assets/index-BqCwaLI1.js   175.01 kB │ gzip: 56.43 kB
-dist/assets/Scene-weuZpu5B.js   818.76 kB │ gzip: 220.45 kB
-✓ built in 6.92s
+dist/assets/index-CoxSU-lQ.js   175.27 kB │ gzip: 56.48 kB
+dist/assets/Scene-BrU63OxX.js   820.62 kB │ gzip: 221.12 kB
+✓ built in 9.64s
 exit 0
 ```
 
-The build now emits two scripts: the shell (56.43 kB gzip) and the lazy scene (220.45 kB gzip). The scene's 818.76 kB raw is the three.js renderer plus the world's own modules, and it is fetched only after the shell has painted.
+The build now emits two scripts: the shell (56.48 kB gzip) and the lazy scene (221.12 kB gzip). The scene's 820.62 kB raw is the three.js renderer plus the world's own modules, and it is fetched only after the shell has painted.
 
 ### 5.6 Dev server — SERVES
 
@@ -388,7 +393,7 @@ MISSING  README.md
 | Command | Result |
 |---|---|
 | `npm ci` | exit 0, 221 packages |
-| `npm run verify` | exit 0 — 249 tests passed, 22 files, `dist/` produced |
+| `npm run verify` | exit 0 — 266 tests passed, 23 files, `dist/` produced |
 | `npm run verify` with an injected `TS2322` in `src/app/App.tsx` | exit 2 — the gate fails a broken tree |
 | `npm run docs:check` with a claim edited to be false | exit 1 — the gate fails a drifted document |
 
@@ -539,15 +544,16 @@ Also note: the authoring scripts run under **Node's type stripping**, which eras
 
 ### 7.7 The 3D world (MCD §4) — PARTIALLY IMPLEMENTED (spec 0005, 2026-10-18)
 
-Four of the ten rules are live:
+Five of the ten rules are live:
 
-- **Rule 1, one canvas.** `src/world/Scene.tsx` is the lazy chunk, armed by `WorldLayer` two frames after the shell paints. The shell stays 56.43 kB gzip because three.js is in the other chunk.
+- **Rule 1, one canvas.** `src/world/Scene.tsx` is the lazy chunk, armed by `WorldLayer` two frames after the shell paints. The shell stays 56.48 kB gzip because three.js is in the other chunk.
 - **Rule 2, on demand.** `frameloop="demand"` with explicit invalidation, and no `useFrame` anywhere. A two second idle reading moved the renderer's frame counter by zero; a search moved it once per beat.
+- **Rule 3, the authored camera.** `camera.ts` fixes one frame per beat, `CameraRig.tsx` eases toward it and stops, and the pointer may tilt the view by at most 0.14 world units and nothing more. There is no orbit control, no wheel or scroll listener, and no drag. Verified live: a search moved the camera from the idle frame to the revealing frame and stopped there.
 - **Rule 4, the graph.** `graph.ts` draws a seeded radial web from `clientId` and `journeyStart` with sagging strands and object anchors, as plain data, so it is tested without a renderer.
 - **Rule 6, density.** Node and strand counts are a function of days completed, from 11 and 20 at zero to 71 and 140 at ninety, thinned to 9 and 16 in the phone tier.
 - **Rule 7, tokens only.** `palette.ts` reads the `--anansi-*` custom properties at mount, and `purity.test.ts` fails the suite on any hex, rgb, or hsl literal in the module.
 
-Not built: the authored camera (rule 3), object families (rule 5), Anansi, the springs (rule 8), the search choreography, and the reduced motion pass (rule 9), which the DOM still carries alone. The mobile tier exists as density and a pixel ratio cap only (rule 10). `src/world/` is a leaf: it imports the engine's seeded stream, React, three and the renderer, never the app, the state layer, or the content, and `purity.test.ts` enforces that too.
+Not built: object families (rule 5), Anansi, the springs (rule 8), the search choreography, and the reduced motion pass (rule 9), which the DOM still carries alone and the camera honours only by staying still. The mobile tier exists as density and a pixel ratio cap only (rule 10). `src/world/` is a leaf: it imports the engine's seeded stream, React, three and the renderer, never the app, the state layer, or the content, and `purity.test.ts` enforces that too.
 
 ### 7.8 Design system (MCD §7) — PARTIALLY IMPLEMENTED
 
@@ -565,8 +571,8 @@ All hex lives in one `:root` block, honouring the "tokens only" rule. Two derive
 
 | Budget | Target | Measured |
 |---|---|---|
-| App shell JS (gzip, pre-scene) | ≤ 250 kB | **56.43 kB**, measured 2026-10-18 |
-| Scene chunk (gzip, lazy) | ≤ 350 kB | **220.45 kB**, measured 2026-10-18 |
+| App shell JS (gzip, pre-scene) | ≤ 250 kB | **56.48 kB**, measured 2026-10-18 |
+| Scene chunk (gzip, lazy) | ≤ 350 kB | **221.12 kB**, measured 2026-10-18 |
 | Topic bundle (gzip, 300 topics) | ≤ 150 kB | **1.6 kB at 24**, ~19 kB projected |
 | First usable interaction | ≤ 3.5 s | Not measured |
 | Idle GPU | ≈ 0 | **≈ 0**: zero frames in a two second reading of the live page |
@@ -637,7 +643,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `docs/MCD.md` | Present | v1.0, 339 lines, amended 2026-10-16 to match the code and 2026-10-17 to record the engine and the state schema |
 | `KNOWLEDGE INDEX.md` | Present | Added at the root 2026-10-17; the navigation map, verified against the repository |
 | `src/app/` | Present | The whole loop, the drawer, and the stage layer: three controllers, their markup, the store binding, styles; 62 tests |
-| `src/world/` | Present | The stage's first two steps: the seeded graph, the lazy canvas, the palette tokens, the beats; 28 tests |
+| `src/world/` | Present | The stage's first three steps: the seeded graph, the lazy canvas, the authored camera, the palette tokens, the beats; 45 tests |
 | `src/engine/` | Present | Contract, frozen tuning, `offerNextStory`, day key, PRNG; 44 tests including the purity boundary |
 | `src/state/` | Present | Four validated stores, the rollover, the prune, the tally and the stream helper; 50 tests |
 | `src/content/` | Present | Types, generated bundle, loader |
@@ -665,7 +671,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Show 30-day history | **Working**: the drawer lists the window by day, searchable and filterable, from a real browser pass |
 | Show 37 / 90 | **Working**: shown on the taken story and in the drawer header, absent until the first day is taken |
 | Find a story by domain | Deferred (roadmap 5.3) until the pool covers the domains |
-| Render the web and Anansi | **Partly**: the web renders behind the shell; the camera, objects, and Anansi are not built |
+| Render the web and Anansi | **Partly**: the web renders behind the shell and the camera frames every beat; the objects and Anansi are not built |
 | Light mode | Not built |
 | Ship to a host | Not built |
 
@@ -719,8 +725,8 @@ Re-statused from v1. Three of the original critical risks are closed, and the ri
 **R16 — Two drawer limits a user can meet (LOW).** The list can only show what the store kept, so a learned story older than thirty days leaves the drawer while still counting toward `N / 90`, and a topic retired from the library disappears from history entirely. The written date search also follows the browser locale, so the date form a person can type is the one their locale writes.
 *Action:* recorded in spec 0004's Follow-up, where a future sentence or a wider retention window can address it if use shows it confuses.
 
-**R17 — The stage's fallbacks are unexercised in a browser (MEDIUM).** The WebGL probe and the error boundary are code paths, not observed ones: no session has run with WebGL refused or the scene throwing, so the claim that the ritual carries on rests on their shape. The phone tier was checked by its drawn counts (9 beads, 16 strands) and a pixel ratio cap, not by a screenshot at that width, and the scene has no visual check at a second width yet.
-*Action:* refuse WebGL in a throwaway browser profile before 6.3 is called done, and repeat the phone width check visually once the camera exists.
+**R17 — Two stage paths rest on code and tests, not a live session (MEDIUM).** The WebGL probe and the error boundary are code paths, not observed ones: no session has run with WebGL refused or the scene throwing, so the claim that the ritual carries on rests on their shape. The camera's reduced motion branch has the same standing: the unit tests pin the zero parallax, and the snap to frame is a branch no live session has taken. The phone tier now has a screenshot and drawn counts, so the earlier width gap is closed.
+*Action:* refuse WebGL in a throwaway browser profile, and emulate reduce in one before the reduced motion pass (6.9) is called done.
 
 **R14 — Claims the documentation gate cannot reach (LOW).** The gate covers the mechanical claims in this document only. The CI run id, `npm ci`'s package count, and `npm audit`'s advisories need the network or a live install, and any fact phrased in a shape `claims.ts` does not recognise is not compared.
 *Action:* extend the rules when a claim shape recurs, and keep the unreachable figures stamped with the date, commit, and source that produced them.
@@ -739,7 +745,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 | 3 — State and persistence | **Complete** (3.1 to 3.6), 50 tests |
 | 4 — The ritual loop | **Complete** (4.1 to 4.7), 31 tests |
 | 5 — History and progress | **Complete** (5.1 and 5.2; 5.3 deferred), 25 new tests |
-| 6 — The 3D world | **In progress** (6.1 canvas and 6.2 graph built), 28 new tests |
+| 6 — The 3D world | **In progress** (6.1 canvas, 6.2 graph, and 6.3 camera built), 45 new tests |
 | 7 — Modes and design system | Not started |
 | 8 — Evolution and surprises | Not started |
 | 9 — Quality gates | Not started |
@@ -748,7 +754,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 
 **Recommended order of the next moves:**
 
-1. **Finish Phase 6, the 3D world.** Steps 6.1 and 6.2 are built: the lazy canvas and the seeded graph behind the shell. Remaining are the authored camera and the five beat timeline (6.3), the object families (6.4), Anansi (6.5), the search choreography that replaces the 900 ms pause (6.6), the springs (6.8), the reduced motion and touch tier (6.9), and the measured scene budget (6.10). The phone tier has density and a pixel ratio cap now, and no visual check at a second width yet (R17).
+1. **Finish Phase 6, the 3D world.** Steps 6.1 to 6.3 are built: the lazy canvas, the seeded graph, and the authored camera that frames every beat. Remaining are the object families (6.4), Anansi (6.5), the search choreography that replaces the 900 ms pause (6.6), the springs (6.8), the reduced motion and touch tier (6.9), and the measured scene budget (6.10). The phone tier has density, a pixel ratio cap, and pulled back frames now.
 2. **Grow the content pool.** The library is 24 topics of the 300 target, and twenty four stories run out in about eight days of daily use; roadmap 5.3 (the optional domain filter) also waits on that coverage.
 3. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
 4. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
@@ -774,7 +780,7 @@ npm install            # 221 packages
 npm run dev            # serves http://127.0.0.1:5173/
 npm run verify         # THE gate: typecheck + content:check + test + docs:check + build
 npm run typecheck      # tsc --noEmit, covers src/, scripts/, vite.config.ts
-npm run test           # vitest run — 249 tests
+npm run test           # vitest run — 266 tests
 npm run docs:check     # fail if this document has drifted from the repository
 npm run build          # vite build → dist/
 npm run content:validate   # validate the library; exits non-zero on error
@@ -788,7 +794,8 @@ npm run content:report     # coverage, difficulty spread, bundle size
 - The project builds, typechecks, tests, and serves cleanly. The content gate is real and proven to fail correctly.
 - The engine is pure by contract, and `src/engine/purity.test.ts` now fails the suite when an import crosses the boundary.
 - The DOM carries the product; the canvas enhances it. The web renders behind the shell as a seeded graph, and the ritual is unchanged when the scene fails or never loads.
-- The stage draws only on demand: an idle page holds at zero frames, and the scene chunk (220.45 kB gzip) loads after the shell (56.43 kB) has painted.
+- The stage draws only on demand: an idle page holds at zero frames, and the scene chunk (221.12 kB gzip) loads after the shell (56.48 kB) has painted.
+- The camera is authored, not driven: five beat frames, a bounded pointer tilt, and no orbit or scroll travel. A search moves it from the idle frame to the revealing frame and it stops there.
 - The search is a 900 ms pause until Phase 6 replaces it with the world's search; the controller boundary (delay injected, skipped under reduced motion) is what makes that swap safe.
 - The drawer is a pure view over the store: it keeps no copy, so a midnight roll or another tab's write shows up while it is open. Its filters partition the log, with Explored meaning not yet learned.
 - Time-on-site is a failure signal. Features that increase session length oppose the product's purpose.
@@ -798,4 +805,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v3.2. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v3.3. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*

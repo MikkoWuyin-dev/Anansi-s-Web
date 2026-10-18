@@ -15,6 +15,9 @@ const Scene = lazy(() => import('@/world/Scene'))
 /** The stylesheet's own phone breakpoint, so the scene and the layout agree. */
 export const MOBILE_QUERY = '(max-width: 40rem)'
 
+/** The media query the camera rig reads to stay still (spec 0005, AC-14). */
+export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
 export interface WorldLayerProps {
   /** Which ritual beat the stage should frame (spec 0005, AC-9). */
   readonly beat: Beat
@@ -33,6 +36,17 @@ function subscribeToWidth(onChange: () => void): () => void {
 
 function isNarrow(): boolean {
   return window.matchMedia(MOBILE_QUERY).matches
+}
+
+function subscribeToMotion(onChange: () => void): () => void {
+  const query = window.matchMedia(REDUCED_MOTION_QUERY)
+  query.addEventListener('change', onChange)
+
+  return () => query.removeEventListener('change', onChange)
+}
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia(REDUCED_MOTION_QUERY).matches
 }
 
 /** Whether the browser can give the scene a context at all (AC-17). */
@@ -66,6 +80,7 @@ class StageBoundary extends Component<{ readonly children: ReactNode }, { readon
  */
 export function WorldLayer({ beat, days, seed }: WorldLayerProps) {
   const mobile = useSyncExternalStore(subscribeToWidth, isNarrow, () => false)
+  const reducedMotion = useSyncExternalStore(subscribeToMotion, prefersReducedMotion, () => false)
   const [armed, setArmed] = useState(false)
 
   useEffect(() => {
@@ -126,7 +141,13 @@ export function WorldLayer({ beat, days, seed }: WorldLayerProps) {
       {armed ? (
         <StageBoundary>
           <Suspense fallback={null}>
-            <Scene seed={seed} days={days} mobile={mobile} beat={beat} />
+            <Scene
+              seed={seed}
+              days={days}
+              mobile={mobile}
+              beat={beat}
+              reducedMotion={reducedMotion}
+            />
           </Suspense>
         </StageBoundary>
       ) : null}

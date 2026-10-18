@@ -2,6 +2,7 @@
 
 **Date**: 2026-10-18
 **Status**: In Progress
+**Built**: 2026-10-18 — steps 6.1 to 6.3: the lazy canvas, the seeded graph, and the authored camera, 45 tests
 
 ## Summary
 

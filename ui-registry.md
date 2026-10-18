@@ -261,7 +261,9 @@ Last updated: 2026-10-18
 | Density | 11 beads and 20 strands at day 0, 71 and 140 at day 90; the phone tier draws 9 and 16 |
 | Colour source | `src/world/palette.ts` reads the `--anansi-*` custom properties at mount; `src/world/purity.test.ts` forbids a colour literal there |
 | Accessibility | the container is `role="img"` with `aria-label` from `descriptionFor`; the canvas inside it is presentational |
-| Motion | none yet; frames are drawn only on an explicit invalidation |
+| Camera | one authored frame per beat from `src/world/camera.ts`; eases at a stiffness of 6 and stops once framed; the phone tier pulls every frame back by 1.45 |
+| Pointer tilt | bounded to 0.14 world units horizontally and 0.084 vertically, zero under reduced motion; there is no orbit, drag, wheel, or scroll listener |
+| Motion | the camera only; every frame is drawn on an explicit invalidation, and an idle page draws none |
 | Accent usage | none in the web yet: yellow is reserved for the reveal filament in step 6.6 |
 
 **Pattern notes:**

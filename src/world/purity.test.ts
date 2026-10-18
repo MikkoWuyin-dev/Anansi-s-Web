@@ -26,7 +26,15 @@ const ALLOWED = /^(@\/(world|engine)\/|react$|three$|@react-three\/fiber$)/
 describe('the world module boundary', () => {
   it('finds the world sources', () => {
     expect(sources.map((entry) => entry.name)).toEqual(
-      expect.arrayContaining(['Scene.tsx', 'Web.tsx', 'graph.ts', 'palette.ts', 'stage.ts']),
+      expect.arrayContaining([
+        'CameraRig.tsx',
+        'Scene.tsx',
+        'Web.tsx',
+        'camera.ts',
+        'graph.ts',
+        'palette.ts',
+        'stage.ts',
+      ]),
     )
   })
 

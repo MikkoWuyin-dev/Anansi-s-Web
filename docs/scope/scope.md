@@ -185,10 +185,19 @@ spec [0005](../specs/0005-the-3d-stage.md)
 - [ ] Verify it: `/check verify the stage`
 - [ ] Test it: `/test the stage`
 
-### 9. The authored camera and the search · needs a decision
+### 9. The authored camera and the search · in-progress
 The search as an event rather than a spinner: the web wakes, Anansi moves between strands and returns with a story, framed throughout by a camera the visitor never drives.
 **Done when:** there is no free orbit and no travelling by scroll; every beat from idle to resting is framed by design; the search reads as a searching spider; and frame time stays at or under 16 ms on a mid range desktop.
-- [ ] Design it (spec): `/architect authored camera and search`
+code in `src/world/`
+
+spec [0005](../specs/0005-the-3d-stage.md)
+
+- [x] Design it (spec): `/architect the stage`
+- [ ] Build it: `/develop the stage`
+  - [x] The authored camera: five beat frames, a bounded pointer tilt, no orbit or scroll travel (AC-8, AC-9)
+  - [ ] The search choreography: the web wakes, Anansi moves and returns, and the 900 ms pause retires (AC-9, AC-12, AC-13)
+- [ ] Verify it: `/check verify the stage`
+- [ ] Test it: `/test the stage`
 
 ### 10. Object families, Anansi, and density · needs a decision
 One seeded generator per object family, a procedural Anansi whose character comes from motion rather than mesh detail, and a web whose richness follows the journey.

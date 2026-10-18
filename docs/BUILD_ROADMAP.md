@@ -273,7 +273,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 6 — The 3D world (IN PROGRESS, 6.1 and 6.2 built 2026-10-18)
+## Phase 6 — The 3D world (IN PROGRESS, 6.1 to 6.3 built 2026-10-18)
 
 **Goal:** the stage. Authored camera, user touches but never navigates.
 
@@ -283,7 +283,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 - **Deliverable:** a single lazy-loaded R3F `<Canvas>` behind the already-painted DOM shell, with `frameloop="demand"` and explicit invalidation.
 - **Done when:** the hero and action are usable before the scene loads, and an idle page does not draw frames.
-- **Built:** `src/world/Scene.tsx` is the lazy chunk and `src/app/WorldLayer.tsx` arms it two frames after the shell paints, behind a WebGL probe and an error boundary. Verified in a browser: the arm marker landed after the first contentful paint, a two second idle reading moved the frame counter by zero, a search advanced it once per beat, the canvas took no pointer event, and the shell bundle stayed at 56.43 kB gzip.
+- **Built:** `src/world/Scene.tsx` is the lazy chunk and `src/app/WorldLayer.tsx` arms it two frames after the shell paints, behind a WebGL probe and an error boundary. Verified in a browser: the arm marker landed after the first contentful paint, a two second idle reading moved the frame counter by zero, a search advanced it once per beat, the canvas took no pointer event, and the shell bundle stayed at 56.48 kB gzip.
 
 ### 6.2 The web graph — BUILT 2026-10-18
 
@@ -291,10 +291,11 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Done when:** the same seed reproduces the same graph exactly, and objects can anchor to nodes.
 - **Built:** `src/world/graph.ts` draws the web as plain data (no three.js) from `clientId` and `journeyStart`: 11 beads and 20 strands at the start, 71 and 140 at ninety days, 9 and 16 in the phone tier, with anchors for the objects to come. `src/world/Web.tsx` renders it as one line segment buffer and one instanced mesh. 13 tests pin determinism (by geometry, not the seed label), the density curve, reachability, the caps, and the anchors.
 
-### 6.3 The camera rig
+### 6.3 The camera rig — BUILT 2026-10-18
 
 - **Deliverable:** an authored camera component driven by a beat timeline: `idle → searching → revealing → celebrating → resting`. Cursor parallax and touch tilt modulate but never command.
 - **Done when:** there is no free orbit and no scroll-to-travel, and every beat is framed by design.
+- **Built:** `src/world/camera.ts` fixes one frame per beat and holds the parallax bound as plain data; `src/world/CameraRig.tsx` eases toward the frame, stops once framed, and asks for no more frames until something changes. No orbit control, drag, wheel or scroll listener exists, and `purity.test.ts` fails the suite if one appears. Verified live: a search moved the camera from the idle frame to the revealing frame and stopped, the idle page still drew zero frames, and the pointer never moved the camera beyond 0.14 world units. The phone tier pulls every frame back by 1.45. Touch tilt remains for 6.9.
 
 ### 6.4 Object families
 
