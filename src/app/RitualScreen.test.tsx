@@ -44,6 +44,7 @@ function storyView(overrides: Partial<Extract<RitualView, { kind: 'story' }>> = 
     learned: false,
     canReroll: true,
     sealed: false,
+    count: null,
     ...overrides,
   }
 }
@@ -116,6 +117,17 @@ describe('taking and learning', () => {
 
     expect(html).toContain('Learned. You can tell it now.')
     expect(html).not.toContain('I understood it')
+  })
+
+  it('shows the quiet count on the taken story and nowhere else', () => {
+    const count = { days: 1, label: '1 / 90', spoken: '1 of 90 days' }
+    const taken = render(storyView({ taken: true, canReroll: false, sealed: true, count }))
+    const offered = render(storyView({ count }))
+
+    expect(taken).toContain('1 / 90')
+    expect(taken).toContain('1 of 90 days')
+    expect(taken).not.toMatch(/streak/i)
+    expect(offered).not.toContain('1 / 90')
   })
 })
 

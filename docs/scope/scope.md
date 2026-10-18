@@ -25,7 +25,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 4 | The daily ruling and the reveal | Slice 1 | in-progress |
 | 5 | Taking a story, and the journey count | Slice 1 | in-progress |
 | 6 | An accessible loop with honest states | Slice 1 | in-progress |
-| 7 | The history drawer | Slice 2 | planned |
+| 7 | The history drawer | Slice 2 | in-progress |
 | 8 | The canvas and the web graph | Slice 3 | planned |
 | 9 | The authored camera and the search | Slice 3 | planned |
 | 10 | Object families, Anansi, and density | Slice 3 | planned |
@@ -127,7 +127,7 @@ spec [0003](../specs/0003-ritual-loop.md)
 - [ ] Build it: `/develop taking a story and the journey count`
   - [ ] Taking a story, closing the day's ruling, and counting the day once (AC-6)
   - [ ] The inline learned mark, and its state after a reload (AC-7)
-  - [ ] The quiet journey count on the taken state, built in Phase 5.2, not in spec 0003
+  - [x] The quiet journey count on the taken state, built in Phase 5.2, not in spec 0003
 - [ ] Verify it: `/check verify taking a story and the journey count`
 - [ ] Test it: `/test taking a story and the journey count`
 
@@ -149,10 +149,21 @@ spec [0003](../specs/0003-ritual-loop.md)
 
 ## Slice 2: continuity
 
-### 7. The history drawer · needs a decision
-The plain practical list the ritual needs alongside the metaphor: the rolling 30 days, searchable and filterable.
+### 7. The history drawer · in-progress
+The plain practical list the ritual needs alongside the metaphor: the rolling 30 days, searchable and filterable, with the quiet journey count beside it.
 **Done when:** the drawer lists the rolling 30 day history and can be searched and filtered by All, Explored, and Learned; it is reachable and operable by keyboard; and it reads from the same store rather than keeping its own copy.
-- [ ] Design it (spec): `/architect history drawer`
+code in `src/app/`
+
+spec [0004](../specs/0004-history-drawer-and-journey-count.md)
+
+- [x] Design it (spec): `/architect history drawer`
+- [x] Build it: `/develop history drawer`
+  - [x] The view: visible rows joined to titles, grouped by day, with the filters as a partition (AC-2, AC-4, AC-7)
+  - [x] Search and the honest empty states (AC-5, AC-6)
+  - [x] The count, the day labels, and the corner control wired to the live store (AC-1, AC-8, AC-10, AC-11)
+  - [x] Focus, Escape, reduced motion, and the markup purity test (AC-3, AC-9, AC-12, AC-13, AC-14)
+- [ ] Verify it: `/check verify history drawer`
+- [ ] Test it: `/test history drawer`
 
 ## Slice 3: the stage
 

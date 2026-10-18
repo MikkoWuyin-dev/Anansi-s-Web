@@ -161,7 +161,7 @@ interface StoryProps {
 }
 
 function Story({ view, headingRef, onReroll, onTake, onMarkLearned }: StoryProps) {
-  const { topic, because, taken, learned, dayStory, sealed } = view
+  const { topic, because, taken, learned, dayStory, sealed, count } = view
   const note = taken ? TAKEN_NOTE : dayStory ? DAY_STORY_NOTE : sealed ? ONLY_STORY_NOTE : null
 
   return (
@@ -188,6 +188,13 @@ function Story({ view, headingRef, onReroll, onTake, onMarkLearned }: StoryProps
         onTake={onTake}
         onMarkLearned={onMarkLearned}
       />
+
+      {taken && count !== null ? (
+        <p className="count">
+          <span aria-hidden="true">{count.label}</span>
+          <span className="visually-hidden">{count.spoken}</span>
+        </p>
+      ) : null}
     </article>
   )
 }

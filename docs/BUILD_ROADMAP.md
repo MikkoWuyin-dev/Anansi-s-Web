@@ -3,7 +3,7 @@
 
 **Date:** 2026-10-16
 **Companions:** `docs/PRD.md` (v1.1 product truth), `docs/MCD.md` (v1.0 technical truth)
-**Status:** Phases 0 to 3 complete; the library is at 24 of 300 topics. Phases 4 onward are planned, not built.
+**Status:** Phases 0 to 5 complete (5.3 deferred); the library is at 24 of 300 topics. Phases 6 onward are planned, not built.
 **Audience:** any engineer or coding agent picking up the build.
 
 ---
@@ -246,7 +246,11 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 5 — History and progress
+## Phase 5 — History and progress (COMPLETE, 2026-10-18)
+
+**Goal:** continuity. The last thirty days become inspectable, and the journey has a quiet number.
+
+**Spec:** `docs/specs/0004-history-drawer-and-journey-count.md` (captured 2026-10-18) settles the inline panel, the corner control, the filter partition, the search rules, the day labels, the read only list, and the count's two placements. Steps 5.1 and 5.2 are written to match it; 5.3 is deferred.
 
 ### 5.1 The history drawer
 
@@ -258,10 +262,14 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Deliverable:** "37 / 90" as the model, never a streak, with no shame messaging and no punishment for missed days (PRD §19, §21).
 - **Done when:** the counter reads from accepted days only and missing days produce no warning of any kind.
 
-### 5.3 Optional domain filtering
+### 5.3 Optional domain filtering — DEFERRED
 
 - **Deliverable:** a domain filter, if it proves useful in use.
 - **Done when:** it reuses the history store rather than duplicating logic.
+
+**Deferred 2026-10-18.** The pool is 24 topics across few populated domains, so a domain filter would mostly return empty results and would put domain back on a surface the reveal keeps clean. It waits until the pool covers the domains, and it must reuse the view this phase built.
+
+**Built 2026-10-18.** `src/app/history.ts` derives the whole panel from the store and the library: rows with their titles resolved (a record whose topic has left the library is dropped), day groups newest first, the three filters as a partition (All, Explored as not yet learned, Learned), counts on each filter, the folded title and date search, the Today and Yesterday labels through `Intl`, and the `N / 90` count. `src/app/HistoryPanel.tsx` renders it, and `App.tsx` holds the open state, the query, and the filter for the session, opening from a pinned corner control with the heading focused and Escape returning focus to the control. The count appears on the taken story and in the panel header, and is absent before the first taken day. Verified in a browser: keyboard open and close, the filter partition, case and accent folding, the ISO and locale written date search, the clear control, the query surviving a close, a live history rewrite from another tab updating the open panel, and no domain, difficulty, or tag in the DOM. Four deliberate breakages (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, showing the count at zero) each fail the suite and were reverted byte for byte.
 
 ---
 

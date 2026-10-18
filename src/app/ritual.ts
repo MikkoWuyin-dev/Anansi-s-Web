@@ -10,6 +10,7 @@
  * shows a topic's title and never reads its domain, difficulty, or tags (PRD §8).
  */
 
+import { journeyCount, type JourneyCount } from '@/app/history'
 import type { Topic } from '@/content/types'
 import { offerNextStory } from '@/engine/offer'
 import { ENGINE_TUNING } from '@/engine/tuning'
@@ -53,6 +54,8 @@ export type RitualView =
       readonly learned: boolean
       readonly canReroll: boolean
       readonly sealed: boolean
+      /** The quiet journey count, absent before the first taken day (spec 0004). */
+      readonly count: JourneyCount | null
     }
 
 export interface RitualViewInput {
@@ -138,6 +141,7 @@ export function ritualView({ state, library, ui, newDay }: RitualViewInput): Rit
     learned: learnedFor(state, offeredId),
     canReroll: !taken && !dayStory && !ui.sealed,
     sealed: taken || dayStory || ui.sealed,
+    count: journeyCount(state.progress),
   }
 }
 

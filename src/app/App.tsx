@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { HistoryPanel } from '@/app/HistoryPanel'
+import { historyView, type HistoryFilter } from '@/app/history'
 import { Ritual } from '@/app/RitualScreen'
 import {
   announcementOf,
@@ -36,8 +38,28 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   const state = useJourney(store)
   const [ui, setUi] = useState<RitualUi>(INITIAL_UI)
   const [newDay, setNewDay] = useState(false)
+  // The drawer's narrowing controls are session state: closing keeps them,
+  // a reload starts again at All with no query (spec 0004, AC-10).
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState<HistoryFilter>('all')
+  const historyHeading = useRef<HTMLHeadingElement>(null)
+  const historyControl = useRef<HTMLButtonElement>(null)
   const busy = useRef(false)
   const library = getLibrary()
+
+  // Opening the panel places focus on its heading, so the list is the next
+  // thing read rather than the top of the page (AC-12).
+  useEffect(() => {
+    if (historyOpen) {
+      historyHeading.current?.focus()
+    }
+  }, [historyOpen])
+
+  const closeHistory = useCallback((): void => {
+    setHistoryOpen(false)
+    historyControl.current?.focus()
+  }, [])
 
   // Another tab writing the day rehydrates this one (spec 0002).
   useEffect(() => watchStorageEvents(store), [store])
@@ -99,10 +121,34 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   }, [library, store])
 
   const view = ritualView({ state, library, ui, newDay })
+  const history = historyView({
+    state,
+    library,
+    query,
+    filter,
+    today: state.day.dayKey,
+  })
 
   return (
     <main className="shell">
       <Web />
+
+      <button
+        className="history-open"
+        type="button"
+        ref={historyControl}
+        aria-expanded={historyOpen}
+        aria-controls="history-panel"
+        onClick={() => {
+          if (historyOpen) {
+            closeHistory()
+          } else {
+            setHistoryOpen(true)
+          }
+        }}
+      >
+        History
+      </button>
 
       <Ritual
         view={view}
@@ -121,6 +167,21 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
             learnStory(store, view.topic.id)
           }
         }}
+      />
+
+      <HistoryPanel
+        open={historyOpen}
+        view={history}
+        query={query}
+        filter={filter}
+        headingRef={historyHeading}
+        onQuery={setQuery}
+        onFilter={setFilter}
+        onClear={() => {
+          setQuery('')
+          setFilter('all')
+        }}
+        onClose={closeHistory}
       />
     </main>
   )

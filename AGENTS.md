@@ -472,14 +472,14 @@ These are high-level reminders, not substitutes for reading the relevant PRD sec
 
 ## 14. Technical Constraints and Current-State Cautions
 
-The teardown's latest assessment, 2026-10-17, recorded the following. **Re-check the live repository before relying on any item as current.**
+The teardown's latest assessment, 2026-10-18, recorded the following. **Re-check the live repository before relying on any item as current.**
 
 - **Stack:** React 18, strict TypeScript, Vite SPA/static output.
 - **3D and state dependencies:** Three.js through `@react-three/fiber` and `@react-three/drei`, `react-spring`, and Zustand were installed but reported unused at the time of the teardown. Do not use an installed dependency without a task requirement and architectural fit.
 - **Node:** Node ≥22.6 was required by authoring scripts using native type stripping. The teardown reported `enum` and `namespace` were forbidden in code imported by those scripts. Verify the current implementation and preserve the constraint unless an approved change resolves it.
 - **Engine boundary:** The engine is a pure TypeScript module with injected inputs and no DOM, React, or storage dependencies, and it must not import from the app, state, or world layers. `src/engine/purity.test.ts` enforces that by reading the module's own imports, so a violating import fails the suite.
 - **Content schema:** The schema in `src/content/types.ts` and `docs/MCD.md` §5 were reconciled on 2026-10-16 (natural-case titles, closed tag union). Reconcile any further discrepancy through §4 rather than assuming either source is automatically correct.
-- **Verification status:** `npm run verify` passes with 109 tests across eight files, 24 reviewed topics, and a green CI run (`38947782059`). These counts are current as of 2026-10-17 and still only as good as the last gate run; re-run it before relying on them.
+- **Verification status:** `npm run verify` passes with 215 tests across seventeen files, 24 reviewed topics, and a green CI run (`38947782059`) on the Phase 4 commit. These counts are current as of 2026-10-18 and still only as good as the last gate run; re-run it before relying on them.
 - **Known risks:** Dependency advisories, the CI failure path being proven only locally, incomplete product phases, and other risks in the teardown are not blanket authorization to upgrade dependencies, add infrastructure, or work outside the current task.
 
 Inspect current files, scripts, tests, and configuration before making implementation claims or planning changes based on these notes.

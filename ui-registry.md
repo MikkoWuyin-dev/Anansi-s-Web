@@ -167,6 +167,86 @@ Last updated: 2026-10-17
 
 Every state keeps the hero scale for its heading and one action where an action helps, so nothing is a blank screen. The searching dots are decorative and `aria-hidden`; the sentence that carries the meaning is the one live region, which is always in the document. The stranded day (a stored story no longer in the library) reuses the failed layout without a misleading Try again.
 
+### History control
+
+File: `src/app/styles.css` (`.history-open`), used by `src/app/App.tsx`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Background | transparent |
+| Border | `1px solid var(--anansi-jet)`, turning `var(--anansi-lavender)` on hover |
+| Border radius | `0.85rem 1.6rem 0.85rem 1.6rem`, the control radius at a smaller measure |
+| Text | `var(--anansi-dim)`, `0.875rem`, uppercase, tracked `0.06em` |
+| Position | absolute, pinned to the shell corner with `clamp()` insets, so it is one press away in every state |
+| Hover state | the lavender border, ink text, `translateY(-3px)` |
+| Focus state | the baseline focus ring |
+| Accent usage | none; the corner control never takes yellow |
+
+**Pattern notes:**
+
+The smaller asymmetric radius is the control family at a smaller size, not a new shape. Any future small control (a chip, a filter, a field) uses this measure rather than a plain rectangle.
+
+### History panel
+
+File: `src/app/HistoryPanel.tsx`, styled by `.history` in `src/app/styles.css`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Background | none; the panel sits on the page's black |
+| Border | a single `1px solid var(--anansi-jet)` above the panel, no box |
+| Border radius | none on the panel; the controls inside carry the radius |
+| Text — heading | `var(--anansi-ink)`, `clamp(1.5rem, 4vw, 2rem)`, weight `500` |
+| Text — secondary | day headings and statuses use `var(--anansi-dim)` at `0.75rem`, uppercase, tracked |
+| Spacing | `gap: 1.5rem` in a column; rows `0.7rem` vertical with a `1px` jet divider |
+| Width | `max-width: 44rem`, aligned to the ritual's left offset; no `width: 100%` |
+| Focus state | the baseline focus ring on every control; the heading is focusable only as a target |
+| Accent usage | none. The panel carries no yellow, and the lavender ring is its only accent |
+
+**Pattern notes:**
+
+The panel is a disclosure, not a dialog: it stays in the document with the `hidden` attribute so `aria-controls` always resolves, and it needs no focus trap. Focus moves to the heading on open and back to the control on close.
+
+Do not give a grid item `width: 100%` together with a left `margin`: the margin is added outside the track and the content runs past the viewport. The panel is a grid item, so it sizes from the track and the `max-width`.
+
+### Filter row
+
+File: `src/app/HistoryPanel.tsx`, styled by `.filters` in `src/app/styles.css`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Background | transparent |
+| Border | `1px solid var(--anansi-jet)`; the pressed filter takes `var(--anansi-ink)` |
+| Border radius | the small control radius, `0.85rem 1.6rem 0.85rem 1.6rem` |
+| Text | `var(--anansi-dim)` at `0.875rem`, ink when pressed |
+| Count | `var(--anansi-dim)` at `0.75rem`, tabular numerals |
+| State | `aria-pressed`, never a colour alone |
+| Focus state | the baseline focus ring |
+| Accent usage | none |
+
+**Pattern notes:**
+
+A filter is a toggle button with `aria-pressed`, not a link and not a radio: it changes the same list in place. The count inside the label is part of the accessible name, so a screen reader hears "Explored 9".
+
+### Count
+
+File: `src/app/RitualScreen.tsx` and `src/app/HistoryPanel.tsx`, styled by `.count`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Text | `var(--anansi-dim)`, `0.9375rem`, tracked `0.12em` |
+| Numerals | `font-variant-numeric: tabular-nums`, so the number never jitters as it grows |
+| Markup | the visible `N / 90` is `aria-hidden`; a `.visually-hidden` span carries `N of 90 days` |
+| Placement | beside the taken story and in the drawer header, and nowhere before the first taken day |
+| Accent usage | none, by design: the count must never compete with the action |
+
+**Pattern notes:**
+
+`.visually-hidden` is the project's one screen-reader-only utility, added with this component. Use it whenever the visual form of a value is a symbol rather than words, and keep the words in the same element.
+
 ## Components to fix
 
 None. Every component matches the baseline it was read from, and the one duplication the audit flagged (the easing curve written three times) was resolved on 2026-10-17 by the motion tokens `--anansi-ease`, `--anansi-duration`, and `--anansi-entrance`.

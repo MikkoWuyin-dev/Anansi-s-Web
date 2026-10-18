@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-17 (v3.0)
+- **Last updated:** 2026-10-18 (v3.1)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -46,6 +46,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 
 **v3.0 — 2026-10-17.** Phase 4 was designed and built, and the product is now usable without any 3D. `docs/specs/0003-ritual-loop.md` (249 lines) is the third spec, from three rounds of questions, and `src/app/` holds the loop: `ritual.ts` (the controller: the screen view, the search, the reroll, taking, learning), `RitualScreen.tsx` (the semantic markup), `useJourney.ts` (the store subscription), `store.ts` (the one store the app reads), plus 31 tests across `ritual.test.ts` and `RitualScreen.test.tsx`. The suite stands at 15 files and 190 tests, and `vite.config.ts` now collects `.test.tsx` as well as `.test.ts`. The loop was verified in a real browser by keyboard: the reveal showed a title and nothing else, two rerolls offered new stories, the sealed third story removed the reroll, taking closed the ruling and marked the day, the learned confirm held focus and persisted across a reload, and the DOM carried no `domain`, `difficulty`, or `tags`. The resurfaced treatment, the empty and failed states, the blocked storage line, the reduced motion path, and the midnight rollover rest on controller and markup tests rather than a live session (R15). The scope's features 4, 5 and 6 are `in-progress` with the spec linked, and the count of planned features falls from 15 to 12.
 
+**v3.1 — 2026-10-18.** Phase 5 was designed and built, so the journey is now legible. `docs/specs/0004-history-drawer-and-journey-count.md` (241 lines) is the fourth spec, from four rounds of questions, and `src/app/` holds the drawer: `history.ts` (the pure view: visible rows joined to titles, day groups, the filter partition, the folded title and date search, the `Intl` day labels, and the count), `HistoryPanel.tsx` (the semantic markup), and the wiring in `App.tsx` (the corner control, the open state, the query, and the filter for the session). 25 new tests bring the app to 56 and the suite to 17 files and 215 tests. The drawer was verified in a real browser by keyboard: open and close with focus placed and returned, the filter partition, case and accent folding, the ISO and locale written date search, the clear control, the query surviving an Escape close, a live history rewrite from another tab updating the open panel, and no `domain`, `difficulty`, or `tag` in the DOM. Four deliberate breakages (opening Explored to learned rows, titling a missing topic with its id, removing accent folding, showing the count at zero) each fail the suite and were reverted byte for byte. Roadmap 5.3, the optional domain filter, is deferred until the pool covers the domains. The count now appears on the taken story and in the drawer header, so the loop's own follow-up is closed.
+
 ---
 
 ## 0. How to read this document
@@ -77,20 +79,20 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | Build tooling | Vite + React 18 + TypeScript strict, builds and serves |
 | DOM shell | Hero line and primary action, palette tokens, reduced-motion mode |
 | Ritual loop | Search, reveal, the daily ruling, take, learned, honest states (spec 0003, 2026-10-17) |
+| History drawer and journey count | The last 30 days listed by day, searchable and filterable, with the quiet `N / 90` (spec 0004, 2026-10-18) |
 | Content layer | 24 reviewed topics, validation and compile pipeline, typed bundle, loader |
 | Engine | The pure selection engine: contract, frozen tuning, `offerNextStory`, day key, PRNG (spec 0001) |
 | State layer | Four validated stores under `anansi:v1:*`, rollover, prune, tally, per day stream (spec 0002) |
 | Version control | Git history on `main`, LF-normalised, GitHub remote (`origin`) |
 | CI | `.github/workflows/verify.yml` runs on every push and PR; first run green (2026-10-16) |
 | Documentation gate | `npm run docs:check` compares this document's counts, file lists, and tracked-state claims against the repository |
-| History drawer and the journey counter | **Not started** (Phase 5) |
 | The 3D world (`src/world/`) | **Not started** |
 | Light mode | **Not started** |
 | `ui-registry.md`, `memory.md`, `docs/scope/` | Present and tracked (2026-10-16) |
 
-**Headline state:** the foundation is real and honest. All five gates (`typecheck`, `content:check`, `test`, `docs:check`, `build`) exit 0; the content gate has been *proven to fail* on malformed and drifted input, and the documentation gate on a state claim that no longer holds, rather than assumed to. The product now does the thing it exists to do: a person can ask the web for a story, receive a title alone, reroll twice, take the day's story, and mark it learned, with the day surviving a reload. What it still lacks is the world behind it and the history surface.
+**Headline state:** the foundation is real and honest. All five gates (`typecheck`, `content:check`, `test`, `docs:check`, `build`) exit 0; the content gate has been *proven to fail* on malformed and drifted input, and the documentation gate on a state claim that no longer holds, rather than assumed to. The product now does the thing it exists to do, and keeps a record of it: a person can ask the web for a story, receive a title alone, reroll twice, take the day's story, mark it learned, and find the last thirty days listed by day with a quiet `N / 90` beside them. What it still lacks is the world behind it, the light mode, and the deployment.
 
-**Single biggest risk:** delivery pace against scope. The remaining work — engine, state, loop, history, and an entire procedural 3D stage — is substantially larger than what has been built. The governance gap has narrowed: CI runs the gate on every push and pull request and its first run was green, so the gate no longer depends on someone remembering, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
+**Single biggest risk:** delivery pace against scope. The remaining work — an entire procedural 3D stage, the design modes, and the quality and release phases — is substantially larger than what has been built. The governance gap has narrowed: CI runs the gate on every push and pull request and its first run was green, so the gate no longer depends on someone remembering, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
 
 ---
 
@@ -122,7 +124,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 Every tracked file, by area.
 
 ```
-C:\dev\Anansi's Web\                        166 tracked files
+C:\dev\Anansi's Web\                        171 tracked files
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -140,14 +142,15 @@ C:\dev\Anansi's Web\                        166 tracked files
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
 │   ├── MCD.md                  339 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        506 lines   Phases 0 to 11, the build sequence
+│   ├── BUILD_ROADMAP.md        514 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
 │   ├── specs/
 │   │   ├── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
 │   │   ├── 0002-local-state-and-persistence.md   246 lines   The state decision, 2026-10-17
-│   │   └── 0003-ritual-loop.md   249 lines   The loop decision, 2026-10-17
+│   │   ├── 0003-ritual-loop.md   252 lines   The loop decision, 2026-10-17
+│   │   └── 0004-history-drawer-and-journey-count.md   242 lines   The drawer and count decision, 2026-10-18
 │   ├── scope/
-│   │   └── scope.md            254 lines   living scope record
+│   │   └── scope.md            265 lines   living scope record
 │   └── system-teardown.html                Generated rendering (gitignored)
 │
 ├── content/                    the library source of truth
@@ -169,14 +172,16 @@ C:\dev\Anansi's Web\                        166 tracked files
 ├── src/
 │   ├── main.tsx                mounts React into #root
 │   ├── vite-env.d.ts           Vite client types
-│   ├── app/                    the ritual, wired to the store (spec 0003)
-│   │   ├── App.tsx             wiring: the store, the midnight check, the actions
+│   ├── app/                    the ritual and its history (specs 0003, 0004)
+│   │   ├── App.tsx             wiring: the store, the midnight check, the actions, the drawer
 │   │   ├── ritual.ts           the controller: the view, the search, take, learned
 │   │   ├── RitualScreen.tsx    the semantic markup for every view
+│   │   ├── history.ts          the drawer's view: rows, filters, search, labels, count
+│   │   ├── HistoryPanel.tsx    the drawer's semantic markup
 │   │   ├── useJourney.ts       useSyncExternalStore over the vanilla store
 │   │   ├── store.ts            the one journey store the app reads
 │   │   ├── styles.css          palette and motion tokens, layout, reduced motion
-│   │   └── *.test.ts*          31 tests: the controller and the markup purity
+│   │   └── *.test.ts*          56 tests: the controllers, the markup purity, the drawer
 │   ├── content/
 │   │   ├── types.ts            THE schema: Domain, Tag, Difficulty, Topic
 │   │   ├── topics.generated.ts GENERATED bundle (committed, drift checked)
@@ -205,9 +210,9 @@ C:\dev\Anansi's Web\                        166 tracked files
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 75 | 6,403 |
-| Project documentation | 4 | 2,539 |
+| Project documentation | 4 | 2,573 |
 | Authoring scripts | 11 | 2,603 |
-| Application source | 35 | 5,113 |
+| Application source | 39 | 6,256 |
 | Content (24 JSON + 1 README) | 25 | 335 |
 | Build config | 6 | ~160 |
 
@@ -261,31 +266,33 @@ exit 0
 
 Covers `src/`, `scripts/`, and `vite.config.ts`. `@types/node@24.19.2` is installed, pinned to the runtime major (Node 24.13), which fixed the v1 failure on `node:url`.
 
-### 5.3 Tests — PASS, 190 of them
+### 5.3 Tests — PASS, 215 of them
 
 ```
 $ npm run test        # vitest run
- ✓ src/app/RitualScreen.test.tsx         ( 15 tests)
+ ✓ src/engine/offer.test.ts              ( 20 tests)
+ ✓ scripts/lib/claims.test.ts            ( 35 tests)
+ ✓ src/state/journeyStore.test.ts        ( 19 tests)
  ✓ src/app/ritual.test.ts                ( 16 tests)
- ✓ src/engine/purity.test.ts             (  4 tests)
+ ✓ src/app/history.test.ts               ( 14 tests)
+ ✓ src/app/RitualScreen.test.tsx         ( 16 tests)
+ ✓ scripts/lib/validate.test.ts          ( 21 tests)
  ✓ src/state/shapes.test.ts              ( 14 tests)
  ✓ scripts/lib/compile.test.ts           (  9 tests)
- ✓ src/engine/rng.test.ts                (  9 tests)
  ✓ src/state/purity.test.ts              (  5 tests)
- ✓ scripts/lib/validate.test.ts          ( 21 tests)
- ✓ src/engine/offer.test.ts              ( 20 tests)
- ✓ src/state/journeyStore.test.ts        ( 19 tests)
- ✓ scripts/lib/claims.test.ts            ( 35 tests)
- ✓ src/engine/dayKey.test.ts             (  5 tests)
- ✓ src/state/retention.test.ts           (  6 tests)
+ ✓ src/engine/purity.test.ts             (  4 tests)
+ ✓ src/app/HistoryPanel.test.tsx         ( 10 tests)
  ✓ src/state/progress.test.ts            (  6 tests)
+ ✓ src/state/retention.test.ts           (  6 tests)
+ ✓ src/engine/dayKey.test.ts             (  5 tests)
+ ✓ src/engine/rng.test.ts                (  9 tests)
  ✓ src/engine/offer.statistical.test.ts  (  6 tests)
- Test Files  15 passed (15)
-      Tests  190 passed (190)
+ Test Files  17 passed (17)
+      Tests  215 passed (215)
 exit 0
 ```
 
-The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 50 arrive with it in v2.9; the app's 31 arrive with the ritual loop in v3.0 (16 controller tests, 15 markup tests through `react-dom/server`, which need no DOM environment). Ten mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), and three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
+The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 50 arrive with it in v2.9; the app's 56 arrive with the ritual loop in v3.0 (16 controller tests, 15 markup tests) and the history drawer in v3.1 (14 controller tests, 10 markup tests; all markup through `react-dom/server`, which needs no DOM environment). Fourteen mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), and four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
 
 ### 5.4 Content gate — PASSES, and fails correctly
 
@@ -308,9 +315,9 @@ Proven to reject bad input rather than assumed to. Three probes were run:
 ```
 $ npm run build       # vite build
 dist/index.html                   1.24 kB │ gzip:  0.66 kB
-dist/assets/index-BvgtmmxL.css    2.95 kB │ gzip:  1.25 kB
-dist/assets/index-s7JqPggi.js   148.36 kB │ gzip: 47.55 kB
-✓ built in 2.25s
+dist/assets/index-ogjUdXqH.css    9.42 kB │ gzip:  2.37 kB
+dist/assets/index-dOa_OllY.js   171.75 kB │ gzip: 55.19 kB
+✓ built in 1.59s
 exit 0
 ```
 
@@ -362,7 +369,7 @@ MISSING  README.md
 | Command | Result |
 |---|---|
 | `npm ci` | exit 0, 221 packages |
-| `npm run verify` | exit 0 — 190 tests passed, 15 files, `dist/` produced |
+| `npm run verify` | exit 0 — 215 tests passed, 17 files, `dist/` produced |
 | `npm run verify` with an injected `TS2322` in `src/app/App.tsx` | exit 2 — the gate fails a broken tree |
 | `npm run docs:check` with a claim edited to be false | exit 1 — the gate fails a drifted document |
 
@@ -397,7 +404,7 @@ Four probes were run to show the gate fails rather than merely passes:
 
 ## 6. Documentation deep-dive
 
-Four documents in `docs/`, in a clear authority order, plus the selection-engine spec under `docs/specs/`, the scope record under `docs/scope/`, and the root `KNOWLEDGE INDEX.md` that navigates all of them.
+Four documents in `docs/`, in a clear authority order, plus four build specs under `docs/specs/`, the scope record under `docs/scope/`, and the root `KNOWLEDGE INDEX.md` that navigates all of them.
 
 ### 6.1 `docs/PRD.md` — Product Requirements Document v1.1
 
@@ -485,7 +492,20 @@ Four keys under `anansi:v1:*`, each value carrying `version: 1` and validated on
 
 **What the browser pass proved:** the first story revealed as a title alone, two rerolls offered new stories, the third removed the reroll and said the day's story stays until midnight, taking closed the ruling and left a learned mark, the inline confirm kept focus, and learned persisted across a reload with no reshuffle. **What rests on tests and markup only:** the resurfaced treatment (it needs a 60 day absence), the empty and failed states, the blocked storage line, the reduced motion path, and the midnight rollover, none of which could be produced in a live session without editing the code or the system clock.
 
-### 7.5 The content schema — IMPLEMENTED, with two documented refinements
+### 7.5 The history drawer and the journey count — IMPLEMENTED (spec 0004, 2026-10-18)
+
+`src/app/history.ts` derives the whole panel from the store and the library, and `HistoryPanel.tsx` renders it:
+
+- **The rows.** Every stored record whose topic is still in the library becomes a row with its title resolved by id; a record whose topic has left is dropped rather than titled with its id. Rows are grouped under day headings newest day first and newest row first within a day.
+- **The filters.** All, Explored and Learned partition the log: Explored is the rows not marked learned, Learned is the subset located in a `Set`, and each filter carries the count of the rows it shows, so the three counts sum to All.
+- **The search.** One field matches the title with case and accents folded (`normalize('NFD')` then stripping combining marks), and matches the day in its ISO form (`2026-10-12`), its written locale form, and its heading (`Today`, `Yesterday`).
+- **The labels.** `dayLabel` compares the record's `dayKey` with today's, so the heading comes from the record and never from a timezone conversion of `presentedAt`; `Intl.DateTimeFormat` writes the rest, falling back to the key when the locale is unusable.
+- **The count.** `journeyCount(progress)` reads `acceptedDayKeys`, returns null at zero so nothing shows a `0 / 90`, and renders beside the taken story and in the panel header with the visible `N / 90` and a screen-reader `N of 90 days`.
+- **The panel.** It stays in the document with the `hidden` attribute so `aria-controls` always resolves, opens from a pinned corner control that reports `aria-expanded`, moves focus to its heading, closes on Escape with focus returned to the control, and re-derives on every store change, so a midnight roll or another tab's write shows up while it is open.
+
+**What the browser pass proved:** the panel opened and closed by keyboard with focus placed and returned, the filters partitioned the rows, an accented and upper-cased query found the title, the ISO and written dates found the day, the clear control reset both, the query survived an Escape close (after a fix: a `search` input treats Escape as its own clear), a live rewrite of the history key updated the open panel, and the DOM carried no `domain`, `difficulty`, or `tag`. **What rests on tests only:** the every-library-topic purity assertion and the reduced motion path, which has nothing to skip because the panel carries no entrance animation.
+
+### 7.6 The content schema — IMPLEMENTED, with two documented refinements
 
 The MCD's §5 schema is marked *"initial shape — refine during build"*. Two refinements were made, both recorded in `src/content/types.ts`:
 
@@ -498,11 +518,11 @@ The MCD's §5 schema is marked *"initial shape — refine during build"*. Two re
 
 Also note: the authoring scripts run under **Node's type stripping**, which erases types but cannot transform them. That rules out `enum` and `namespace` anywhere in code the scripts import. This constraint is documented at the top of `types.ts` and is why `engines.node` is now `>=22.6.0`.
 
-### 7.6 The 3D world (MCD §4) — NOT STARTED
+### 7.7 The 3D world (MCD §4) — NOT STARTED
 
 None of the ten rules is implemented: no canvas, no on-demand rendering, no camera rig, no web graph, no object families, no Anansi, no density mapping, no motion budget, and no reduced-motion path in the world (though the DOM shell does honour `prefers-reduced-motion`). `src/world/` does not exist.
 
-### 7.7 Design system (MCD §7) — PARTIALLY IMPLEMENTED
+### 7.8 Design system (MCD §7) — PARTIALLY IMPLEMENTED
 
 | Token | Value | Status |
 |---|---|---|
@@ -514,11 +534,11 @@ None of the ten rules is implemented: no canvas, no on-demand rendering, no came
 
 All hex lives in one `:root` block, honouring the "tokens only" rule. Two derived text neutrals (`--anansi-ink`, `--anansi-dim`) were added, because the PRD palette carries no light neutral and text on near-black would otherwise fail contrast. **Light mode is not implemented** (PRD §33 requires both). `ui-registry.md` now exists, established on 2026-10-16 by an audit of these styles.
 
-### 7.8 Performance budgets (MCD §8) — MEASURED WHERE POSSIBLE
+### 7.9 Performance budgets (MCD §8) — MEASURED WHERE POSSIBLE
 
 | Budget | Target | Measured |
 |---|---|---|
-| App shell JS (gzip, pre-scene) | ≤ 250 kB | **47.55 kB** |
+| App shell JS (gzip, pre-scene) | ≤ 250 kB | **55.19 kB** |
 | Scene chunk (gzip, lazy) | ≤ 350 kB | n/a, no scene |
 | Topic bundle (gzip, 300 topics) | ≤ 150 kB | **1.6 kB at 24**, ~19 kB projected |
 | First usable interaction | ≤ 3.5 s | Not measured |
@@ -528,7 +548,7 @@ All hex lives in one `:root` block, honouring the "tokens only" rule. Two derive
 
 The content budget holds with wide margin. The projection to 300 topics is a linear extrapolation and rough, but there is roughly eight times the headroom.
 
-### 7.9 The workflow skills system
+### 7.10 The workflow skills system
 
 `skills/` holds a self-contained, agent-agnostic development workflow toolkit — 75 files, ~6,400 lines, 13 skills — vendored into the product repository. It is a process layer, not application code.
 
@@ -589,7 +609,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `docs/PRD.md` | Present | v1.1, 950 lines |
 | `docs/MCD.md` | Present | v1.0, 339 lines, amended 2026-10-16 to match the code and 2026-10-17 to record the engine and the state schema |
 | `KNOWLEDGE INDEX.md` | Present | Added at the root 2026-10-17; the navigation map, verified against the repository |
-| `src/app/` | Present | The whole loop: controller, markup, store binding, styles; 31 tests |
+| `src/app/` | Present | The whole loop and the drawer: two controllers, their markup, the store binding, styles; 56 tests |
 | `src/world/` | **Missing** | The entire 3D stage |
 | `src/engine/` | Present | Contract, frozen tuning, `offerNextStory`, day key, PRNG; 44 tests including the purity boundary |
 | `src/state/` | Present | Four validated stores, the rollover, the prune, the tally and the stream helper; 50 tests |
@@ -600,8 +620,8 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `ui-registry.md` | Present | Established 2026-10-16 by `/imprint audit`; tracked |
 | `memory.md` | Present | Written 2026-10-16 by `/remember save`; tracked |
 | `AGENTS.md` | Present | Written by the project owner; tracked |
-| `docs/specs/` | Present | Three specs, one per built layer: the engine, the state, and the loop (2026-10-17) |
-| `docs/scope/` | Present | 6 enrolled and 12 planned features, 5 in progress, 2026-10-17; tracked |
+| `docs/specs/` | Present | Four specs, one per built layer: the engine, the state, the loop, and the drawer with the count (2026-10-18) |
+| `docs/scope/` | Present | 6 enrolled and 11 planned features, 6 in progress, 2026-10-18; tracked |
 | `README.md` | **Missing** | Repo has a one-line description and no entry point |
 | `.github/workflows/verify.yml` | Present | Runs the gate on push and PR, satisfying MCD §6's "in CI" expectation; first run green 2026-10-16 |
 
@@ -615,8 +635,9 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Choose a topic for today | **Working**: the app asks the engine through the store |
 | Accept or reroll | **Working**: take closes the ruling; two rerolls, no repeats |
 | Persist a journey across reloads | **Working**, verified in the browser and by the suite |
-| Show 30-day history | The window is kept in state; no surface shows it yet |
-| Show 37 / 90 | The count exists in state; no surface shows it yet |
+| Show 30-day history | **Working**: the drawer lists the window by day, searchable and filterable, from a real browser pass |
+| Show 37 / 90 | **Working**: shown on the taken story and in the drawer header, absent until the first day is taken |
+| Find a story by domain | Deferred (roadmap 5.3) until the pool covers the domains |
 | Render the web and Anansi | Not built |
 | Light mode | Not built |
 | Ship to a host | Not built |
@@ -625,7 +646,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 
 - **The MCD and this teardown agree as of 2026-10-17.** The MCD's §13 status and its §5 schema were reconciled with the code on 2026-10-16, and §13 was updated again on 2026-10-17 to record the engine as built, so no document now contradicts another.
 - **This document's current-state claims are now enforced.** `npm run docs:check` fails the gate when a count, a file list, a tracked-state statement, a version, or the gate's own composition no longer matches the repository. What remains on trust is what the gate cannot reach: the network and live-install figures, the amendment history, and any fact phrased in a shape the rules do not know.
-- **Roadmap Phases 0 to 4 are now marked complete**, and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
+- **Roadmap Phases 0 to 5 are now marked complete** (5.3, the optional domain filter, is deferred with its reason recorded), and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
 - **The teardown v1 is superseded** by this document but remains in the git history.
 - **`skills/` has no license or attribution** and is published publicly, a decision made knowingly.
 - **The display font is fetched from Google Fonts**, an external request mildly against PRD §35. Recorded in the roadmap as a decision still to make.
@@ -656,8 +677,8 @@ Re-statused from v1. Three of the original critical risks are closed, and the ri
 **R8 — The 3D stage is the whole remaining risk (MEDIUM).** Ten MCD §4 rules, a procedural object generator per family, a choreographed camera, and a ≤ 350 kB scene budget are all unbuilt and unmeasured. This is the largest and least certain body of work in the project.
 *Action:* build it in the roadmap's order (graph, camera, families, Anansi, choreography) and measure the budget as it grows.
 
-**R9 — Scope versus delivery (MEDIUM).** The ritual works end to end with no 3D, but the product's stated identity rests on a world that does not exist: the search is a 900 ms pause, there is no web, no Anansi, and no history surface. The 24 topic pool also runs out of fresh stories in about eight days of daily use.
-*Action:* Phase 6 (the stage) and Phase 5 (history and the counter) are the remaining product work; the topic pool is Phase 1's unmet target or the thin pool path shows itself.
+**R9 — Scope versus delivery (MEDIUM).** The ritual and its history work end to end with no 3D, but the product's stated identity rests on a world that does not exist: the search is a 900 ms pause, there is no web and no Anansi. The 24 topic pool also runs out of fresh stories in about eight days of daily use.
+*Action:* Phase 6 (the stage) is the remaining product work; the topic pool is Phase 1's unmet target or the thin pool path shows itself.
 
 **R10 — No linting or formatting (LOW).** No ESLint, Prettier, or EditorConfig. TypeScript strict mode covers some ground, but the MCD §4 rule 7 "no hardcoded hex" and React hooks rules are unenforced.
 
@@ -665,8 +686,11 @@ Re-statused from v1. Three of the original critical risks are closed, and the ri
 
 **R12 — Peer-version fragility (LOW).** React 18 with R3F 8, drei 9, and three 0.169 is consistent today, but R3F 9 targets React 19. Upgrading React without R3F would break the scene layer before it is even written.
 
-**R15 — Loop paths proven without a browser (LOW).** The resurfaced treatment, the empty and failed states, the blocked storage line, the reduced motion path, and the midnight rollover are covered by controller and markup tests, but no live session reproduced them, because each needs a 60 day absence, an empty library, a broken engine, a blocked browser store, or a changed system clock.
-*Action:* re-verify each in a browser when Phase 5 and Phase 6 give a natural way to reach it, or add a dev-only switch that forces a state for a manual pass.
+**R15 — Loop paths proven without a browser (LOW).** The resurfaced treatment, the empty and failed states, the blocked storage line, the reduced motion path, and the midnight rollover are covered by controller and markup tests, but no live session reproduced them, because each needs a 60 day absence, an empty library, a broken engine, a blocked browser store, or a changed system clock. The drawer's reduced motion path is in the same position: it carries no entrance animation, so there is nothing for the media query to switch off, and the markup test is what holds that.
+*Action:* re-verify each in a browser when Phase 6 gives a natural way to reach it, or add a dev-only switch that forces a state for a manual pass.
+
+**R16 — Two drawer limits a user can meet (LOW).** The list can only show what the store kept, so a learned story older than thirty days leaves the drawer while still counting toward `N / 90`, and a topic retired from the library disappears from history entirely. The written date search also follows the browser locale, so the date form a person can type is the one their locale writes.
+*Action:* recorded in spec 0004's Follow-up, where a future sentence or a wider retention window can address it if use shows it confuses.
 
 **R14 — Claims the documentation gate cannot reach (LOW).** The gate covers the mechanical claims in this document only. The CI run id, `npm ci`'s package count, and `npm audit`'s advisories need the network or a live install, and any fact phrased in a shape `claims.ts` does not recognise is not compared.
 *Action:* extend the rules when a claim shape recurs, and keep the unreachable figures stamped with the date, commit, and source that produced them.
@@ -684,7 +708,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 | 2 — Selection engine | **Complete** (2.1 to 2.7), 44 tests |
 | 3 — State and persistence | **Complete** (3.1 to 3.6), 50 tests |
 | 4 — The ritual loop | **Complete** (4.1 to 4.7), 31 tests |
-| 5 — History and progress | Not started |
+| 5 — History and progress | **Complete** (5.1 and 5.2; 5.3 deferred), 25 new tests |
 | 6 — The 3D world | Not started |
 | 7 — Modes and design system | Not started |
 | 8 — Evolution and surprises | Not started |
@@ -694,9 +718,10 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 
 **Recommended order of the next moves:**
 
-1. **Phase 5, history and progress.** The store already keeps the 30 day window and the accepted day tally, so the surface that shows them (the drawer, the filters, and the quiet `37 / 90`) is the next product work, and it is what makes the learned mark meaningful after the day it was marked. Spec 0003's follow-up asks for the count on the taken state.
-2. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
-3. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
+1. **Phase 6, the 3D world.** The ritual, its history, and its count all exist in the DOM, and the phase order is now the stage: the canvas, the web graph, the authored camera, the object families, Anansi, the search choreography, density, the scene budget, and the reduced motion and mobile tier. The 900 ms pause is the seam it replaces.
+2. **Grow the content pool.** The library is 24 topics of the 300 target, and twenty four stories run out in about eight days of daily use; roadmap 5.3 (the optional domain filter) also waits on that coverage.
+3. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
+4. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
 
 **Definition of done for V1** — the deployed static site renders the hero and the search ritual; a day offers at most three deterministic, reload-stable topics; accepting logs history and advances the 90-day count; the 30-day history is viewable and filterable; the web visibly evolves; both light and dark modes work; reduced motion is fully functional; keyboard and screen-reader paths work; and every performance budget in MCD §8 is met.
 
@@ -719,7 +744,7 @@ npm install            # 221 packages
 npm run dev            # serves http://127.0.0.1:5173/
 npm run verify         # THE gate: typecheck + content:check + test + docs:check + build
 npm run typecheck      # tsc --noEmit, covers src/, scripts/, vite.config.ts
-npm run test           # vitest run — 190 tests
+npm run test           # vitest run — 215 tests
 npm run docs:check     # fail if this document has drifted from the repository
 npm run build          # vite build → dist/
 npm run content:validate   # validate the library; exits non-zero on error
@@ -734,6 +759,7 @@ npm run content:report     # coverage, difficulty spread, bundle size
 - The engine is pure by contract, and `src/engine/purity.test.ts` now fails the suite when an import crosses the boundary.
 - The DOM carries the product; the canvas enhances it. No 3D exists yet, and the ritual works without it.
 - The search is a 900 ms pause until Phase 6 replaces it with the world's search; the controller boundary (delay injected, skipped under reduced motion) is what makes that swap safe.
+- The drawer is a pure view over the store: it keeps no copy, so a midnight roll or another tab's write shows up while it is open. Its filters partition the log, with Explored meaning not yet learned.
 - Time-on-site is a failure signal. Features that increase session length oppose the product's purpose.
 - AI is used at authoring time only. Nothing AI-generated ships without human review.
 - Node ≥ 22.6 is required: the authoring scripts rely on native type stripping, which forbids `enum` and `namespace` in shared code.
@@ -741,4 +767,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v3.0. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v3.1. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
