@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   announcementOf,
+  beatFor,
   checkDay,
   findStory,
   INITIAL_UI,
@@ -367,5 +368,46 @@ describe('announcementOf', () => {
 
     expect(spoken).toContain(view.topic.title)
     expect(spoken).toContain("This is today's story")
+  })
+})
+
+describe('beatFor', () => {
+  it('asks the stage for the beat the ritual is already in', async () => {
+    const { store } = makeStore()
+    const library = [makeTopic('one'), makeTopic('two'), makeTopic('three')]
+
+    expect(beatFor(viewOf(store, library))).toBe('idle')
+
+    await findStory({ store, library, wait: immediateWait })
+
+    const offered = viewOf(store, library)
+
+    if (offered.kind !== 'story') {
+      throw new Error('expected a story')
+    }
+
+    expect(beatFor(offered)).toBe('revealing')
+
+    takeStory(store, offered.topic.id)
+
+    const taken = viewOf(store, library)
+
+    if (taken.kind !== 'story') {
+      throw new Error('expected a story')
+    }
+
+    expect(beatFor(taken)).toBe('resting')
+  })
+
+  it('asks for the search while a search runs', () => {
+    const { store } = makeStore()
+    const searching = ritualView({
+      state: store.getState(),
+      library: [makeTopic('one')],
+      ui: { phase: 'searching', failure: null, sealed: false },
+      newDay: false,
+    })
+
+    expect(beatFor(searching)).toBe('searching')
   })
 })

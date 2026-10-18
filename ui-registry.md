@@ -247,6 +247,27 @@ Last updated: 2026-10-18
 
 `.visually-hidden` is the project's one screen-reader-only utility, added with this component. Use it whenever the visual form of a value is a symbol rather than words, and keep the words in the same element.
 
+### Stage
+
+File: `src/world/Scene.tsx` and `src/world/Web.tsx`, mounted by `src/app/WorldLayer.tsx`, styled by `.world`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Layer | `position: fixed; inset: 0; z-index: -1; pointer-events: none` |
+| Canvas | transparent clear, so `body` supplies the black; `frameloop="demand"` |
+| Strands | one line segment buffer, `var(--anansi-lavender)` mixed toward `var(--anansi-jet)` by depth, opacity `0.5`, no depth write |
+| Beads | one instanced mesh; mostly `var(--anansi-ink)` and `var(--anansi-dim)`, `var(--anansi-strawberry)` on every ninth, `var(--anansi-lavender)` on every fourth |
+| Density | 11 beads and 20 strands at day 0, 71 and 140 at day 90; the phone tier draws 9 and 16 |
+| Colour source | `src/world/palette.ts` reads the `--anansi-*` custom properties at mount; `src/world/purity.test.ts` forbids a colour literal there |
+| Accessibility | the container is `role="img"` with `aria-label` from `descriptionFor`; the canvas inside it is presentational |
+| Motion | none yet; frames are drawn only on an explicit invalidation |
+| Accent usage | none in the web yet: yellow is reserved for the reveal filament in step 6.6 |
+
+**Pattern notes:**
+
+The stage sits below the text and above the body background. The CSS decorative web (`.web`) still paints on top of it, and is retired once the scene carries the frame alone. A new 3D object takes its colour from `palette.ts` and anchors to a node in the graph; it is never positioned by hand.
+
 ## Components to fix
 
 None. Every component matches the baseline it was read from, and the one duplication the audit flagged (the easing curve written three times) was resolved on 2026-10-17 by the motion tokens `--anansi-ease`, `--anansi-duration`, and `--anansi-entrance`.

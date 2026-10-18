@@ -16,6 +16,7 @@ import { offerNextStory } from '@/engine/offer'
 import { ENGINE_TUNING } from '@/engine/tuning'
 import type { Offer, OfferBecause } from '@/engine/types'
 import { dayRng, type JourneySnapshot, type JourneyStore } from '@/state'
+import type { Beat } from '@/world/stage'
 
 /** The pause that marks the search before the world exists (spec 0003). */
 export const SEARCH_DELAY_MS = 900
@@ -143,6 +144,23 @@ export function ritualView({ state, library, ui, newDay }: RitualViewInput): Rit
     sealed: taken || dayStory || ui.sealed,
     count: journeyCount(state.progress),
   }
+}
+
+/**
+ * Which stage beat a view asks for (spec 0005, AC-9). The stage never owns a
+ * transition; it is told the beat the ritual is already in. `celebrating` is
+ * reserved for the acceptance choreography in 6.6, so a taken story rests.
+ */
+export function beatFor(view: RitualView): Beat {
+  if (view.kind === 'searching') {
+    return 'searching'
+  }
+
+  if (view.kind !== 'story') {
+    return 'idle'
+  }
+
+  return view.taken ? 'resting' : 'revealing'
 }
 
 /** What the live region says for a view. Kept beside the view so they agree. */

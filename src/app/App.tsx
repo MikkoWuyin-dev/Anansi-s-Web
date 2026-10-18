@@ -3,8 +3,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { HistoryPanel } from '@/app/HistoryPanel'
 import { historyView, type HistoryFilter } from '@/app/history'
 import { Ritual } from '@/app/RitualScreen'
+import { WorldLayer } from '@/app/WorldLayer'
 import {
   announcementOf,
+  beatFor,
   checkDay,
   findStory,
   INITIAL_UI,
@@ -16,7 +18,7 @@ import {
 import { journeyStore } from '@/app/store'
 import { useJourney } from '@/app/useJourney'
 import { getLibrary } from '@/content/loader'
-import { watchStorageEvents, type JourneyStore } from '@/state'
+import { daysCompleted, watchStorageEvents, type JourneyStore } from '@/state'
 
 /** The search beat is skipped when the person asked for less motion (AC-13). */
 function prefersReducedMotion(): boolean {
@@ -131,6 +133,12 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
 
   return (
     <main className="shell">
+      <WorldLayer
+        beat={beatFor(view)}
+        days={daysCompleted(state.progress)}
+        seed={`${state.identity.clientId}:${state.progress.journeyStart}`}
+      />
+
       <Web />
 
       <button

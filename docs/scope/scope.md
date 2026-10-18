@@ -169,10 +169,21 @@ spec [0004](../specs/0004-history-drawer-and-journey-count.md)
 
 The world thickens the display segment of the thread that already runs. It is built here because it choreographs beats that must exist first.
 
-### 8. The canvas and the web graph · needs a decision
+### 8. The canvas and the web graph · in-progress
 A single lazy loaded canvas behind the already painted shell, holding a generated web of nodes and strands that a returning visitor can recognise as theirs.
 **Done when:** the hero and the action are usable before the scene loads; an idle page draws no frames; the same seed reproduces the same graph exactly; and objects can anchor to nodes.
-- [ ] Design it (spec): `/architect canvas and web graph`
+code in `src/world/`, `src/app/`
+
+spec [0005](../specs/0005-the-3d-stage.md)
+
+- [x] Design it (spec): `/architect the stage`
+- [x] Build it: `/develop the stage`
+  - [x] The palette reader, the beats, and the description, with the source scan that forbids colour literals (AC-9, AC-18, AC-19)
+  - [x] The seeded graph: density, strands, anchors (AC-5, AC-6, AC-7)
+  - [x] The lazy canvas after first paint, on demand rendering, the WebGL probe, the boundary, the pixel ratio cap (AC-1, AC-2, AC-3, AC-4, AC-15, AC-17)
+  - [x] The graph drawn as one strand buffer and one bead mesh (AC-2, AC-6, AC-7)
+- [ ] Verify it: `/check verify the stage`
+- [ ] Test it: `/test the stage`
 
 ### 9. The authored camera and the search · needs a decision
 The search as an event rather than a spinner: the web wakes, Anansi moves between strands and returns with a story, framed throughout by a camera the visitor never drives.

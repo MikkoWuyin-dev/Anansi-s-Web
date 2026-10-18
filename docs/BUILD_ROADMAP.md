@@ -273,19 +273,23 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 6 — The 3D world
+## Phase 6 — The 3D world (IN PROGRESS, 6.1 and 6.2 built 2026-10-18)
 
 **Goal:** the stage. Authored camera, user touches but never navigates.
 
-### 6.1 The canvas
+**Spec:** `docs/specs/0005-the-3d-stage.md` (captured 2026-10-18) settles the stage's composition, the phone tier, Anansi's resting presence, the reveal beat, the graph contract, the five beats, and the palette rule. Steps 6.1 and 6.2 are built; 6.3 to 6.10 remain.
+
+### 6.1 The canvas — BUILT 2026-10-18
 
 - **Deliverable:** a single lazy-loaded R3F `<Canvas>` behind the already-painted DOM shell, with `frameloop="demand"` and explicit invalidation.
 - **Done when:** the hero and action are usable before the scene loads, and an idle page does not draw frames.
+- **Built:** `src/world/Scene.tsx` is the lazy chunk and `src/app/WorldLayer.tsx` arms it two frames after the shell paints, behind a WebGL probe and an error boundary. Verified in a browser: the arm marker landed after the first contentful paint, a two second idle reading moved the frame counter by zero, a search advanced it once per beat, the canvas took no pointer event, and the shell bundle stayed at 56.43 kB gzip.
 
-### 6.2 The web graph
+### 6.2 The web graph — BUILT 2026-10-18
 
 - **Deliverable:** a generated graph of nodes and strands, seeded deterministically from the journey so a returning user's web is theirs (MCD §4 rule 4).
 - **Done when:** the same seed reproduces the same graph exactly, and objects can anchor to nodes.
+- **Built:** `src/world/graph.ts` draws the web as plain data (no three.js) from `clientId` and `journeyStart`: 11 beads and 20 strands at the start, 71 and 140 at ninety days, 9 and 16 in the phone tier, with anchors for the objects to come. `src/world/Web.tsx` renders it as one line segment buffer and one instanced mesh. 13 tests pin determinism (by geometry, not the seed label), the density curve, reachability, the caps, and the anchors.
 
 ### 6.3 The camera rig
 
