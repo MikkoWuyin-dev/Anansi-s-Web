@@ -19,6 +19,7 @@ import { journeyStore } from '@/app/store'
 import { useJourney } from '@/app/useJourney'
 import { getLibrary } from '@/content/loader'
 import { daysCompleted, watchStorageEvents, type JourneyStore } from '@/state'
+import { CELEBRATE_MS } from '@/world/choreography'
 
 /** The search beat is skipped when the person asked for less motion (AC-13). */
 function prefersReducedMotion(): boolean {
@@ -40,6 +41,9 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   const state = useJourney(store)
   const [ui, setUi] = useState<RitualUi>(INITIAL_UI)
   const [newDay, setNewDay] = useState(false)
+  // The web answers once when a story is kept, then settles (spec 0005, AC-9).
+  const [celebrating, setCelebrating] = useState(false)
+  const celebrateTimer = useRef<number | null>(null)
   // The drawer's narrowing controls are session state: closing keeps them,
   // a reload starts again at All with no query (spec 0004, AC-10).
   const [historyOpen, setHistoryOpen] = useState(false)
@@ -122,7 +126,36 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
     })
   }, [library, store])
 
+  useEffect(
+    () => () => {
+      if (celebrateTimer.current !== null) {
+        window.clearTimeout(celebrateTimer.current)
+      }
+    },
+    [],
+  )
+
   const view = ritualView({ state, library, ui, newDay })
+  const take = useCallback((): void => {
+    if (view.kind !== 'story') {
+      return
+    }
+
+    takeStory(store, view.topic.id)
+
+    if (prefersReducedMotion()) {
+      return
+    }
+
+    setCelebrating(true)
+
+    if (celebrateTimer.current !== null) {
+      window.clearTimeout(celebrateTimer.current)
+    }
+
+    celebrateTimer.current = window.setTimeout(() => setCelebrating(false), CELEBRATE_MS)
+  }, [store, view])
+
   const history = historyView({
     state,
     library,
@@ -134,7 +167,7 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   return (
     <main className="shell">
       <WorldLayer
-        beat={beatFor(view)}
+        beat={beatFor(view, celebrating)}
         days={daysCompleted(state.progress)}
         seed={`${state.identity.clientId}:${state.progress.journeyStart}`}
       />
@@ -165,11 +198,7 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
         onFind={search}
         onReroll={search}
         onRetry={search}
-        onTake={() => {
-          if (view.kind === 'story') {
-            takeStory(store, view.topic.id)
-          }
-        }}
+        onTake={take}
         onMarkLearned={() => {
           if (view.kind === 'story') {
             learnStory(store, view.topic.id)

@@ -256,19 +256,95 @@ Last updated: 2026-10-18
 | -------- | ----- |
 | Layer | `position: fixed; inset: 0; z-index: -1; pointer-events: none` |
 | Canvas | transparent clear, so `body` supplies the black; `frameloop="demand"` |
-| Strands | one line segment buffer, `var(--anansi-lavender)` mixed toward `var(--anansi-jet)` by depth, opacity `0.5`, no depth write |
+| Strands | one line segment buffer, `var(--anansi-lavender)` mixed toward `var(--anansi-jet)` by depth, opacity `0.44` at rest and up to `0.72` while the web wakes, no depth write |
 | Beads | one instanced mesh; mostly `var(--anansi-ink)` and `var(--anansi-dim)`, `var(--anansi-strawberry)` on every ninth, `var(--anansi-lavender)` on every fourth |
-| Density | 11 beads and 20 strands at day 0, 71 and 140 at day 90; the phone tier draws 9 and 16 |
+| Density | 11 beads and 20 strands at day 0, 71 and 140 at day 90; the phone tier draws 9 and 16. Objects are five at day 0 and twenty at day 90 on desktop, ten at day 90 on a phone |
+| Reveal | one yellow filament from the hub to the first anchor, opacity springing to `0.9` on `revealing` and `celebrating`, mounted at zero opacity so its shader compiles with the stage |
 | Colour source | `src/world/palette.ts` reads the `--anansi-*` custom properties at mount; `src/world/purity.test.ts` forbids a colour literal there |
 | Accessibility | the container is `role="img"` with `aria-label` from `descriptionFor`; the canvas inside it is presentational |
 | Camera | one authored frame per beat from `src/world/camera.ts`; eases at a stiffness of 6 and stops once framed; the phone tier pulls every frame back by 1.45 |
-| Pointer tilt | bounded to 0.14 world units horizontally and 0.084 vertically, zero under reduced motion; there is no orbit, drag, wheel, or scroll listener |
-| Motion | the camera only; every frame is drawn on an explicit invalidation, and an idle page draws none |
-| Accent usage | none in the web yet: yellow is reserved for the reveal filament in step 6.6 |
+| Pointer tilt | a spring, bounded to 0.14 world units horizontally and 0.084 vertically (0.098 and 0.059 on touch), zero under reduced motion; there is no orbit, drag, wheel, or scroll listener |
+| Motion | springs only: tilt, each object family's bounded impulse, Anansi's travel, and the wake and filament. Every frame is drawn on an explicit invalidation, and an idle page draws none |
+| Accent usage | yellow appears exactly twice in the world and nowhere else: the reveal filament and Anansi's two small eyes |
 
 **Pattern notes:**
 
-The stage sits below the text and above the body background. The CSS decorative web (`.web`) still paints on top of it, and is retired once the scene carries the frame alone. A new 3D object takes its colour from `palette.ts` and anchors to a node in the graph; it is never positioned by hand.
+The stage sits below the text and above the body background. The CSS decorative web (`.web`) still paints on top of it as the refused-context fallback; retiring it is a follow-up. A new 3D object takes its colour from `palette.ts` and anchors to a node in the graph; it is never positioned by hand.
+
+An object family is one primitive and one instanced mesh: variation is proportions, rotation, tone and phase, never a new geometry per instance. The quiet tones come first and the accents are rare, so the world never competes with the story.
+
+### Object families
+
+File: `src/world/families.ts`, drawn by `src/world/Objects.tsx`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Families | five: clock (torus), key (cylinder), eye (sphere), book (box), planet (octahedron) |
+| Instances | one to four per family, by thirty day steps of the journey; one to two on a phone |
+| Scale | `0.064` to `0.11` base per family, then `0.78` to `1.22` per instance, with a family's own proportion axis |
+| Tones | quietest first: `var(--anansi-dim)` and `var(--anansi-lavender)` dominate; `var(--anansi-ink)` and `var(--anansi-strawberry)` are the rare accents |
+| Placement | the node's position plus `z + 0.1..0.18` and at most `0.06` of drift, so nothing floats free of the web |
+| Motion | a bounded spring impulse on every beat: scale `+3.5%` at most and a `0.012` radian lean, back to rest; none under reduced motion |
+| Draw calls | five, one per family, regardless of how many instances the journey has earned |
+
+**Pattern notes:**
+
+A new family is a row in `FAMILIES`, a form, a base scale, a tone list, and a generator branch. Do not add a bespoke mesh, and do not let a family's first tone be its loudest.
+
+### Anansi
+
+File: `src/world/Anansi.tsx`, with his numbers in `src/world/spider.ts`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Body | two spheres: abdomen `var(--anansi-lavender)`, head `var(--anansi-ink)` |
+| Eyes | two `0.0065` spheres, `var(--anansi-yellow)`, level and mirrored |
+| Legs | eight, four a side, two cylinder segments each, ink upper and dim lower |
+| Rest | the hub, lifted `0.14` above the web |
+| Gait | alternating phases, swing `±1` and lift up to `0.5`, both zero at a hold |
+| Travel | a spring from the hub to two anchors and home over the 1400 ms search; none under reduced motion |
+| Isolation | only `Scene.tsx` imports him, and only `Anansi.tsx` imports `spider.ts`; `purity.test.ts` fails otherwise |
+
+**Pattern notes:**
+
+His character is motion, not detail: the legs stop when he looks, the body dips `0.012` into a stride, and the travel has weight. A modelled replacement changes `Anansi.tsx` only.
+
+### Search choreography
+
+File: `src/world/choreography.ts`, consumed by `Anansi.tsx`, `Web.tsx`, and `src/app/ritual.ts`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Duration | `1400 ms`, the reveal's wait; `900 ms` of `celebrating` after a story is kept |
+| Route | hub, first anchor, middle anchor, hub, with holds at 0.10, 0.46 and 0.80 |
+| Easing | cubic in and out inside each keyframe; the position itself is a spring's progress, never a linear tween |
+| Wake | `0` at idle and resting, `1` searching, `0.6` revealing, `0.9` celebrating |
+| Reduced motion | the pose is the hub at every progress, stride `0`; the ritual skips the wait |
+
+**Pattern notes:**
+
+The choreography decides nothing about the story: the engine's answer is recorded before the route begins, and the reveal is simply held for the movement. Keep that separation; the stage must never become the chooser.
+
+### Reduced motion and the phone
+
+File: `src/app/WorldLayer.tsx`, `src/world/camera.ts`, `src/world/Objects.tsx`, `src/world/Anansi.tsx`
+Last updated: 2026-10-18
+
+| Property | Class |
+| -------- | ----- |
+| Reduced motion source | `WorldLayer` reads the media query once and passes a boolean down; no world module touches `matchMedia` |
+| Camera | snaps to the beat frame, never tilts, listener not attached |
+| Objects | amplitude `0`, no beat impulse |
+| Anansi | stays at the hub, stride `0` |
+| Web | state changes with `set` rather than a spring, so nothing travels |
+| Description | identical to the animated path: it follows the beat either way |
+| Phone breakpoint | `(max-width: 40rem)`, the stylesheet's own |
+| Phone density | graph thinned by two spokes and two rings; objects capped at two per family |
+| Phone frames | every camera frame pulled back `1.45`; pixel ratio capped at `1.5` |
+| Touch tilt | `0.7` of the mouse bound, same spring |
 
 ## Components to fix
 

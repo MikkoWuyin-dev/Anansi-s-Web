@@ -1,35 +1,35 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { useThree } from '@react-three/fiber'
+import { useSpring } from '@react-spring/three'
+import { useFrame, useThree } from '@react-three/fiber'
 import {
   BufferGeometry,
   Color,
   Float32BufferAttribute,
   InstancedMesh,
+  Line,
+  LineBasicMaterial,
   Matrix4,
   Quaternion,
   Vector3,
 } from 'three'
 
-import { graphFor, type WebGraph } from '@/world/graph'
+import { webWake } from '@/world/choreography'
+import type { WebGraph as Graph } from '@/world/graph'
 import { documentPalette, type Palette } from '@/world/palette'
 import type { Beat } from '@/world/stage'
 
 export interface WebGraphProps {
-  /** `${clientId}:${journeyStart}`; the same seed draws the same web. */
-  readonly seed: string
-  /** Days completed, which sets the density. */
-  readonly days: number
-  /** The phone tier draws fewer strands and caps the pixel ratio. */
+  readonly graph: Graph
   readonly mobile: boolean
-  /** The beat the ritual is in. The stage repaints when it changes. */
   readonly beat: Beat
+  readonly reducedMotion: boolean
 }
 
 /**
  * Every strand as one line segment buffer, sagging at its midpoint: one draw
  * call for the whole web, which is what keeps the idle frame cheap.
  */
-function strandGeometry(graph: WebGraph, palette: Palette): BufferGeometry {
+function strandGeometry(graph: Graph, palette: Palette): BufferGeometry {
   const positions: number[] = []
   const colours: number[] = []
 
@@ -69,6 +69,30 @@ function strandGeometry(graph: WebGraph, palette: Palette): BufferGeometry {
   return geometry
 }
 
+/**
+ * The one filament the reveal is allowed (spec 0005): a single yellow thread
+ * from the hub to the strand Anansi found the story on. It sags like every
+ * other strand, so it belongs to the web rather than sitting over it.
+ */
+function revealGeometry(graph: Graph): BufferGeometry {
+  const hub = graph.nodes[0]?.position ?? [0, 0, 0]
+  const node = graph.nodes[graph.anchors[0] ?? 0] ?? graph.nodes[0]
+  const [x, y, z] = node?.position ?? hub
+  const mid: [number, number, number] = [
+    (hub[0] + x) / 2,
+    (hub[1] + y) / 2 - 0.18,
+    (hub[2] + z) / 2,
+  ]
+
+  const geometry = new BufferGeometry()
+  geometry.setAttribute(
+    'position',
+    new Float32BufferAttribute([...hub, ...mid, x, y, z], 3),
+  )
+
+  return geometry
+}
+
 /** A bead's colour: mostly the quiet neutrals, with two sparse accents. */
 function beadColour(index: number, depth: number, palette: Palette): string {
   if (index % 9 === 0) {
@@ -82,7 +106,7 @@ function beadColour(index: number, depth: number, palette: Palette): string {
   return depth > 0.2 ? palette.ink : palette.dim
 }
 
-function paintBeads(mesh: InstancedMesh, graph: WebGraph, palette: Palette): void {
+function paintBeads(mesh: InstancedMesh, graph: Graph, palette: Palette): void {
   const matrix = new Matrix4()
   const place = new Vector3()
   const scale = new Vector3()
@@ -107,16 +131,40 @@ function paintBeads(mesh: InstancedMesh, graph: WebGraph, palette: Palette): voi
 }
 
 /**
- * The web itself, inside the canvas. It derives its graph from the seed and
- * the journey count, and it repaints only when one of those changes or the
- * beat moves on: no component here runs a frame loop (spec 0005, AC-4).
+ * The web itself, inside the canvas. It derives nothing: the graph arrives
+ * from the scene, so the same graph feeds the objects and Anansi. It wakes
+ * when a search begins and springs back when one ends, and it draws no frames
+ * of its own (spec 0005, AC-3, AC-4, AC-12).
  */
-export function WebGraph({ seed, days, mobile, beat }: WebGraphProps) {
+export function WebGraph({ graph, mobile, beat, reducedMotion }: WebGraphProps) {
   const invalidate = useThree((state) => state.invalidate)
   const palette = useMemo(() => documentPalette(), [])
-  const graph = useMemo(() => graphFor({ seed, days, mobile }), [seed, days, mobile])
   const geometry = useMemo(() => strandGeometry(graph, palette), [graph, palette])
+  const filament = useMemo(() => {
+    const line = new Line(
+      revealGeometry(graph),
+      new LineBasicMaterial({
+        color: palette.yellow,
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        toneMapped: false,
+      }),
+    )
+
+    line.frustumCulled = false
+
+    return line
+  }, [graph, palette])
   const beads = useRef<InstancedMesh>(null)
+  const lines = useRef<LineBasicMaterial>(null)
+
+  const [spring, api] = useSpring(() => ({
+    wake: 0,
+    reveal: 0,
+    config: { tension: 130, friction: 26 },
+    onChange: () => invalidate(),
+  }))
 
   useLayoutEffect(() => {
     if (beads.current !== null) {
@@ -127,23 +175,62 @@ export function WebGraph({ seed, days, mobile, beat }: WebGraphProps) {
   }, [graph, palette, invalidate])
 
   useEffect(() => {
-    invalidate()
-  }, [beat, invalidate])
+    const next = {
+      wake: reducedMotion && beat === 'searching' ? 0.5 : webWake(beat),
+      reveal: beat === 'revealing' || beat === 'celebrating' ? 1 : 0,
+    }
 
-  useEffect(() => () => geometry.dispose(), [geometry])
+    // Reduced motion still says what the web is doing, but changes at once
+    // rather than travelling there (AC-14).
+    if (reducedMotion) {
+      api.set(next)
+      invalidate()
+    } else {
+      api.start(next)
+    }
+  }, [api, beat, invalidate, reducedMotion])
+
+  useFrame(() => {
+    // The spring writes these on every tick; the frame is what shows them.
+    if (lines.current !== null) {
+      lines.current.opacity = 0.44 + spring.wake.get() * 0.28
+    }
+
+    filament.material.opacity = spring.reveal.get() * 0.9
+  })
+
+  useEffect(
+    () => () => {
+      geometry.dispose()
+      filament.geometry.dispose()
+      filament.material.dispose()
+    },
+    [geometry, filament],
+  )
 
   return (
     <>
       <lineSegments geometry={geometry} frustumCulled={false}>
-        <lineBasicMaterial vertexColors transparent opacity={0.5} depthWrite={false} toneMapped={false} />
+        <lineBasicMaterial
+          ref={lines}
+          vertexColors
+          transparent
+          opacity={0.44}
+          depthWrite={false}
+          toneMapped={false}
+        />
       </lineSegments>
+
+      {/* The filament is always mounted at zero opacity, so its shader
+          compiles with the stage rather than hitching the reveal. */}
+      <primitive object={filament} />
 
       <instancedMesh
         ref={beads}
         args={[undefined, undefined, graph.nodes.length]}
         frustumCulled={false}
       >
-        <sphereGeometry args={[1, 12, 8]} />
+        <sphereGeometry args={[1, mobile ? 8 : 12, mobile ? 6 : 8]} />
         <meshBasicMaterial toneMapped={false} />
       </instancedMesh>
     </>

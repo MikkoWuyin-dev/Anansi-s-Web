@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { useSpring } from '@react-spring/three'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Vector3 } from 'three'
 
@@ -8,7 +9,7 @@ import {
   SETTLE_STIFFNESS,
   settled,
   smoothing,
-  type PointerTilt,
+  tiltFor,
 } from '@/world/camera'
 import type { Beat } from '@/world/stage'
 
@@ -24,17 +25,26 @@ export interface CameraRigProps {
  * It eases toward the beat's frame and stops, then asks for no more frames
  * until something changes. There is no orbit control, no wheel or scroll
  * listener, and no drag: the pointer may tilt the view by a bounded offset and
- * nothing more. Under reduced motion it snaps to the frame and never tilts.
+ * nothing more, and the tilt itself is a spring so it has weight. Under reduced
+ * motion it snaps to the frame and never tilts.
  */
 export function CameraRig({ beat, mobile, reducedMotion }: CameraRigProps) {
   const camera = useThree((state) => state.camera)
   const invalidate = useThree((state) => state.invalidate)
   const frame = useMemo(() => frameFor(beat, mobile), [beat, mobile])
 
-  const pointer = useRef<PointerTilt>({ x: 0, y: 0 })
   const look = useRef(new Vector3(frame.target[0], frame.target[1], frame.target[2]))
   const wanted = useRef(new Vector3())
   const wantedLook = useRef(new Vector3())
+
+  // The tilt is a spring, not a value copied from the pointer: releasing it
+  // lets the view settle rather than stop dead.
+  const [tilt, api] = useSpring(() => ({
+    x: 0,
+    y: 0,
+    config: { tension: 110, friction: 24 },
+    onChange: () => invalidate(),
+  }))
 
   useEffect(() => {
     if (reducedMotion || typeof window === 'undefined') {
@@ -42,23 +52,26 @@ export function CameraRig({ beat, mobile, reducedMotion }: CameraRigProps) {
     }
 
     const onPointerMove = (event: PointerEvent): void => {
-      // Touch belongs to the mobile tier, which has its own pass in 6.9.
-      if (event.pointerType !== 'mouse') {
-        return
-      }
+      const next = tiltFor(
+        event.pointerType,
+        event.clientX,
+        event.clientY,
+        window.innerWidth,
+        window.innerHeight,
+      )
 
-      pointer.current = {
-        x: (event.clientX / window.innerWidth) * 2 - 1,
-        y: -((event.clientY / window.innerHeight) * 2 - 1),
+      if (next !== null) {
+        api.start(next)
+        // The spring writes to the camera inside `useFrame`, so the first
+        // frame of the tilt has to be asked for here.
+        invalidate()
       }
-
-      invalidate()
     }
 
     window.addEventListener('pointermove', onPointerMove, { passive: true })
 
     return () => window.removeEventListener('pointermove', onPointerMove)
-  }, [invalidate, reducedMotion])
+  }, [api, invalidate, reducedMotion])
 
   useEffect(() => {
     invalidate()
@@ -67,7 +80,7 @@ export function CameraRig({ beat, mobile, reducedMotion }: CameraRigProps) {
   useFrame((_, delta) => {
     const [px, py, pz] = frame.position
     const [tx, ty, tz] = frame.target
-    const [ox, oy] = parallaxOffset(pointer.current, reducedMotion)
+    const [ox, oy] = parallaxOffset({ x: tilt.x.get(), y: tilt.y.get() }, reducedMotion)
 
     wanted.current.set(px + ox, py + oy, pz)
     wantedLook.current.set(tx + ox * 0.5, ty + oy * 0.5, tz)
@@ -84,8 +97,14 @@ export function CameraRig({ beat, mobile, reducedMotion }: CameraRigProps) {
 
     camera.lookAt(look.current)
 
-    // Keep drawing only while there is somewhere left to go.
-    if (!settled(camera.position, wanted.current) || !settled(look.current, wantedLook.current)) {
+    // Keep drawing only while there is somewhere left to go, including the
+    // tilt spring's own settling.
+    if (
+      tilt.x.isAnimating ||
+      tilt.y.isAnimating ||
+      !settled(camera.position, wanted.current) ||
+      !settled(look.current, wantedLook.current)
+    ) {
       invalidate()
     }
   })

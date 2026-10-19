@@ -273,11 +273,11 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 6 — The 3D world (IN PROGRESS, 6.1 to 6.3 built 2026-10-18)
+## Phase 6 — The 3D world (BUILT 2026-10-18, 6.1 to 6.10)
 
 **Goal:** the stage. Authored camera, user touches but never navigates.
 
-**Spec:** `docs/specs/0005-the-3d-stage.md` (captured 2026-10-18) settles the stage's composition, the phone tier, Anansi's resting presence, the reveal beat, the graph contract, the five beats, and the palette rule. Steps 6.1 and 6.2 are built; 6.3 to 6.10 remain.
+**Spec:** `docs/specs/0005-the-3d-stage.md` (captured 2026-10-18) settles the stage's composition, the phone tier, Anansi's resting presence, the reveal beat, the graph contract, the five beats, and the palette rule. Steps 6.1 to 6.10 were built the same day.
 
 ### 6.1 The canvas — BUILT 2026-10-18
 
@@ -297,40 +297,47 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Done when:** there is no free orbit and no scroll-to-travel, and every beat is framed by design.
 - **Built:** `src/world/camera.ts` fixes one frame per beat and holds the parallax bound as plain data; `src/world/CameraRig.tsx` eases toward the frame, stops once framed, and asks for no more frames until something changes. No orbit control, drag, wheel or scroll listener exists, and `purity.test.ts` fails the suite if one appears. Verified live: a search moved the camera from the idle frame to the revealing frame and stopped, the idle page still drew zero frames, and the pointer never moved the camera beyond 0.14 world units. The phone tier pulls every frame back by 1.45. Touch tilt remains for 6.9.
 
-### 6.4 Object families
+### 6.4 Object families — BUILT 2026-10-18
 
 - **Deliverable:** one seeded parametric generator per family (clocks, keys, eyes, books, and so on) returning geometry, material, and idle-motion parameters. No one-off meshes, no imported assets.
 - **Done when:** N instances of a family are visibly varied yet unmistakably the same family.
+- **Built:** `src/world/families.ts` generates clocks, keys, eyes, books, and planets from one primitive each, varying proportions, turn, tone, and phase; `src/world/Objects.tsx` draws every family as one instanced mesh, so the five families cost five draw calls however full the web is. 12 tests pin determinism, the shared primitive, the variation, the anchoring, and the density arc.
 
-### 6.5 Anansi
+### 6.5 Anansi — BUILT 2026-10-18
 
 - **Deliverable:** a procedural Anansi whose personality is carried by motion rather than mesh detail, isolated in his own component so a modelled asset can replace him later without touching anything else.
 - **Done when:** his component is swappable in isolation and nothing else imports his internals.
+- **Built:** `src/world/spider.ts` holds the eight-leg layout, the alternating gait, and the body dip as plain data; `src/world/Anansi.tsx` draws two body spheres, two eyes, and eight two-segment legs, and only `Scene.tsx` imports him. `purity.test.ts` fails the suite if any other module imports `spider.ts` or `Anansi.tsx`.
 
-### 6.6 The search choreography
+### 6.6 The search choreography — BUILT 2026-10-18
 
 - **Deliverable:** the search as an event, not a spinner: the web activates, Anansi moves between strands, investigates, returns with a topic.
 - **Done when:** the search reads as a searching spider, and the frame time stays **≤ 16 ms** on mid-range desktop.
+- **Built:** `src/world/choreography.ts` is a 1400 ms keyframed route from the hub to two anchors and home, with holds where the gait stops, and a wake value per beat. `ritual.ts` now decides the story at once and holds the reveal for that duration, replacing the 900 ms pause; `celebrating` is used for 900 ms after a story is kept. Verified live: Anansi crossed to the first anchor at 208 ms and the second at 407 ms, held, and was home by 907 ms; the filament appeared on the reveal. 118 `gl.render` calls during a search measured 1.2 ms median, 2.1 ms p95, 2.5 ms max on Intel UHD Graphics.
 
-### 6.7 Density mapping
+### 6.7 Density mapping — BUILT 2026-10-18
 
 - **Deliverable:** stage richness as a pure function of journey progress, matching the early, middle, and late arc (PRD §20).
 - **Done when:** an early journey renders sparse and a late one dense, from the same generator set.
+- **Built:** `src/world/density.ts` maps days completed to objects per family (one to four, one to two on a phone) and to the strength of a beat's impulse, alongside the graph's own node and strand counts. Verified live: zero days drew five objects and 40 strand vertices, forty five days drew ten and 140, sixty days fifteen and 226, from the same generators.
 
-### 6.8 Physical interaction
+### 6.8 Physical interaction — BUILT 2026-10-18
 
 - **Deliverable:** spring-based response throughout via react-spring: inertia, displacement, tension, rotation, depth, hover and click reactions. No linear tweens, and no decoration-only animation.
 - **Done when:** every significant animation reinforces the living-web feeling, and any that does not is removed.
+- **Built:** `@react-spring/three` now drives the camera's pointer tilt, a bounded beat impulse through each object family (displacement, rotation and scale), Anansi's travel, and the web's wake and reveal. The stage receives no pointer events by rule, so its hover reaction is the camera tilt and its click reactions are the beat changes; the DOM controls keep their own. The physics was verified live: a touch tilt moved the camera 0.095 units and settled inside the 0.098 bound, and the idle page returned to zero frames after it.
 
-### 6.9 Reduced motion and mobile
+### 6.9 Reduced motion and mobile — BUILT 2026-10-18
 
 - **Deliverable:** a still but fully functional web under `prefers-reduced-motion` (search resolves in place), and a concept-preserving mobile tier with reduced density and touch-first equivalents.
 - **Done when:** the reduced-motion path carries identical information and affordances, and the mobile tier keeps all three beats intact.
+- **Built:** `WorldLayer` reads both media queries and passes them down. Under reduced motion Anansi stays at the hub, the objects take no impulse, the web changes state without travelling, the camera snaps, and no tilt listener is attached, while the description still follows the beat. On a phone the graph and objects are thinned, frames are pulled back, the pixel ratio is capped, and touch tilts by 0.7 of the mouse bound. Verified live at 390 × 844: ten objects at sixty days, `z 11.02` frames, touch tilt 0.095, all three beats intact. The reduced motion branch itself remains unit-tested rather than observed (R17).
 
-### 6.10 The scene budget
+### 6.10 The scene budget — BUILT 2026-10-18
 
 - **Deliverable:** a measured scene chunk.
 - **Done when:** the scene chunk is **≤ 350 kB gzip**, the pre-scene shell is **≤ 250 kB gzip**, and idle GPU is effectively zero.
+- **Built:** the production build emits a 57.14 kB gzip shell and a 238.02 kB gzip scene, both inside budget. Idle GPU is zero frames over two second readings at zero, forty five, and sixty days; a search drew 118 frames with a 1.2 ms median render call. Lighthouse and first usable interaction remain Phase 9's measurements.
 
 ---
 

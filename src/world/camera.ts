@@ -46,6 +46,9 @@ export const PARALLAX_RISE = 0.6
 /** How quickly the camera eases toward its frame. */
 export const SETTLE_STIFFNESS = 6
 
+/** A thumb moves the view less than a mouse, so a drag cannot swing it. */
+export const TOUCH_TILT = 0.7
+
 /** How close counts as framed, so the stage can stop drawing. */
 export const SETTLE_EPSILON = 0.002
 
@@ -57,6 +60,35 @@ export interface PointerTilt {
 
 export function clampPointer(value: number): number {
   return Math.min(1, Math.max(-1, Number.isFinite(value) ? value : 0))
+}
+
+/**
+ * The tilt a pointer event asks for, normalised to `-1..1`. Mouse, pen and
+ * touch all tilt (the phone tier's equivalent), and anything else is ignored.
+ * A phone uses a smaller factor so a thumb cannot swing the whole frame.
+ */
+export function tiltFor(
+  pointerType: string,
+  clientX: number,
+  clientY: number,
+  width: number,
+  height: number,
+): PointerTilt | null {
+  if (pointerType !== 'mouse' && pointerType !== 'pen' && pointerType !== 'touch') {
+    return null
+  }
+
+  if (width <= 0 || height <= 0) {
+    return null
+  }
+
+  const factor = pointerType === 'touch' ? TOUCH_TILT : 1
+
+  return {
+    // `+ 0` keeps a centred axis from surfacing as negative zero.
+    x: clampPointer((clientX / width) * 2 - 1) * factor + 0,
+    y: clampPointer(-((clientY / height) * 2 - 1)) * factor + 0,
+  }
 }
 
 /** The frame for a beat, pulled back on the phone tier. */

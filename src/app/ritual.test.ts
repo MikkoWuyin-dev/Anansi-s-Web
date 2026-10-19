@@ -111,6 +111,21 @@ describe('findStory', () => {
     expect(pauses).toBe(0)
   })
 
+  it('decides and records before the search choreography finishes', async () => {
+    const { store } = makeStore()
+    let offeredDuringWait = false
+
+    await findStory({
+      store,
+      library: [makeTopic('one')],
+      wait: async () => {
+        offeredDuringWait = store.getState().day.offeredTopicIds.length === 1
+      },
+    })
+
+    expect(offeredDuringWait).toBe(true)
+  })
+
   it('reports a thrown search without recording anything', async () => {
     const { store } = makeStore()
 
@@ -397,6 +412,7 @@ describe('beatFor', () => {
     }
 
     expect(beatFor(taken)).toBe('resting')
+    expect(beatFor(taken, true)).toBe('celebrating')
   })
 
   it('asks for the search while a search runs', () => {

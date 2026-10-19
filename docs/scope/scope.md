@@ -26,10 +26,10 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 5 | Taking a story, and the journey count | Slice 1 | in-progress |
 | 6 | An accessible loop with honest states | Slice 1 | in-progress |
 | 7 | The history drawer | Slice 2 | in-progress |
-| 8 | The canvas and the web graph | Slice 3 | planned |
-| 9 | The authored camera and the search | Slice 3 | planned |
-| 10 | Object families, Anansi, and density | Slice 3 | planned |
-| 11 | The world without motion, and on mobile | Slice 3 | planned |
+| 8 | The canvas and the web graph | Slice 3 | in-progress |
+| 9 | The authored camera and the search | Slice 3 | in-progress |
+| 10 | Object families, Anansi, and density | Slice 3 | in-progress |
+| 11 | The world without motion, and on mobile | Slice 3 | in-progress |
 | 12 | Light mode and the sun and moon switch | Slice 4 | planned |
 | 13 | The evolving web and hidden interactions | Slice 5 | planned |
 | 14 | Measured performance and accessibility | Quality | planned |
@@ -195,19 +195,39 @@ spec [0005](../specs/0005-the-3d-stage.md)
 - [x] Design it (spec): `/architect the stage`
 - [ ] Build it: `/develop the stage`
   - [x] The authored camera: five beat frames, a bounded pointer tilt, no orbit or scroll travel (AC-8, AC-9)
-  - [ ] The search choreography: the web wakes, Anansi moves and returns, and the 900 ms pause retires (AC-9, AC-12, AC-13)
+  - [x] The search choreography: the web wakes, Anansi moves and returns, and the 900 ms pause retires (AC-9, AC-12, AC-13)
 - [ ] Verify it: `/check verify the stage`
 - [ ] Test it: `/test the stage`
 
-### 10. Object families, Anansi, and density · needs a decision
+### 10. Object families, Anansi, and density · in-progress
 One seeded generator per object family, a procedural Anansi whose character comes from motion rather than mesh detail, and a web whose richness follows the journey.
 **Done when:** many instances of one family look varied yet unmistakably related; Anansi's component can be swapped for a modelled asset without touching anything else; and an early journey renders sparse while a late one renders dense from the same generators.
-- [ ] Design it (spec): `/architect object families Anansi and density`
+code in `src/world/`
 
-### 11. The world without motion, and on mobile · needs a decision
+spec [0005](../specs/0005-the-3d-stage.md)
+
+- [x] Design it (spec): `/architect the stage`
+- [ ] Build it: `/develop the stage`
+  - [x] Five seeded families, one primitive each, drawn as five instanced meshes (AC-10)
+  - [x] Anansi isolated in his own component, with nothing else importing his internals (AC-11)
+  - [x] Objects per family and beat impulse as a pure function of the journey (AC-6, AC-10)
+- [ ] Verify it: `/check verify the stage`
+- [ ] Test it: `/test the stage`
+
+### 11. The world without motion, and on mobile · in-progress
 The stage has to stay fully understandable when motion is reduced, and has to survive on a phone without losing the mystery.
 **Done when:** under reduced motion the web is still and the search resolves in place with identical information and affordances; the mobile tier keeps all three beats intact with touch first interactions; and the scene chunk stays at or under 350 kB gzip with the shell at or under 250 kB gzip.
-- [ ] Design it (spec): `/architect reduced motion and mobile world`
+code in `src/world/`, `src/app/`
+
+spec [0005](../specs/0005-the-3d-stage.md)
+
+- [x] Design it (spec): `/architect the stage`
+- [ ] Build it: `/develop the stage`
+  - [x] Reduced motion: static objects, Anansi at the hub, the search in place, no tilt (AC-14)
+  - [x] The phone tier: thinner graph and objects, pulled-back frames, touch tilt (AC-15)
+  - [x] The measured budgets: shell 57.14 kB, scene 238.02 kB gzip, zero idle frames (AC-16)
+- [ ] Verify it: `/check verify the stage`
+- [ ] Test it: `/test the stage`
 
 ## Slice 4: modes
 

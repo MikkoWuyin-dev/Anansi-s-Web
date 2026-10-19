@@ -16,10 +16,14 @@ import { offerNextStory } from '@/engine/offer'
 import { ENGINE_TUNING } from '@/engine/tuning'
 import type { Offer, OfferBecause } from '@/engine/types'
 import { dayRng, type JourneySnapshot, type JourneyStore } from '@/state'
+import { SEARCH_MS } from '@/world/choreography'
 import type { Beat } from '@/world/stage'
 
-/** The pause that marks the search before the world exists (spec 0003). */
-export const SEARCH_DELAY_MS = 900
+/**
+ * The length of the stage's search (spec 0005, AC-12). It replaces the old
+ * 900 ms pause: the reveal waits for the choreography, not for a timer.
+ */
+export const SEARCH_DURATION_MS = SEARCH_MS
 
 export const SEARCH_FAILED_MESSAGE =
   'Anansi lost the thread before he could bring a story. Nothing was recorded.'
@@ -151,7 +155,7 @@ export function ritualView({ state, library, ui, newDay }: RitualViewInput): Rit
  * transition; it is told the beat the ritual is already in. `celebrating` is
  * reserved for the acceptance choreography in 6.6, so a taken story rests.
  */
-export function beatFor(view: RitualView): Beat {
+export function beatFor(view: RitualView, celebrating = false): Beat {
   if (view.kind === 'searching') {
     return 'searching'
   }
@@ -160,7 +164,11 @@ export function beatFor(view: RitualView): Beat {
     return 'idle'
   }
 
-  return view.taken ? 'resting' : 'revealing'
+  if (view.taken) {
+    return celebrating ? 'celebrating' : 'resting'
+  }
+
+  return 'revealing'
 }
 
 /** What the live region says for a view. Kept beside the view so they agree. */
@@ -220,8 +228,10 @@ function defaultWait(ms: number): Promise<void> {
 }
 
 /**
- * Ask for the day's next story. The pause comes first so the search has a
- * beat; with reduced motion there is no artificial wait, and the announced
+ * Ask for the day's next story. The engine decides at once, so a failure is
+ * known before the search finishes, and the reveal then waits for the stage's
+ * choreography rather than for a dead pause (spec 0005, AC-12). Under reduced
+ * motion there is no wait: the search resolves in place and the announced
  * message carries the same meaning.
  */
 export async function findStory({
@@ -231,9 +241,7 @@ export async function findStory({
   reducedMotion = () => false,
   offer = offerNextStory,
 }: RitualDeps): Promise<SearchOutcome> {
-  if (!reducedMotion()) {
-    await wait(SEARCH_DELAY_MS)
-  }
+  let outcome: SearchOutcome
 
   try {
     const snapshot = store.getState()
@@ -246,15 +254,20 @@ export async function findStory({
     })
 
     if (result.kind === 'none') {
-      return { ok: true, kind: 'none', reason: result.reason }
+      outcome = { ok: true, kind: 'none', reason: result.reason }
+    } else {
+      store.getState().offer(result.topic.id)
+      outcome = { ok: true, kind: 'story' }
     }
-
-    store.getState().offer(result.topic.id)
-
-    return { ok: true, kind: 'story' }
   } catch {
     return { ok: false, message: SEARCH_FAILED_MESSAGE }
   }
+
+  if (!reducedMotion()) {
+    await wait(SEARCH_DURATION_MS)
+  }
+
+  return outcome
 }
 
 /** Take an offered story. The store refuses anything it did not offer. */

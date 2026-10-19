@@ -60,7 +60,9 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function count(base: number, days: number, per: number, max: number): number {
-  return clamp(base + Math.floor(Math.max(days, 0) / per), 0, max)
+  const safe = Number.isFinite(days) ? Math.max(days, 0) : 0
+
+  return clamp(base + Math.floor(safe / per), 0, max)
 }
 
 export function spokeCount(days: number, mobile: boolean): number {

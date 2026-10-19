@@ -1,7 +1,12 @@
+import { useMemo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 
+import { Anansi } from '@/world/Anansi'
 import { CameraRig } from '@/world/CameraRig'
 import { frameFor } from '@/world/camera'
+import { graphFor } from '@/world/graph'
+import { Objects } from '@/world/Objects'
+import { objectCount } from '@/world/families'
 import { WebGraph } from '@/world/Web'
 import type { Beat } from '@/world/stage'
 
@@ -20,6 +25,12 @@ export interface SceneProps {
  */
 export default function Scene({ seed, days, mobile, beat, reducedMotion }: SceneProps) {
   const idle = frameFor('idle', mobile)
+  const graph = useMemo(() => graphFor({ seed, days, mobile }), [seed, days, mobile])
+  const objects = objectCount(days, mobile)
+  // The hook is created once, so it reads the count through a ref rather than
+  // capturing the first render's count (the phone tier arrives after mount).
+  const objectsNow = useRef(objects)
+  objectsNow.current = objects
 
   return (
     <Canvas
@@ -36,14 +47,17 @@ export default function Scene({ seed, days, mobile, beat, reducedMotion }: Scene
 
         if (import.meta.env.DEV) {
           // A development hook, so the browser pass can prove that an idle
-          // page draws nothing, that the web reached the renderer, and where
-          // the camera is framed. Production builds drop this branch.
+          // page draws nothing, what the web reached the renderer, where the
+          // camera is framed, and how many objects the journey earned.
+          // Production builds drop this branch.
           ;(
             window as unknown as {
               __anansiStage?: {
                 frames: () => number
                 drawn: () => { lines: number; triangles: number; calls: number }
                 camera: () => [number, number, number]
+                objects: () => number
+                gl: () => typeof gl
               }
             }
           ).__anansiStage = {
@@ -58,12 +72,22 @@ export default function Scene({ seed, days, mobile, beat, reducedMotion }: Scene
               Math.round(camera.position.y * 1000) / 1000,
               Math.round(camera.position.z * 1000) / 1000,
             ],
+            objects: () => objectsNow.current,
+            gl: () => gl,
           }
         }
       }}
     >
       <CameraRig beat={beat} mobile={mobile} reducedMotion={reducedMotion} />
-      <WebGraph seed={seed} days={days} mobile={mobile} beat={beat} />
+      <WebGraph graph={graph} mobile={mobile} beat={beat} reducedMotion={reducedMotion} />
+      <Objects
+        graph={graph}
+        days={days}
+        mobile={mobile}
+        beat={beat}
+        reducedMotion={reducedMotion}
+      />
+      <Anansi graph={graph} beat={beat} mobile={mobile} reducedMotion={reducedMotion} />
     </Canvas>
   )
 }

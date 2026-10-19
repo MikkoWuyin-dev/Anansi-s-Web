@@ -2,7 +2,7 @@
 
 **Date**: 2026-10-18
 **Status**: In Progress
-**Built**: 2026-10-18 — steps 6.1 to 6.3: the lazy canvas, the seeded graph, and the authored camera, 45 tests
+**Built**: 2026-10-18 — steps 6.1 to 6.10: the lazy canvas, the seeded graph, the authored camera, five object families, a procedural Anansi, the search choreography, the springs, the reduced motion and touch tiers, and the measured budget; 86 world tests, 41 of them added after the camera
 
 ## Summary
 
@@ -234,10 +234,11 @@ Ordered as a Tracer Bullet, like every phase before it: the smallest end to end 
 
 ## Follow-up
 
-- [ ] The scene chunk's actual gzip size is measured in step 12, and the teardown's budget table gains a real number.
-- [ ] Frame time is measured on real hardware, not inferred, before AC-12 is claimed.
-- [ ] The CSS strand decorations are retired once the scene reads as the web.
-- [ ] `ui-registry.md` gains the stage's patterns after the camera pass.
+- [x] The scene chunk's actual gzip size is measured in step 12, and the teardown's budget table gains a real number: 238.02 kB, against a 57.14 kB shell.
+- [x] Frame time is measured on real hardware, not inferred, before AC-12 is claimed: 1.2 ms median, 2.1 ms p95, 2.5 ms max over 118 search renders on Intel UHD Graphics, 2026-10-18.
+- [ ] The CSS strand decorations are retired once the scene reads as the web; they remain as the fallback for a refused context.
+- [x] `ui-registry.md` gains the stage's patterns after the camera pass, and again after the objects, Anansi, and the search.
+- [ ] The reduced motion branch is observed live in a browser profile with the media query emulated, closing R17.
 
 ## References
 

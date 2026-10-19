@@ -10,6 +10,8 @@ import {
   SETTLE_EPSILON,
   settled,
   smoothing,
+  tiltFor,
+  TOUCH_TILT,
 } from '@/world/camera'
 import { BEATS } from '@/world/stage'
 
@@ -111,6 +113,34 @@ describe('the easing', () => {
 
   it('caps a long stall, so a hidden tab does not teleport the camera', () => {
     expect(smoothing(6, 0.1)).toBe(smoothing(6, 5))
+  })
+})
+
+describe('the pointer tilt', () => {
+  it('reads the centre of the viewport as no tilt', () => {
+    expect(tiltFor('mouse', 500, 400, 1000, 800)).toEqual({ x: 0, y: 0 })
+  })
+
+  it('reads the edges as the full bound, with the top as a positive rise', () => {
+    expect(tiltFor('mouse', 1000, 0, 1000, 800)).toEqual({ x: 1, y: 1 })
+    expect(tiltFor('mouse', 0, 800, 1000, 800)).toEqual({ x: -1, y: -1 })
+  })
+
+  it('clamps a pointer that reports past the viewport', () => {
+    expect(tiltFor('mouse', 4000, -4000, 1000, 800)).toEqual({ x: 1, y: 1 })
+  })
+
+  it('tilts less on touch, so a thumb cannot swing the frame', () => {
+    const touch = tiltFor('touch', 1000, 400, 1000, 800)
+
+    expect(tiltFor('pen', 1000, 400, 1000, 800)?.x).toBe(1)
+    expect(touch?.x).toBeCloseTo(TOUCH_TILT, 5)
+  })
+
+  it('ignores anything that is not a pointer, and a viewport with no area', () => {
+    expect(tiltFor('', 10, 10, 1000, 800)).toBeNull()
+    expect(tiltFor('mouse', 10, 10, 0, 800)).toBeNull()
+    expect(tiltFor('mouse', 10, 10, 1000, 0)).toBeNull()
   })
 })
 

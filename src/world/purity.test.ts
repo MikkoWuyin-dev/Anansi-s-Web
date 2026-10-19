@@ -21,18 +21,24 @@ const sources = readdirSync(directory)
 const imports = (source: string): string[] =>
   [...source.matchAll(/from\s+'([^']+)'/g)].map((match) => match[1] as string)
 
-const ALLOWED = /^(@\/(world|engine)\/|react$|three$|@react-three\/fiber$)/
+const ALLOWED = /^(@\/(world|engine)\/|react$|three$|@react-three\/fiber$|@react-spring\/three$)/
 
 describe('the world module boundary', () => {
   it('finds the world sources', () => {
     expect(sources.map((entry) => entry.name)).toEqual(
       expect.arrayContaining([
+        'Anansi.tsx',
         'CameraRig.tsx',
+        'Objects.tsx',
         'Scene.tsx',
         'Web.tsx',
         'camera.ts',
+        'choreography.ts',
+        'density.ts',
+        'families.ts',
         'graph.ts',
         'palette.ts',
+        'spider.ts',
         'stage.ts',
       ]),
     )
@@ -78,6 +84,24 @@ describe('the world module boundary', () => {
         name,
         orbit: false,
       })
+    }
+  })
+
+  it('keeps Anansi in his own component', () => {
+    for (const { name, source } of sources) {
+      if (name !== 'Anansi.tsx') {
+        expect({ name, internals: /from\s+'@\/world\/spider'/.test(source) }).toEqual({
+          name,
+          internals: false,
+        })
+      }
+
+      if (name !== 'Scene.tsx') {
+        expect({ name, component: /from\s+'@\/world\/Anansi'/.test(source) }).toEqual({
+          name,
+          component: false,
+        })
+      }
     }
   })
 
