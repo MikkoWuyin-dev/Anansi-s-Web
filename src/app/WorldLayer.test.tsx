@@ -6,8 +6,24 @@ import { descriptionFor, type Beat } from '@/world/stage'
 
 const SEED = 'client-one:2026-10-18'
 
-function render(beat: Beat = 'idle', days = 0, mode: 'light' | 'dark' = 'dark'): string {
-  return renderToStaticMarkup(<WorldLayer beat={beat} days={days} seed={SEED} mode={mode} />)
+function render(
+  beat: Beat = 'idle',
+  days = 0,
+  mode: 'light' | 'dark' = 'dark',
+  keptToday = false,
+): string {
+  const keptDays = Array.from({ length: days }, (_, index) => `2026-01-${index + 1}`).slice(0, 30)
+
+  return renderToStaticMarkup(
+    <WorldLayer
+      beat={beat}
+      days={days}
+      seed={SEED}
+      mode={mode}
+      keptDays={keptDays}
+      keptToday={keptToday}
+    />,
+  )
 }
 
 describe('the stage layer', () => {
@@ -35,5 +51,11 @@ describe('the stage layer', () => {
     for (const beat of ['idle', 'searching', 'revealing', 'celebrating', 'resting'] as const) {
       expect(render(beat, 90)).not.toMatch(/domain|difficulty|resurfac/i)
     }
+  })
+
+  it('names the weave once a story is kept, and never a count', () => {
+    expect(render('idle', 0)).not.toContain('story you kept')
+    expect(render('idle', 1)).toContain('story you kept')
+    expect(render('idle', 45)).not.toMatch(/\b45\b|forty five/i)
   })
 })

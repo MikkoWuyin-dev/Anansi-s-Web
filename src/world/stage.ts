@@ -41,8 +41,12 @@ export function descriptionFor(beat: Beat, days: number): string {
   switch (beat) {
     case 'idle':
       // No "in the dark": the description has to be true in both token sets
-      // (spec 0006), and the mode is not something the canvas reports.
-      return `A ${densityWord(days)} web. Anansi waits at its centre.`
+      // (spec 0006), and the mode is not something the canvas reports. The
+      // weave is named without a number, because the count belongs to the
+      // ritual's own text, not the world's (spec 0008, AC-6).
+      return days > 0
+        ? `A ${densityWord(days)} web, one strand for every story you kept. Anansi waits at its centre.`
+        : `A ${densityWord(days)} web. Anansi waits at its centre.`
     case 'searching':
       return 'Anansi is searching the web.'
     case 'revealing':
@@ -50,6 +54,6 @@ export function descriptionFor(beat: Beat, days: number): string {
     case 'celebrating':
       return 'The story is kept. The web answers.'
     case 'resting':
-      return 'The story is kept. The web settles until tomorrow.'
+      return "The story is kept. Its thread stays in the web until tomorrow."
   }
 }

@@ -363,14 +363,15 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 8 — Evolution and surprises
+## Phase 8 — Evolution and surprises (8.1 BUILT 2026-10-20)
 
-### 8.1 The evolving web
+### 8.1 The evolving web — BUILT 2026-10-20
 
 - **Deliverable:** accumulated history represented visually, so the user feels *"I built this."* Density is already a function of progress; this phase makes the accumulation legible.
 - **Done when:** a returning user can see their history in the world without reading a list.
+- **Built:** `src/world/kept.ts` turns each day in `acceptedDayKeys` into one standing thread and one knot, anchored to an existing node and running outward from the hub, seeded by the day itself so a day's thread never belongs to another. The tally is the source rather than the history, because history prunes at thirty days and the world must not lose its earliest marks: nothing new is stored, and an existing journey shows its past on the first frame. `Web.tsx` draws every thread in one line buffer and every knot in one instanced mesh, so the weave costs two draw calls however many days were kept, and the reveal filament holds at `0.45` while today's story is kept instead of fading to nothing. The canvas description names the weave without a number. Ten new tests (the generator's count, determinism, stability, ceiling, phone tier and filament floor, plus the markup's description). Verified live: an empty journey drew 28 calls, one kept day drew 30, and forty five day keys written into storage appeared immediately at the same 30 calls. Spec: `docs/specs/0008-the-evolving-web.md`.
 
-### 8.2 Hidden interactions
+### 8.2 Hidden interactions — NEEDS A DECISION
 
 - **Deliverable:** small surprises that reward curiosity (PRD §32): unexpected reactions, easter eggs, unusual hover states.
 - **Done when:** none of them can interfere with the core task, and the primary path is unchanged when they are removed.

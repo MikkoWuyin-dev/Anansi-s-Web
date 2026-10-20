@@ -5,17 +5,17 @@ working state, not requirements.
 
 ## Where the project is
 
-Phases 0 to 7 are complete. Phase 7 finished on 2026-10-20: 7.1 the light token set, 7.2 the sun
-and moon switch, and 7.3 the `/imprint` pass, which read `ui-registry.md` against the code and fixed
-three drifts. Everything through 7.3 is committed and pushed to `origin/main`.
+Phases 0 to 7 are complete, and Phase 8 is half done: 8.1, the evolving web, landed on 2026-10-20
+against spec 0008. 8.2, the hidden interactions, has not started because it is a product decision.
+Everything through 7.3 is committed; the 8.1 work is the commit that follows this handoff.
 
-- Specs: `docs/specs/0006-the-light-token-set.md` (built; AC-2 superseded) and
-  `docs/specs/0007-the-sun-and-moon-switch.md` (`Built`, 2026-10-20).
+- Specs: `0006-the-light-token-set.md` (built; AC-2 superseded), `0007-the-sun-and-moon-switch.md`
+  (built), and `0008-the-evolving-web.md` (`Built`, 2026-10-20).
 - Code: the mode is one authority on `<html data-mode>`; `src/state/mode.ts` stores the choice,
   `src/app/mode.ts` resolves and applies it, `src/app/ModeSwitch.tsx` is the button, `index.html`
   sets the attribute before the module loads.
-- Tests: 337 in 31 files — `src/app/` 85, `src/state/` 56, `src/world/` 87, `src/engine/` 44.
-- Records: teardown v3.8, MCD §§7 and 13, roadmap 7.1 to 7.3, the scope (feature 12 in progress),
+- Tests: 347 in 32 files — `src/app/` 86, `src/state/` 56, `src/world/` 96, `src/engine/` 44.
+- Records: teardown v3.9, MCD §§7 and 13, roadmap 8.1, the scope (feature 13 in progress),
   `ui-registry.md`, and this file were reconciled on 2026-10-20.
 
 ## The mode (specs 0006 and 0007)
@@ -36,6 +36,17 @@ three drifts. Everything through 7.3 is committed and pushed to `origin/main`.
   `startViewTransition` when it exists, and skips that under `prefers-reduced-motion`.
 - Three roles exist because the palette names hues, not jobs: `--anansi-surface`,
   `--anansi-action-edge` (the yellow fill is 1.06:1 on paper), `--anansi-lavender-text`.
+
+## The weave (spec 0008)
+
+- `src/world/kept.ts` derives one thread and one knot per day in `acceptedDayKeys`. The tally is the
+  source, never the history: history prunes at 30 days and the world must not lose its earliest marks.
+- The thread's geometry comes from `createRng(`${seed}:kept:${dayKey}`)`, so a day's mark is fixed for
+  a given web and adding a day never rewrites an earlier one. A thread carries a day key and a
+  position only, which is what keeps the hidden selection system out of the geometry.
+- `Web.tsx` draws every thread in one line buffer and every knot in one instanced mesh: two draw
+  calls at any day count (28 with none, 30 with one or forty five). `filamentRest` holds the reveal
+  filament at `0.45` while today is kept, and the description names the weave without a number.
 
 ## Phase 6 decisions worth keeping
 
@@ -60,8 +71,8 @@ they target three.js r186 while this project pins 0.169: check an API against th
 
 ## Verified on 2026-10-20
 
-- `npm run verify` → exit 0: typecheck, content check, 337 tests in 31 files, documentation check
-  (203 claims), build. Shell 57.74 kB gzip, scene 238.06 kB gzip, stylesheet 2.90 kB gzip.
+- `npm run verify` → exit 0: typecheck, content check, 347 tests in 32 files, documentation check
+  (206 claims), build. Shell 57.81 kB gzip, scene 238.49 kB gzip, stylesheet 2.90 kB gzip.
 - Switch pass (`127.0.0.1:5173`, storage cleared): the button was 44 × 44, named "Switch to light
   mode"; a press moved the document to light (`--anansi-surface #f2efe4`, `color-scheme: light`,
   `theme-color #f2efe4`), stored `{"version":1,"choice":"light"}`, kept focus, and renamed itself.
@@ -71,6 +82,12 @@ they target three.js r186 while this project pins 0.169: check an API against th
   `x 219–370, y 20–64` (hero at `y 286`); no horizontal overflow.
 - Colour scheme emulation in both directions still recolours the mounted canvas without a reload
   (the 7.1 pass), and the canvas label is mode-neutral.
+- The weave: an empty tally drew 28 calls and named no weave in the label; after taking the day's
+  story the label said the thread stays, and a reload drew 30 calls (the two extra are the kept
+  buffer and the knot mesh); forty five day keys written into the progress store drew the same 30
+  calls, so the retroactive path and the two call ceiling both hold. Idle settled back to zero
+  frames each time. Two mutation probes (a filament that never holds, a tally drawing a day twice)
+  each failed the suite and were reverted.
 
 ## Not verified, and why
 
@@ -85,8 +102,7 @@ on a real phone or in daylight.
 
 ## Next justified action
 
-Phase 8, the evolving web and hidden interactions, is the next phase and the first since Phase 5
-with no spec. Both of its steps are product decisions for the owner — what accumulated history
-should look like in the world, and which surprises are worth any risk to the ritual — so the next
-move is to ask, not to code. Phase 9's measured quality gates and the deployment are the work after
-that.
+Phase 8.2, the hidden interactions, is the one step left in Phase 8 and it is a product decision:
+which few surprises are worth the ritual's attention, since one that costs the ritual a moment is
+worse than none. Ask the owner, then spec them with one rule (nothing may block or delay the loop).
+Phase 9's measured quality gates and the deployment are the work after that.

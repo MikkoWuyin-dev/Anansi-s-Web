@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-20 (v3.8)
+- **Last updated:** 2026-10-20 (v3.9)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -63,6 +63,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 
 **v3.8 — 2026-10-20.** Roadmap 7.3 closed Phase 7. `ui-registry.md` was read against the code entry by entry: every component the app renders has an entry, the two token sets are recorded with the role each exists for, and the review is now dated at the top so a later pass can judge staleness. The pass found three drifts, all created this week: the page background was still recorded as `--anansi-black` where it had become `--anansi-surface`, the corner control was described as absolutely positioned after it moved into the `.controls` cluster, and the reduced-motion row predated the switch and the view transition. All three are corrected. Phase 8 is the next phase and the first since Phase 5 with no spec: its two steps are product decisions, so the next move is the owner's answers, not code.
 
+**v3.9 — 2026-10-20.** Roadmap 8.1 landed: the evolving web. `src/world/kept.ts` turns the journey's own tally into one standing thread and one knot per kept day, anchored to an existing node and running outward, so the page is a record rather than a readout. The threads come from `acceptedDayKeys` rather than the history, because history prunes at thirty days and the world must not lose its earliest marks; nothing new is stored, so an existing journey shows its past on the first frame. `Web.tsx` draws every thread in one line buffer and every knot in one instanced mesh, which is two draw calls however many days were kept; the reveal filament now holds at `0.45` while today's story is kept instead of fading to nothing, and the canvas description names the weave without a number. Ten new tests bring the suite to 347 in 32 files. Verified live at 1280 × 800 and 390 × 844: an empty journey drew 28 calls and said nothing about a weave, one kept day drew 30 and named the thread, and 45 days written into storage appeared immediately at the same 30 calls; the idle page settled to zero frames, and the build measures 57.81 kB gzip for the shell and 238.49 kB for the scene.
+
 ---
 
 ## 0. How to read this document
@@ -102,6 +104,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | CI | `.github/workflows/verify.yml` runs on every push and PR; first run green (2026-10-16) |
 | Documentation gate | `npm run docs:check` compares this document's counts, file lists, and tracked-state claims against the repository |
 | The 3D world (`src/world/`) | The lazy canvas, the seeded graph, the authored camera, five object families, Anansi, the search choreography, springs, and the reduced motion and touch tiers (spec 0005, 2026-10-18) |
+| The evolving web | **Built** (8.1, 2026-10-20): one standing thread and knot per kept day, derived from the journey's tally, in two extra draw calls |
 | Light and dark modes | **Built** — the light token set with surface, edge, and readable-lavender roles and an executable contrast contract (spec 0006, 7.1), and the sun and moon switch with the stored choice applied before the first paint and the system preference followed live (spec 0007, 7.2), both 2026-10-20 |
 | `ui-registry.md`, `memory.md`, `docs/scope/` | Present and tracked (2026-10-16) |
 
@@ -136,10 +139,10 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 
 ## 3. Repository map
 
-Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. By 2026-10-20 the 21 installed skill packs are tracked, so the working set the gate measures is 426 tracked files, all committed.
+Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. By 2026-10-20 the 21 installed skill packs are tracked, so the working set the gate measures is 429 tracked files, and the 21 packs account for 221 of them.
 
 ```
-C:\dev\Anansi's Web\                        426 tracked files in the gate's working set (all committed; the 21 skill packs account for 221 of them)
+C:\dev\Anansi's Web\                        429 tracked files in the gate's working set (the 21 skill packs account for 221 of them)
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -157,7 +160,7 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
 │   ├── MCD.md                  341 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        529 lines   Phases 0 to 11, the build sequence
+│   ├── BUILD_ROADMAP.md        530 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
 │   ├── specs/
 │   │   ├── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
@@ -166,7 +169,8 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 │   │   ├── 0004-history-drawer-and-journey-count.md   242 lines   The drawer and count decision, 2026-10-18
 │   │   ├── 0005-the-3d-stage.md   the stage decision, 2026-10-18; all twelve stages built
 │   │   ├── 0006-the-light-token-set.md   the daylight set, 2026-10-20; activation superseded by 0007
-│   │   └── 0007-the-sun-and-moon-switch.md   the switch and the mode's authority, 2026-10-20
+│   │   ├── 0007-the-sun-and-moon-switch.md   the switch and the mode's authority, 2026-10-20
+│   │   └── 0008-the-evolving-web.md   one standing thread per kept day, 2026-10-20
 │   ├── scope/
 │   │   └── scope.md            living scope record
 │   └── system-teardown.html                Generated rendering (gitignored)
@@ -202,7 +206,7 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 │   │   ├── useJourney.ts       useSyncExternalStore over the vanilla store
 │   │   ├── store.ts            the one journey store the app reads
 │   │   ├── styles.css          palette and motion tokens, layout, reduced motion
-│   │   └── *.test.ts*          85 tests: the controllers, the markup purity, the drawer, the layer, the token sets, the mode, the switch
+│   │   └── *.test.ts*          86 tests: the controllers, the markup purity, the drawer, the layer, the token sets, the mode, the switch
 │   ├── content/
 │   │   ├── types.ts            THE schema: Domain, Tag, Difficulty, Topic
 │   │   ├── topics.generated.ts GENERATED bundle (committed, drift checked)
@@ -237,7 +241,8 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 │       ├── camera.ts           the five beat frames, the parallax rules, the tilt reader
 │       ├── palette.ts          colours read from the stylesheet tokens
 │       ├── stage.ts            the five beats and the accessibility description
-│       └── *.test.ts           87 tests: graph, camera, families, spider, choreography, density, palette, beats, boundary
+│       ├── kept.ts             one standing thread per kept day, derived from the tally
+│       └── *.test.ts           96 tests: graph, camera, families, spider, choreography, density, palette, beats, weave, boundary
 │
 └── skills/                     296 files, ~135,400 lines — 34 skills: 13 project plus 21 installed packs
 ```
@@ -247,9 +252,9 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 296 | 135,381 |
-| Project documentation | 4 | 2,679 |
+| Project documentation | 4 | 2,691 |
 | Authoring scripts | 11 | 2,603 |
-| Application source | 70 | 10,077 |
+| Application source | 72 | 10,409 |
 | Content (24 JSON + 1 README) | 25 | 335 |
 | Build config | 6 | ~160 |
 
@@ -303,7 +308,7 @@ exit 0
 
 Covers `src/`, `scripts/`, and `vite.config.ts`. `@types/node@24.19.2` is installed, pinned to the runtime major (Node 24.13), which fixed the v1 failure on `node:url`.
 
-### 5.3 Tests — PASS, 337 of them
+### 5.3 Tests — PASS, 347 of them
 
 ```
 $ npm run test        # vitest run
@@ -333,17 +338,18 @@ $ npm run test        # vitest run
  ✓ src/world/spider.test.ts              (  7 tests)
  ✓ src/world/palette.test.ts             (  5 tests)
  ✓ src/world/stage.test.ts               (  4 tests)
- ✓ src/app/WorldLayer.test.tsx           (  4 tests)
+ ✓ src/app/WorldLayer.test.tsx           (  5 tests)
  ✓ src/app/ModeSwitch.test.tsx           (  4 tests)
  ✓ src/world/density.test.ts             (  4 tests)
+ ✓ src/world/kept.test.ts                (  9 tests)
  ✓ src/engine/dayKey.test.ts             (  5 tests)
  ✓ src/engine/offer.statistical.test.ts  (  6 tests)
- Test Files  31 passed (31)
-      Tests  337 passed (337)
+ Test Files  32 passed (32)
+      Tests  347 passed (347)
 exit 0
 ```
 
-The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 56 arrive with it in v2.9 and the stored mode in v3.7; the app's 85 arrive with the ritual loop in v3.0, the history drawer in v3.1, the stage layer in v3.2, the celebrating beat in v3.4, the two token sets in v3.6, and the switch in v3.7 (19 controller tests, 16 markup for the ritual, 14 and 10 for the drawer, 4 for the layer, 9 for the tokens, 9 for the resolved mode, 4 for the switch; all markup through `react-dom/server`, which needs no DOM environment); the world's 87 arrive across steps 6.1 to 6.10 plus the mode read in 7.1 (13 graph, 22 camera, 5 palette, 8 boundary, 4 beats, 12 families, 12 choreography, 4 density, 7 spider). Twenty-two mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero), two against the stage (ignoring the graph seed, and giving two beats one sentence), one against the camera (dropping the pointer clamp), three against the stage's inhabitants (a family sharing another family's form, a phone cap raised to the desktop limit, and reduced motion leaving the hub), and two against the switch (a press that never flips the mode, and a pre-paint script that leaves the attribute unset). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
+The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 56 arrive with it in v2.9 and the stored mode in v3.7; the app's 85 arrive with the ritual loop in v3.0, the history drawer in v3.1, the stage layer in v3.2, the celebrating beat in v3.4, the two token sets in v3.6, and the switch in v3.7 (19 controller tests, 16 markup for the ritual, 14 and 10 for the drawer, 4 for the layer, 9 for the tokens, 9 for the resolved mode, 4 for the switch; all markup through `react-dom/server`, which needs no DOM environment); the world's 96 arrive across steps 6.1 to 6.10, the mode read in 7.1, and the weave in 8.1 (13 graph, 22 camera, 5 palette, 8 boundary, 4 beats, 12 families, 12 choreography, 4 density, 7 spider, 9 weave). Twenty-four mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero), two against the stage (ignoring the graph seed, and giving two beats one sentence), one against the camera (dropping the pointer clamp), three against the stage's inhabitants (a family sharing another family's form, a phone cap raised to the desktop limit, and reduced motion leaving the hub), two against the switch (a press that never flips the mode, and a pre-paint script that leaves the attribute unset), and two against the weave (a filament that never holds after a story is kept, and a tally that draws a day twice). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
 
 ### 5.4 Content gate — PASSES, and fails correctly
 
@@ -367,13 +373,13 @@ Proven to reject bad input rather than assumed to. Three probes were run:
 $ npm run build       # vite build
 dist/index.html                   2.03 kB │ gzip:   1.02 kB
 dist/assets/index-tqOk6PYv.css   11.93 kB │ gzip:   2.90 kB
-dist/assets/index-DIcrfKVd.js   178.91 kB │ gzip:  57.74 kB
-dist/assets/Scene-Ddffp8My.js   864.59 kB │ gzip: 238.06 kB
-✓ built in 7.98s
+dist/assets/index-CyaW4IzU.js   179.13 kB │ gzip:  57.81 kB
+dist/assets/Scene-D6V-4TFH.js   866.30 kB │ gzip: 238.49 kB
+✓ built in 7.57s
 exit 0
 ```
 
-The build emits two scripts: the shell (57.74 kB gzip) and the lazy scene (238.06 kB gzip). The scene's 864.59 kB raw is the three.js renderer, the springs, and the world's own modules, and it is fetched only after the shell has painted. Both are inside the MCD §8 budgets with room to spare. Against the single-mode v2.9 build, the second token set and the switch cost 1.83 kB more raw CSS (0.38 kB gzip) and 1.74 kB more raw shell (0.55 kB gzip), and nothing in the scene. The head grew by 0.70 kB raw (0.33 kB gzip): the inline pre-paint script arrived, and one `theme-color` meta left, which is the price of a first paint that honours a stored choice.
+The build emits two scripts: the shell (57.81 kB gzip) and the lazy scene (238.49 kB gzip). The scene's 866.30 kB raw is the three.js renderer, the springs, and the world's own modules, and it is fetched only after the shell has painted. Both are inside the MCD §8 budgets with room to spare. Against the single-mode v2.9 build, the second token set and the switch cost 1.83 kB more raw CSS (0.38 kB gzip) and 1.74 kB more raw shell (0.55 kB gzip), and nothing in the scene. The head grew by 0.70 kB raw (0.33 kB gzip): the inline pre-paint script arrived, and one `theme-color` meta left, which is the price of a first paint that honours a stored choice.
 
 ### 5.6 Dev server — SERVES
 
@@ -387,6 +393,8 @@ The rendered shell was inspected in a browser on 2026-10-18: the heading "What s
 On 2026-10-20 the colour scheme was emulated in Chromium at 1280 × 800, in both directions, on a page already running: switching to light turned the document to `--anansi-surface: #f2efe4` with `color-scheme: light`, and the mounted canvas recoloured in place, its strands and beads changing from the dark set's pale ink to the light set's dark ink with lavender strands, without a reload or a remount; switching back restored `#08090a` and `#edf1f1`. The action showed its jet boundary on paper, and the history drawer's heading, counts, search field, and empty state all read as dark text on paper. The idle page returned to zero new frames after the switch (two frames drawn for the change itself). The canvas label was read in both modes and now says "A sparse web. Anansi waits at its centre.", having dropped "in the dark" so a screen reader is not told the wrong mode. No console errors and no failed requests.
 
 The switch itself was exercised on 2026-10-20 at `127.0.0.1:5173`, with the stored choice cleared first. The button measured 44 × 44 and was named "Switch to light mode" in dark; a pointer press set `data-mode="light"`, moved `--anansi-surface` to `#f2efe4`, `color-scheme` to `light` and the one `theme-color` meta to `#f2efe4`, stored `{"version":1,"choice":"light"}`, and left focus on the control with the name now "Switch to dark mode". Tab from the body landed on the switch before History, and Enter flipped it back to dark, relabelled it and stored `{"version":1,"choice":"dark"}`. A reload with the stored light choice arrived with `data-mode="light"` already on the document, the moon showing (sun `opacity 0`, moon `1`), the theme colour `#f2efe4` and the label "Switch to dark mode". Layout: at 1280 × 800 the cluster sat at `x 1081–1232, y 40–84` while the hero began at `y 211`; at 390 × 844 it sat at `x 219–370, y 20–64` while the hero began at `y 286`; no horizontal overflow at either width.
+
+The weave was exercised on the same page on 2026-10-20. With an empty tally the stage drew 28 calls across 34 lines and the label said nothing about a kept story. After a revealed story was taken, the day's key arrived in `acceptedDayKeys` and the label moved to "The story is kept. Its thread stays in the web until tomorrow."; a reload then drew 30 calls and 36 lines, the two extra calls being the kept line buffer and the knot mesh. Forty five day keys written into the progress store drew the same 30 calls and 232 lines, which is the retroactive path and the two-call ceiling at once. The page settled back to zero new frames after each reload. The camera, the objects, and the ritual were unchanged.
 
 Three things could not be observed in that session and rest on the code and its tests instead: the crossfade and the glyph's turn (the preview webview was not being composited, so its CSS transitions sat at `currentTime 0` and no screenshot could be captured), and the focus ring (`:focus-visible` does not match while `document.hasFocus()` is false, which it was). The reduced-motion rules are now pinned by a test that reads the stylesheet, and the ring's contrast by `tokens.test.ts`; the animation itself and the actual first-paint frame remain unobserved (R17).
 
@@ -430,7 +438,7 @@ MISSING  README.md
 | Command | Result |
 |---|---|
 | `npm ci` | exit 0, 221 packages |
-| `npm run verify` | exit 0 — 337 tests passed, 31 files, `dist/` produced |
+| `npm run verify` | exit 0 — 347 tests passed, 32 files, `dist/` produced |
 | `npm run verify` with an injected `TS2322` in `src/app/App.tsx` | exit 2 — the gate fails a broken tree |
 | `npm run docs:check` with a claim edited to be false | exit 1 — the gate fails a drifted document |
 
@@ -442,7 +450,7 @@ MISSING  README.md
 
 ```
 $ npm run docs:check
-docs/SYSTEM_TEARDOWN.md: 204 claims compared against the repository, no drift
+docs/SYSTEM_TEARDOWN.md: 206 claims compared against the repository, no drift
 exit 0
 ```
 
@@ -593,6 +601,7 @@ All ten rules are live, and the build pass that covers them is 6.1 to 6.10:
 - **Rule 8, springs.** `@react-spring/three` drives the camera's pointer tilt, each object family's bounded beat impulse, Anansi's travel, and the web's wake and reveal. The one linear-looking path in the stage is Anansi's route, and that is a spring's progress through a keyframed path, not a tween of position.
 - **Rule 9, the search.** `choreography.ts` is 1400 ms of keyframed route across two anchor nodes, with holds where the gait stops. The ritual decides the story at once and holds the reveal for that choreography; the old 900 ms pause is gone. The web wakes during the search and carries one yellow filament on the reveal.
 - **Rule 10, reduced motion and the phone.** `WorldLayer` reads both media queries and passes them down. Under reduced motion Anansi stays at the hub, the objects take no impulse, the web changes state without travelling, the camera snaps, and the tilt listener is not attached. On a phone the graph and object density are thinned, the frames are pulled back, the pixel ratio is capped, and touch tilts less than a mouse.
+- **The weave (spec 0008).** `kept.ts` maps each day in `acceptedDayKeys` to one thread and one knot, seeded by `${seed}:kept:${dayKey}` so a day's thread is fixed for a given web. The threads are drawn in one line buffer and the knots in one instanced mesh, both static under reduced motion, and the reveal filament holds at `0.45` while today's story is kept. A thread carries a day key and a position only, so nothing about a topic can leak through the geometry.
 
 `src/world/` is still a leaf: it imports the engine's seeded stream, React, three, the renderer, and the springs, never the app, the state layer, or the content, and `purity.test.ts` enforces that, the no-literal rule, the absence of orbit controls, and Anansi's isolation. What the stage does not do: the DOM's searching dots remain as the fallback when WebGL is unavailable, and the CSS strand decoration in the shell is still there, because retiring it is a follow-up rather than a rule.
 
@@ -701,7 +710,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `memory.md` | Present | Written 2026-10-16 by `/remember save`; tracked |
 | `AGENTS.md` | Present | Written by the project owner; tracked |
 | `docs/specs/` | Present | Seven specs: the engine, the state, the loop, the drawer with the count, the 3D stage (2026-10-18), the light token set and the sun and moon switch (2026-10-20) |
-| `docs/scope/` | Present | 6 enrolled and 6 planned features, 11 in progress, 2026-10-20; tracked |
+| `docs/scope/` | Present | 6 enrolled and 5 planned features, 12 in progress, 2026-10-20; tracked |
 | `README.md` | **Missing** | Repo has a one-line description and no entry point |
 | `.github/workflows/verify.yml` | Present | Runs the gate on push and PR, satisfying MCD §6's "in CI" expectation; first run green 2026-10-16 |
 
@@ -719,6 +728,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Show 37 / 90 | **Working**: shown on the taken story and in the drawer header, absent until the first day is taken |
 | Find a story by domain | Deferred (roadmap 5.3) until the pool covers the domains |
 | Render the web, its objects, and Anansi | **Working**: the seeded web, five object families, and a procedural Anansi render behind the shell, framed by the authored camera, with density that follows the journey |
+| See the journey in the world | **Working**: one standing thread per kept day, derived from the tally, and a kept story's filament that stays lit |
 | Make the search an event | **Working**: a 1400 ms choreography wakes the web, carries Anansi across two strands and home, and holds the reveal for the single yellow filament |
 | Both modes, with a switch | **Working**: both token sets, the sun and moon switch, the stored choice applied before the first paint, the system preference followed when nothing is chosen, and the stage following the mode |
 | Ship to a host | Not built |
@@ -796,14 +806,14 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 | 5 — History and progress | **Complete** (5.1 and 5.2; 5.3 deferred), 25 new tests |
 | 6 — The 3D world | **Complete** (6.1 to 6.10), 86 world tests |
 | 7 — Modes and design system | **Complete** (7.1 to 7.3): both token sets, the switch, and the registry reviewed against the code |
-| 8 — Evolution and surprises | Not started; needs a product decision |
+| 8 — Evolution and surprises | **In progress**: 8.1 built (the weave); 8.2 not started |
 | 9 — Quality gates | Not started |
 | 10 — Hardening and deployment | Not started |
 | 11 — The accounts era | Deferred |
 
 **Recommended order of the next moves:**
 
-1. **Start Phase 8, the evolving web and hidden interactions.** It is the first phase since Phase 5 with no spec, and both steps are product decisions: what accumulated history should look like in the world, and which surprises are worth the risk to the ritual. Nothing should be coded before the owner has answered them.
+1. **Finish Phase 8 with the hidden interactions (8.2).** 8.1's weave is built against spec 0008; 8.2 is still a product decision, because a surprise that costs the ritual a moment is worse than none. Decide which few are worth having before coding them, then spec them together so they share one rule about never blocking the ritual.
 2. **Grow the content pool.** The library is 24 topics of the 300 target, and twenty four stories run out in about eight days of daily use; roadmap 5.3 (the optional domain filter) also waits on that coverage.
 3. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
 4. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
@@ -829,7 +839,7 @@ npm install            # 221 packages
 npm run dev            # serves http://127.0.0.1:5173/
 npm run verify         # THE gate: typecheck + content:check + test + docs:check + build
 npm run typecheck      # tsc --noEmit, covers src/, scripts/, vite.config.ts
-npm run test           # vitest run — 337 tests
+npm run test           # vitest run — 347 tests
 npm run docs:check     # fail if this document has drifted from the repository
 npm run build          # vite build → dist/
 npm run content:validate   # validate the library; exits non-zero on error
@@ -843,7 +853,8 @@ npm run content:report     # coverage, difficulty spread, bundle size
 - The project builds, typechecks, tests, and serves cleanly. The content gate is real and proven to fail correctly.
 - The engine is pure by contract, and `src/engine/purity.test.ts` now fails the suite when an import crosses the boundary.
 - The DOM carries the product; the canvas enhances it. The web renders behind the shell as a seeded graph, and the ritual is unchanged when the scene fails or never loads.
-- The stage draws only on demand: an idle page holds at zero frames, and the scene chunk (238.06 kB gzip) loads after the shell (57.74 kB) has painted.
+- The stage draws only on demand: an idle page holds at zero frames, and the scene chunk (238.49 kB gzip) loads after the shell (57.81 kB) has painted.
+- The world is a record: one standing thread and knot per kept day, derived from the journey's tally, drawn in two extra calls however many days were kept. A kept story leaves its filament lit at `0.45` instead of going dark.
 - The mode has one authority: `<html data-mode>`. The switch writes it, a pre-paint script sets it from `anansi:v1:mode` or the system preference, the DOM and the stage both read it, and every text pair and focus ring in both sets is checked against the WCAG minimum by `src/app/tokens.test.ts`.
 - The camera is authored, not driven: five beat frames, a bounded spring tilt (0.098 on touch), and no orbit or scroll travel. A search moves it from the idle frame to the revealing frame and it stops there.
 - The search is the world's search: a 1400 ms choreography across two strands, with the engine's decision made at once and the reveal held for the movement. Under reduced motion there is no wait and Anansi stays at the hub.
@@ -856,4 +867,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v3.8. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v3.9. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*

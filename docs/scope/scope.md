@@ -31,7 +31,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 10 | Object families, Anansi, and density | Slice 3 | in-progress |
 | 11 | The world without motion, and on mobile | Slice 3 | in-progress |
 | 12 | Light mode and the sun and moon switch | Slice 4 | in-progress |
-| 13 | The evolving web and hidden interactions | Slice 5 | planned |
+| 13 | The evolving web and hidden interactions | Slice 5 | in-progress |
 | 14 | Measured performance and accessibility | Quality | planned |
 | 15 | The display face and its network cost | Quality | planned |
 | 16 | Continuous integration and dependency decisions | Release | planned |
@@ -242,10 +242,13 @@ A swapped token set for daylight and a playful switch that belongs to the world 
 
 ## Slice 5: the web grows
 
-### 13. The evolving web and hidden interactions · needs a decision
+### 13. The evolving web and hidden interactions · in progress
 Make accumulated history visible so a returning visitor feels they built this, and add small rewards for curiosity that can never interfere with the ritual.
 **Done when:** a returning visitor can see their history in the world without reading a list; removing every hidden interaction leaves the main path unchanged; and none of them can interrupt the core task.
-- [ ] Design it (spec): `/architect evolving web and hidden interactions`
+- [x] Design the evolving web (spec): `docs/specs/0008-the-evolving-web.md` (2026-10-20); the hidden interactions are still to decide
+- [x] One standing thread and knot per kept day, from the tally, in two extra draw calls (8.1, 2026-10-20)
+- [x] A kept story's filament holds instead of fading, and the canvas description names the weave
+- [ ] Decide the hidden interactions (8.2): which few are worth the ritual's attention, then spec them
 
 ## Quality
 

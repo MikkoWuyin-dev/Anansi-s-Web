@@ -222,6 +222,8 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
         days={daysCompleted(state.progress)}
         seed={`${state.identity.clientId}:${state.progress.journeyStart}`}
         mode={mode}
+        keptDays={state.progress.acceptedDayKeys}
+        keptToday={state.day.acceptedTopicId !== null}
       />
 
       <Web />

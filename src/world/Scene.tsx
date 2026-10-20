@@ -7,6 +7,7 @@ import { frameFor } from '@/world/camera'
 import { graphFor } from '@/world/graph'
 import { Objects } from '@/world/Objects'
 import { objectCount } from '@/world/families'
+import { keptThreads } from '@/world/kept'
 import { documentPalette, type Mode } from '@/world/palette'
 import { WebGraph } from '@/world/Web'
 import type { Beat } from '@/world/stage'
@@ -19,6 +20,10 @@ export interface SceneProps {
   readonly reducedMotion: boolean
   /** The token set to draw with; changing it re-reads the palette (spec 0006). */
   readonly mode: Mode
+  /** Every day whose story was kept, from the journey's own tally (spec 0008). */
+  readonly keptDays: readonly string[]
+  /** Whether today's story is kept, which holds its filament (spec 0008). */
+  readonly keptToday: boolean
 }
 
 /**
@@ -26,12 +31,23 @@ export interface SceneProps {
  * asks for a frame (rule 2). This module is the lazy chunk, so three.js and
  * the renderer never enter the shell's bundle.
  */
-export default function Scene({ seed, days, mobile, beat, reducedMotion, mode }: SceneProps) {
+export default function Scene({
+  seed,
+  days,
+  mobile,
+  beat,
+  reducedMotion,
+  mode,
+  keptDays,
+  keptToday,
+}: SceneProps) {
   const idle = frameFor('idle', mobile)
   // One read for the whole stage, so a mode change recolours the web, the
   // objects, and Anansi together (spec 0006, AC-6).
   const palette = useMemo(() => documentPalette(), [mode])
   const graph = useMemo(() => graphFor({ seed, days, mobile }), [seed, days, mobile])
+  // The weave is derived, never stored: the tally is the record (spec 0008).
+  const kept = useMemo(() => keptThreads(graph, keptDays, mobile), [graph, keptDays, mobile])
   const objects = objectCount(days, mobile)
   // The hook is created once, so it reads the count through a ref rather than
   // capturing the first render's count (the phone tier arrives after mount).
@@ -91,6 +107,8 @@ export default function Scene({ seed, days, mobile, beat, reducedMotion, mode }:
         beat={beat}
         reducedMotion={reducedMotion}
         palette={palette}
+        kept={kept}
+        keptToday={keptToday}
       />
       <Objects
         graph={graph}

@@ -350,6 +350,29 @@ Last updated: 2026-10-20
 
 The glyph rotates rather than swapping, because a control that changes its own meaning should look like one thing turning over. The accessible name always states the destination: a button named by its current state tells a screen-reader user nothing about what pressing it does.
 
+### The weave
+
+File: `src/world/kept.ts`, drawn by `src/world/Web.tsx`
+Last updated: 2026-10-20
+
+| Property | Class |
+| -------- | ----- |
+| One mark | one thread and one knot per day in `acceptedDayKeys`, so the count is the weave |
+| Anchor | an existing graph node, picked by `createRng(`${seed}:kept:${dayKey}`)` |
+| Direction | outward from the hub, `0.35` to `0.65` world units, `0.7` of that on a phone |
+| Sag | `0.04` to `0.12`, the strand convention at its midpoint |
+| Colour | lavender pulled `0.35` toward jet, never quieter than the web's own strands |
+| Knot | `0.02` to `0.035`, `var(--anansi-dim)` |
+| Cost | one line buffer and one instanced mesh, two draw calls at any day count |
+| Motion | none of its own; the threads are placed once per weave and static under reduced motion |
+
+**Pattern notes:**
+
+The weave is derived, never stored: the journey's tally is the record, and the
+history drawer's thirty day window cannot be its source or the earliest marks
+would vanish. A mark that carries a day key and a position cannot leak the
+hidden selection system, which is why nothing about the story travels with it.
+
 ### Reduced motion and the phone
 
 File: `src/app/WorldLayer.tsx`, `src/world/camera.ts`, `src/world/Objects.tsx`, `src/world/Anansi.tsx`
