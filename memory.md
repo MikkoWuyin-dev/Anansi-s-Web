@@ -18,8 +18,18 @@ and the ritual is unchanged without them.
   `CameraRig.tsx`; `src/app/WorldLayer.tsx` arms the scene and reads both media queries;
   `src/app/ritual.ts` holds the reveal for the choreography and maps the `celebrating` beat.
 - Tests: 41 new, so `src/app/` holds 63, `src/world/` holds 86, and the suite is 308 in 27 files.
-- Records: teardown at v3.4, MCD §13, roadmap Phase 6, the scope, `ui-registry.md`, the knowledge
-  index, and `AGENTS.md` §14 all reconciled.
+- Records: teardown at v3.5, MCD §13, roadmap Phase 6, the scope, `ui-registry.md`, the knowledge
+  index, and `AGENTS.md` §12 and §14 all reconciled.
+
+## Installed reference skills (2026-10-18)
+
+On the owner's instruction, 13 `threejs-*` reference skills from `CloudAI-X/threejs-skills` were
+installed into `skills/` with the `skills` CLI, through a throwaway directory and copied in with LF
+endings. They are reference material for the stage's stack, not workflow skills, and no
+agent-specific directory or lockfile was added. They target three.js r186 while this project pins
+0.169, so check an API against the installed version before following an example. Together with the
+eight design/frontend packs, the folder now holds 34 skill directories; the teardown v3.5 records the working-set counts. The
+`threejs-react-three-fiber` and `threejs-performance` skills are the ones relevant to this scene.
 
 ## Decisions a reader cannot infer from the code alone
 

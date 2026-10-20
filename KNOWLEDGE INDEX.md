@@ -318,6 +318,8 @@ The repository's `skills/` directory contains reusable workflow procedures. Read
 
 `skills/` held 13 skill directories when this index was verified on 2026-10-17: `architect`, `audit`, `check`, `debug`, `develop`, `document`, `imprint`, `recover`, `remember`, `review`, `scope`, `sync`, `test`.
 
+Since then, 21 reference packs have been installed alongside them (2026-10-18): eight design and frontend packs, and thirteen `threejs-*` skills from `CloudAI-X/threejs-skills`. The three.js pack is reference material for the stage's stack rather than a workflow to follow; the 13 workflow skills above are still the project's process.
+
 ---
 
 ## 7. Session Continuity and Repository Memory

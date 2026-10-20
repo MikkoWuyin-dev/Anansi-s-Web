@@ -430,7 +430,7 @@ Do not treat a plausible answer unsupported by repository evidence as a pass.
 
 ## 12. Bundled Workflow Skills
 
-The `skills/` directory contains the project's agent-agnostic development workflow toolkit. Read the relevant skill's own instructions before using it; the descriptions below do not replace its actual procedure.
+The `skills/` directory contains the project's agent-agnostic development workflow toolkit (the 13 skills below). It also holds 21 installed reference packs added on 2026-10-18, including the `threejs-*` skills from `CloudAI-X/threejs-skills`; those are reference material and not part of the workflow. The three.js pack targets r186 while this project pins 0.169, so check an API against the installed version before following an example. Read the relevant skill's own instructions before using it; the descriptions below do not replace its actual procedure.
 
 - `architect` — structured discovery and build specifications.
 - `audit` — repository/context audit and agent instruction bootstrapping.

@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-18 (v3.4)
+- **Last updated:** 2026-10-18 (v3.5)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -55,6 +55,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 
 **v3.4 — 2026-10-18.** Phase 6 was finished: steps 6.4 to 6.10 were built, so the stage now has inhabitants, a choreographed search, springs, a reduced motion and touch tier, and a measured budget. `src/world/` gained the object families (`families.ts` and `Objects.tsx`), Anansi (`spider.ts` and `Anansi.tsx`), the search choreography (`choreography.ts`), and the progress-to-richness map (`density.ts`); `Web.tsx` gained the wake and the single yellow reveal filament, `CameraRig.tsx` gained a spring tilt and touch, and `Scene.tsx` now shares one graph across the web, the objects, and Anansi. `ritual.ts` no longer pauses on nothing: it decides at once and holds the reveal for the stage's 1400 ms search, and taking a story adds the `celebrating` beat for 900 ms. 41 new tests bring the world to 86 and the suite to 27 files and 308 tests. Verified in a browser: nine objects per family appeared at sixty days, Anansi crossed two anchors and came home, the web woke and threw a single yellow filament, the camera moved and stopped, the phone tier drew ten objects and answered a touch tilt inside the 0.098 bound, and an idle page still drew zero frames. The build measured 57.14 kB gzip for the shell and 238.02 kB for the scene, and 118 search renders on Intel UHD Graphics measured 1.2 ms median, 2.1 ms p95, 2.5 ms max, none over 16 ms. Three mutation probes (a family sharing another family's form, a phone cap raised to the desktop limit, and reduced motion leaving the hub) each failed the suite and were reverted byte for byte. What remains unverified is the reduced motion branch live (R17) and the object/anansi reduced-motion path beyond its unit tests.
 
+**v3.5 — 2026-10-18.** On the owner's instruction, the thirteen `threejs-*` reference skills from `CloudAI-X/threejs-skills` were installed into `skills/` with the `skills` CLI. They arrived through a throwaway install directory and were copied into the project's own skills folder with LF endings, so no agent-specific directory or lockfile was added to the repository. The pack is reference material for the stage's stack (fundamentals, geometry, materials, lighting, animation, interaction, loaders, shaders, postprocessing, textures, performance, the asset pipeline, and React Three Fiber), not one of the project's 13 workflow skills. It targets three.js r186 while this project pins 0.169, so its examples are guidance and any API should be checked against the installed version before use. The gate's working set grows to 417 files and 34 skills, and these figures are recorded below.
+
 ---
 
 ## 0. How to read this document
@@ -75,7 +77,7 @@ Every claim about the current state was produced by running commands in the repo
 
 **Anansi's Web** is a fully static, accountless, single-page 3D web experience that gives the user one intriguing topic per day to research and then explain aloud in their own words. It is a *discovery and articulation ritual*, not a learning platform. The north star in both design documents is *"make curiosity irresistible, then get out of the way"*, and — unusually for a consumer web product — **time-on-site is treated as a failure signal.**
 
-The design is ratified and mature: a Product Requirements Document (PRD v1.1) and a Master Context Document (MCD v1.0) that locks six architectural decisions and specifies the stack, the engine contract, the data schemas, performance budgets, and accessibility commitments. A bundled set of 21 workflow skills in `skills/` — 13 project skills plus eight untracked packs added on 2026-10-18 — defines the human-plus-agent process for building it.
+The design is ratified and mature: a Product Requirements Document (PRD v1.1) and a Master Context Document (MCD v1.0) that locks six architectural decisions and specifies the stack, the engine contract, the data schemas, performance budgets, and accessibility commitments. A bundled set of 34 workflow skills in `skills/` — the project's 13, plus 21 installed packs (eight design and frontend packs added on 2026-10-18, and thirteen `threejs-*` reference skills installed from `CloudAI-X/threejs-skills` on the owner's instruction) — defines the human-plus-agent process for building it.
 
 **Built so far:**
 
@@ -131,7 +133,7 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. On 2026-10-18 the working set also held eight untracked skill packs, added outside the Phase 6 task, which is why the total is higher than the 196 committed files.
 
 ```
-C:\dev\Anansi's Web\                        404 tracked files in the gate's working set (196 committed; the untracked skill packs account for the rest)
+C:\dev\Anansi's Web\                        417 tracked files in the gate's working set (196 committed; the 21 untracked skill packs account for the rest)
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -226,15 +228,15 @@ C:\dev\Anansi's Web\                        404 tracked files in the gate's work
 │       ├── stage.ts            the five beats and the accessibility description
 │       └── *.test.ts           86 tests: graph, camera, families, spider, choreography, density, palette, beats, boundary
 │
-└── skills/                     283 files, ~129,300 lines — 21 skills: 13 project plus eight untracked packs
+└── skills/                     296 files, ~135,400 lines — 34 skills: 13 project plus 21 installed packs
 ```
 
 **Weight distribution.** The repository's mass is still mostly prose and process, but the balance is shifting toward code.
 
 | Category | Files | Lines |
 |---|---|---|
-| Workflow skills | 283 | 129,291 |
-| Project documentation | 4 | 2,643 |
+| Workflow skills | 296 | 135,381 |
+| Project documentation | 4 | 2,645 |
 | Authoring scripts | 11 | 2,603 |
 | Application source | 63 | 9,217 |
 | Content (24 JSON + 1 README) | 25 | 335 |
@@ -600,7 +602,7 @@ The content budget holds with wide margin. The projection to 300 topics is a lin
 
 ### 7.10 The workflow skills system
 
-`skills/` holds a self-contained, agent-agnostic development workflow toolkit. The gate counts 283 files, ~129,300 lines, and 21 skills: the project's original 13, plus eight packs added on 2026-10-18 and not yet committed. It is a process layer, not application code.
+`skills/` holds a self-contained, agent-agnostic development workflow toolkit. The gate counts 296 files, ~135,400 lines, and 34 skills: the project's original 13, plus 21 installed packs — eight design and frontend packs added on 2026-10-18, and thirteen `threejs-*` reference skills installed from `CloudAI-X/threejs-skills` (via `npx skills add`) on the owner's instruction. The three.js pack is reference material for the stage's stack, not part of the 13-step workflow. It is a process layer, not application code.
 
 | Skill | Purpose |
 |---|---|
@@ -825,4 +827,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v3.4. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v3.5. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
