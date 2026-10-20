@@ -134,10 +134,10 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 
 ## 3. Repository map
 
-Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. By 2026-10-20 the 21 installed skill packs are tracked, so the working set the gate measures is 426 tracked files: 419 committed, and the seven that spec 0007 adds, untracked until the commit that follows this assessment.
+Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. By 2026-10-20 the 21 installed skill packs are tracked, so the working set the gate measures is 426 tracked files, all committed.
 
 ```
-C:\dev\Anansi's Web\                        426 files in the gate's working set (419 committed; the 21 skill packs account for 221 of them)
+C:\dev\Anansi's Web\                        426 tracked files in the gate's working set (all committed; the 21 skill packs account for 221 of them)
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -392,16 +392,16 @@ Three things could not be observed in that session and rest on the code and its 
 
 ```
 $ git log --oneline -4
+4291c31 Give the mode a switch, and put the mode on the document
 0ee4823 Give the page a daylight token set the stage can follow
 7ca0133 Add the thirteen three.js reference skills beside the workflow toolkit
 6a4a86c Record the Phase 6 state and the reference packs now in the skill folder
-c86edb8 Fill the stage with objects, Anansi, and a search worth watching
 
 $ git rev-list --left-right --count origin/main...main
 0	0
 ```
 
-Branch `main` tracks `origin/main` on GitHub and is level with it: every phase commit through 7.1 is on the remote. The spec 0007 work is the working tree's only uncommitted change, which is why the map above counts 426 files against 419 committed. `.gitattributes` enforces `* text=auto eol=lf`, and `git ls-files --eol` reports LF for every tracked file, so the CRLF churn that v1 flagged is gone.
+Branch `main` tracks `origin/main` on GitHub and is level with it: every phase commit through 7.2 is on the remote, the last being `4291c31`, and the working tree is clean. `.gitattributes` enforces `* text=auto eol=lf`, and `git ls-files --eol` reports LF for every tracked file, so the CRLF churn that v1 flagged is gone.
 
 ### 5.8 Dependency installation — HEALTHY
 
@@ -440,7 +440,7 @@ MISSING  README.md
 
 ```
 $ npm run docs:check
-docs/SYSTEM_TEARDOWN.md: 203 claims compared against the repository, no drift
+docs/SYSTEM_TEARDOWN.md: 204 claims compared against the repository, no drift
 exit 0
 ```
 
