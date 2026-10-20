@@ -45,7 +45,7 @@ and it must not make the world look like a different product.
 **Acceptance criteria** (the contract, each criterion is IDed and independently checkable):
 
 - **AC-1**: Light mode is a token set, not a second stylesheet. Both modes define the same `--anansi-*` names, and no rule outside the two token blocks introduces a colour value.
-- **AC-2**: The light set activates from `prefers-color-scheme: light`; dark remains what an unexpressed preference gets, and no script is required for the swap.
+- **AC-2**: The light set activates from `prefers-color-scheme: light`; dark remains what an unexpressed preference gets, and no script is required for the swap. *(Superseded by spec 0007: the set now activates from `<html data-mode>` so a chosen mode can override the system; the values and roles are unchanged.)*
 - **AC-3**: A token missing from either set, or a name present in one and absent from the other, fails a test rather than silently inheriting the other mode's value.
 - **AC-4**: Text passes 4.5:1 on the page in both modes: `--anansi-ink`, `--anansi-dim`, and the lavender link label, which gains its own readable value because the hue itself is 3.67:1 on the dark page.
 - **AC-5**: Controls pass 3:1 in both modes: the focus ring against the page, and the action's boundary against the page, so the filled button is a shape and not only a label.
@@ -145,6 +145,11 @@ web reads correctly on paper with no second palette.
 **Activation.** `@media (prefers-color-scheme: light)` holds the light values and
 `color-scheme: light`. The base block keeps `color-scheme: dark`. `index.html`
 gains a second `theme-color` with `media="(prefers-color-scheme: light)"`.
+
+*Superseded on activation by spec 0007:* the block is selected by
+`:root[data-mode='light']`, the pre-paint script sets the attribute, and the one
+remaining `theme-color` is written from the resolved surface. The values, the
+roles, the contrast contract, and the stage's palette read are as written here.
 
 **Critical test scenarios** (each maps to an acceptance criterion in `## Requirements`):
 

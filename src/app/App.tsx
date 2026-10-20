@@ -1,7 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { flushSync } from 'react-dom'
 
 import { HistoryPanel } from '@/app/HistoryPanel'
 import { historyView, type HistoryFilter } from '@/app/history'
+import {
+  applyMode,
+  loadChoice,
+  resolveMode,
+  saveChoice,
+  subscribeToSystemMode,
+  systemMode,
+  toggleChoice,
+} from '@/app/mode'
+import { ModeSwitch } from '@/app/ModeSwitch'
 import { Ritual } from '@/app/RitualScreen'
 import { WorldLayer } from '@/app/WorldLayer'
 import {
@@ -18,7 +29,12 @@ import {
 import { journeyStore } from '@/app/store'
 import { useJourney } from '@/app/useJourney'
 import { getLibrary } from '@/content/loader'
-import { daysCompleted, watchStorageEvents, type JourneyStore } from '@/state'
+import {
+  daysCompleted,
+  watchStorageEvents,
+  type JourneyStore,
+  type ModeChoice,
+} from '@/state'
 import { CELEBRATE_MS } from '@/world/choreography'
 
 /** The search beat is skipped when the person asked for less motion (AC-13). */
@@ -53,6 +69,41 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   const historyControl = useRef<HTMLButtonElement>(null)
   const busy = useRef(false)
   const library = getLibrary()
+
+  // The mode has one authority: the document attribute (spec 0007). The
+  // choice is the person's; with none, the system preference decides and is
+  // followed while the page stays open.
+  const [choice, setChoice] = useState<ModeChoice>(loadChoice)
+  const system = useSyncExternalStore(subscribeToSystemMode, systemMode, () => 'dark' as const)
+  const mode = resolveMode(choice, system)
+
+  useLayoutEffect(() => {
+    applyMode(mode)
+  }, [mode])
+
+  const switchMode = useCallback((): void => {
+    const next = toggleChoice(choice, system)
+    const commit = (): void => {
+      applyMode(next)
+      setChoice(next)
+      saveChoice(next)
+    }
+
+    const transition = (
+      document as Document & { startViewTransition?: (run: () => void) => void }
+    ).startViewTransition
+
+    // The crossfade is the only animation the change gets, and the person who
+    // asked for less motion does not get it (AC-6).
+    if (prefersReducedMotion() || typeof transition !== 'function') {
+      commit()
+      return
+    }
+
+    transition.call(document, () => {
+      flushSync(commit)
+    })
+  }, [choice, system])
 
   // Opening the panel places focus on its heading, so the list is the next
   // thing read rather than the top of the page (AC-12).
@@ -170,26 +221,31 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
         beat={beatFor(view, celebrating)}
         days={daysCompleted(state.progress)}
         seed={`${state.identity.clientId}:${state.progress.journeyStart}`}
+        mode={mode}
       />
 
       <Web />
 
-      <button
-        className="history-open"
-        type="button"
-        ref={historyControl}
-        aria-expanded={historyOpen}
-        aria-controls="history-panel"
-        onClick={() => {
-          if (historyOpen) {
-            closeHistory()
-          } else {
-            setHistoryOpen(true)
-          }
-        }}
-      >
-        History
-      </button>
+      <div className="controls">
+        <ModeSwitch mode={mode} onToggle={switchMode} />
+
+        <button
+          className="history-open"
+          type="button"
+          ref={historyControl}
+          aria-expanded={historyOpen}
+          aria-controls="history-panel"
+          onClick={() => {
+            if (historyOpen) {
+              closeHistory()
+            } else {
+              setHistoryOpen(true)
+            }
+          }}
+        >
+          History
+        </button>
+      </div>
 
       <Ritual
         view={view}

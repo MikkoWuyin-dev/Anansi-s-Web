@@ -30,7 +30,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 9 | The authored camera and the search | Slice 3 | in-progress |
 | 10 | Object families, Anansi, and density | Slice 3 | in-progress |
 | 11 | The world without motion, and on mobile | Slice 3 | in-progress |
-| 12 | Light mode and the sun and moon switch | Slice 4 | planned |
+| 12 | Light mode and the sun and moon switch | Slice 4 | in-progress |
 | 13 | The evolving web and hidden interactions | Slice 5 | planned |
 | 14 | Measured performance and accessibility | Quality | planned |
 | 15 | The display face and its network cost | Quality | planned |
@@ -236,7 +236,7 @@ A swapped token set for daylight and a playful switch that belongs to the world 
 **Done when:** both modes pass contrast checks for text, controls, and focus states; the switch works by keyboard and the choice persists; and its transition respects reduced motion.
 - [x] Design the token set (spec): `docs/specs/0006-the-light-token-set.md` (2026-10-20), which leaves the switch to its own decisions
 - [x] The light token set, its roles, and the contrast contract (7.1, 2026-10-20): a second set under the system preference, three role tokens, `src/app/tokens.test.ts` over both sets, and the stage recolouring on a mode change
-- [ ] The sun and moon switch (7.2): keyboard operable, persistent, and reduced-motion safe
+- [x] The sun and moon switch (7.2, 2026-10-20): one authority on `<html data-mode>`, the choice under `anansi:v1:mode` applied before the first paint, a live system preference when nothing is chosen, and a view transition reduced motion removes (spec `0007`)
 - [ ] Verify both modes: `/check verify light mode`
 - [ ] Imprint both token sets: roadmap 7.3
 

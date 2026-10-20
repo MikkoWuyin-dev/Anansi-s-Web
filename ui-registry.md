@@ -328,6 +328,26 @@ Last updated: 2026-10-18
 
 The choreography decides nothing about the story: the engine's answer is recorded before the route begins, and the reveal is simply held for the movement. Keep that separation; the stage must never become the chooser.
 
+### The sun and moon switch
+
+File: `src/app/ModeSwitch.tsx`, styled in `src/app/styles.css`; state in `src/state/mode.ts`
+Last updated: 2026-10-20
+
+| Property | Class |
+| -------- | ----- |
+| Element | a native `<button type="button">` in the top-right `.controls` cluster, beside History |
+| Size | `2.75rem` square, circular, one hairline `--anansi-jet` ring, transparent fill |
+| Glyph | the mode the press moves *to*: a yellow disc in eight rays in dark, a lavender crescent cut by `--anansi-surface` in light |
+| Name | `Switch to light mode` / `Switch to dark mode`, so the action is in the name, never the state |
+| Motion | the two discs crossfade, rotate and scale over `240 ms`; the page itself crossfades through the view transition at `220 ms` |
+| Reduced motion | both the glyph's turn and the view transition are removed; the colours change at once |
+| Colour | every value a token; the moon's cut is the page's own surface, so it reads in both modes |
+| Focus | the page's `3px` lavender ring with `4px` offset, as History has |
+
+**Pattern notes:**
+
+The glyph rotates rather than swapping, because a control that changes its own meaning should look like one thing turning over. The accessible name always states the destination: a button named by its current state tells a screen-reader user nothing about what pressing it does.
+
 ### Reduced motion and the phone
 
 File: `src/app/WorldLayer.tsx`, `src/world/camera.ts`, `src/world/Objects.tsx`, `src/world/Anansi.tsx`
@@ -356,7 +376,7 @@ None. Every component matches the baseline it was read from, and the one duplica
 
 **No hardcoded colour outside the tokens.** Every colour in the running app resolves through a custom property, and the raw values appear only in the token blocks. `--anansi-ink` and `--anansi-dim` are derived neutrals; the palette names hues, and a hue cannot do every job.
 
-**The two modes (spec 0006, 2026-10-20).** Light mode is the same token names under `@media (prefers-color-scheme: light)`, so no component or rule below the tokens knows which mode is running. Dark is the base and the native feel; light is the daylight reading of it. Three roles exist because a hue was standing in for a job:
+**The two modes (spec 0006, 2026-10-20).** Light mode is the same token names under `:root[data-mode='light']`, so no component or rule below the tokens knows which mode is running. Dark is the base and the native feel; light is the daylight reading of it. Three roles exist because a hue was standing in for a job:
 
 | Role | Dark | Light | Why it exists |
 |---|---|---|---|
@@ -364,6 +384,6 @@ None. Every component matches the baseline it was read from, and the one duplica
 | `--anansi-action-edge` | `transparent` | `#19323c` | the yellow fill is 1.06:1 on paper; the inset ring gives the button a boundary |
 | `--anansi-lavender-text` | `#a97aa9` | `#885a89` | the one lavender label; the hue itself is 3.67:1 on the dark page |
 
-Yellow stays the single regulated accent in both modes: one fill, always with `--anansi-black` on it (18.38:1 dark, 17.62:1 light). The mode is arithmetic, not taste: `src/app/tokens.test.ts` derives every text pair and focus ring from the stylesheet and fails below 4.5:1 for text or 3:1 for the ring, the action's boundary, and the label on yellow. The sun and moon switch (7.2) is not built yet; the mode currently follows the system.
+Yellow stays the single regulated accent in both modes: one fill, always with `--anansi-black` on it (18.38:1 dark, 17.62:1 light). The mode is arithmetic, not taste: `src/app/tokens.test.ts` derives every text pair and focus ring from the stylesheet and fails below 4.5:1 for text or 3:1 for the ring, the action's boundary, and the label on yellow. The mode has one authority since spec 0007: `<html data-mode>`, set before the first paint and written by the sun and moon switch, so the CSS, the canvas, and the control cannot disagree. The `theme-color` meta is one value, written from the resolved `--anansi-surface`, so the browser's chrome follows the page rather than the system.
 
 **Not a component.** `dist/assets/*.css` is build output and is ignored by this registry.

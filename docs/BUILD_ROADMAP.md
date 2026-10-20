@@ -341,7 +341,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 7 — Modes and design system (7.1 BUILT 2026-10-20)
+## Phase 7 — Modes and design system (7.1 and 7.2 BUILT 2026-10-20)
 
 ### 7.1 The light token set — BUILT 2026-10-20
 
@@ -349,10 +349,11 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Done when:** both modes pass contrast checks for text, controls, and focus states.
 - **Built:** `styles.css` declares a second `:root` under `@media (prefers-color-scheme: light)` with every colour role re-declared. Three roles were added so the swap is safe: `--anansi-surface` (the page, because `--anansi-black` is the label on the yellow action), `--anansi-action-edge` (the boundary a yellow fill cannot draw on paper), and `--anansi-lavender-text` (the one lavender label, 5.74:1 in dark and 4.71:1 in light). `src/app/tokens.test.ts` computes the WCAG ratio of every text pair, the focus ring, and the action's boundary from the stylesheet's own text, and fails on any raw colour outside the two token blocks. The stage reads the palette once per mode in `Scene.tsx` and `WorldLayer` subscribes to the colour scheme, so the web, the objects, and Anansi recolour together without a reload. Verified live with the scheme emulated in both directions: the mounted canvas recoloured in place, the drawer read as dark text on paper, and the idle page returned to zero frames. `npm run verify` → exit 0, 317 tests in 28 files, shell 57.19 kB and scene 238.06 kB gzip. Spec: `docs/specs/0006-the-light-token-set.md`.
 
-### 7.2 The sun and moon switch
+### 7.2 The sun and moon switch — BUILT 2026-10-20
 
 - **Deliverable:** the playful animated sun/moon interaction (PRD §33), integrated into the world rather than bolted on, keyboard operable, and reduced-motion safe.
 - **Done when:** the switch works by keyboard, the choice persists, and the transition respects reduced motion.
+- **Built:** the mode moved to one authority, `<html data-mode>`, because a media query cannot be overridden by a click. `src/state/mode.ts` stores the choice under `anansi:v1:mode` and validates it; `src/app/mode.ts` resolves the choice against the system preference, follows that preference live when nothing is chosen, flips what is showing on every press, and writes the attribute; `ModeSwitch.tsx` is a native 44 px button whose sun-in-dark, moon-in-light glyph is drawn from tokens and whose name says which mode it moves to; `index.html` sets the attribute before the module loads, so a reload never flashes the other mode; the change crossfades through the browser's view transition, which `prefers-reduced-motion` removes. `applyMode` also writes the resolved surface into `theme-color`, so the browser chrome follows the page rather than the system. Twenty new tests: six for the stored shape, nine for resolution, toggling, the attribute, the chrome, and the pre-paint script, four for the switch (its markup, and the reduced-motion rules), and one that pins the light set to the attribute rather than a media query. Spec: `docs/specs/0007-the-sun-and-moon-switch.md`.
 
 ### 7.3 Imprint the registry
 

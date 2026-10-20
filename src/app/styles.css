@@ -39,30 +39,28 @@
   color-scheme: dark;
 }
 
-/* Light mode as the same token names under the system preference (spec 0006,
-   roadmap 7.1). Every colour token is re-declared, so nothing silently falls
-   back to a dark value, and the browser paints the right mode before any
-   script runs. Dark stays the base and the unexpressed preference. */
-@media (prefers-color-scheme: light) {
-  :root {
-    --anansi-surface: #f2efe4;
-    --anansi-black: #0d1011;
-    --anansi-jet: #19323c;
-    --anansi-yellow: #faff00;
-    --anansi-strawberry: #ff3e41;
-    --anansi-lavender: #885a89;
+/* Light mode as the same token names, selected by the attribute the pre-paint
+   script sets (spec 0006, spec 0007). Every colour token is re-declared, so
+   nothing silently falls back to a dark value. Dark stays the base block, and
+   an explicit choice and the system preference both arrive as the attribute. */
+:root[data-mode='light'] {
+  --anansi-surface: #f2efe4;
+  --anansi-black: #0d1011;
+  --anansi-jet: #19323c;
+  --anansi-yellow: #faff00;
+  --anansi-strawberry: #ff3e41;
+  --anansi-lavender: #885a89;
 
-    /* Re-derived for paper: a warm near-black for text, and a mid neutral that
-       holds 4.5:1 on it. Paper is the palette's warmth carried into daylight. */
-    --anansi-ink: #10191c;
-    --anansi-dim: #55605f;
+  /* Re-derived for paper: a warm near-black for text, and a mid neutral that
+     holds 4.5:1 on it. Paper is the palette's warmth carried into daylight. */
+  --anansi-ink: #10191c;
+  --anansi-dim: #55605f;
 
-    --anansi-yellow-glow: rgba(25, 50, 60, 0.28);
-    --anansi-action-edge: #19323c;
-    --anansi-lavender-text: #885a89;
+  --anansi-yellow-glow: rgba(25, 50, 60, 0.28);
+  --anansi-action-edge: #19323c;
+  --anansi-lavender-text: #885a89;
 
-    color-scheme: light;
-  }
+  color-scheme: light;
 }
 
 *,
@@ -487,8 +485,16 @@ body {
   .ghost,
   .history-open,
   .history__input,
-  .filters__button {
+  .filters__button,
+  .mode-switch,
+  .mode-switch__sun,
+  .mode-switch__moon {
     transition: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 
   .action:hover,
@@ -520,11 +526,123 @@ body {
   border: 0;
 }
 
-/* Pinned in the corner, one press away in every state. It never takes yellow. */
-.history-open {
+/* The top-right cluster: the mode switch and the history button (spec 0007). */
+.controls {
   position: absolute;
   top: clamp(1.25rem, 4vw, 2.5rem);
   right: clamp(1.25rem, 5vw, 3rem);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* A sun in dark, a moon in light: the glyph is the mode the press moves to, and
+   the label says so. The disc is the control, the glyph turns inside it. */
+.mode-switch {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  appearance: none;
+  border: 1px solid var(--anansi-jet);
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-color var(--anansi-duration) var(--anansi-ease);
+}
+
+.mode-switch:hover {
+  border-color: var(--anansi-lavender);
+}
+
+.mode-switch:focus-visible {
+  outline: 3px solid var(--anansi-lavender);
+  outline-offset: 4px;
+}
+
+.mode-switch__glyph {
+  position: relative;
+  display: block;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.mode-switch__sun,
+.mode-switch__moon {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition:
+    opacity 240ms var(--anansi-ease),
+    rotate 240ms var(--anansi-ease),
+    scale 240ms var(--anansi-ease);
+}
+
+/* A yellow disc inside eight rays, drawn as a masked conic gradient so the
+   glyph needs no image and takes its colour from the token. */
+.mode-switch__sun {
+  background: radial-gradient(circle, var(--anansi-yellow) 0 34%, transparent 36%);
+}
+
+.mode-switch__sun::before {
+  content: '';
+  position: absolute;
+  inset: -24%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    var(--anansi-yellow) 0deg 9deg,
+    transparent 9deg 45deg
+  );
+  mask: radial-gradient(circle, transparent 0 56%, currentColor 58%);
+}
+
+/* The moon is a lavender disc with the page's own colour set across it, so the
+   crescent is cut by whatever the surface is in this mode. */
+.mode-switch__moon {
+  overflow: hidden;
+  background: var(--anansi-lavender);
+}
+
+.mode-switch__moon::before {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background: var(--anansi-surface);
+  translate: 44% -24%;
+}
+
+.mode-switch__moon {
+  opacity: 0;
+  rotate: 60deg;
+  scale: 0.7;
+}
+
+:root[data-mode='light'] .mode-switch__sun {
+  opacity: 0;
+  rotate: -60deg;
+  scale: 0.7;
+}
+
+:root[data-mode='light'] .mode-switch__moon {
+  opacity: 1;
+  rotate: 0deg;
+  scale: 1;
+}
+
+/* The mode change crossfades the page when the browser offers a view
+   transition (spec 0007). Browsers without it, and people who asked for less
+   motion, simply get the new colours at once. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--anansi-ease);
+}
+
+/* In the corner cluster, one press away in every state. It never takes yellow. */
+.history-open {
   appearance: none;
   border: 1px solid var(--anansi-jet);
   padding: 0.55rem 1.1rem;

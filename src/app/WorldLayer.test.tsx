@@ -6,8 +6,8 @@ import { descriptionFor, type Beat } from '@/world/stage'
 
 const SEED = 'client-one:2026-10-18'
 
-function render(beat: Beat = 'idle', days = 0): string {
-  return renderToStaticMarkup(<WorldLayer beat={beat} days={days} seed={SEED} />)
+function render(beat: Beat = 'idle', days = 0, mode: 'light' | 'dark' = 'dark'): string {
+  return renderToStaticMarkup(<WorldLayer beat={beat} days={days} seed={SEED} mode={mode} />)
 }
 
 describe('the stage layer', () => {

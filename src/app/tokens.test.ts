@@ -14,7 +14,9 @@ import { describe, expect, it } from 'vitest'
 
 const stylesheet = readFileSync(fileURLToPath(new URL('./styles.css', import.meta.url)), 'utf8')
 
-const MODE_QUERY = '@media (prefers-color-scheme: light)'
+/** The selector the light set hangs off (spec 0007 replaced the media query). */
+const LIGHT_SELECTOR = ":root[data-mode='light']"
+
 const LIGHT = 'light'
 const DARK = 'dark'
 
@@ -51,10 +53,9 @@ function baseBlock(): string {
   return stylesheet.slice(start, end)
 }
 
-/** The light block: the `:root` inside the media query. */
+/** The light block: the attribute-selected rule. */
 function lightBlock(): string {
-  const media = stylesheet.indexOf(MODE_QUERY)
-  const start = stylesheet.indexOf(':root', media)
+  const start = stylesheet.indexOf(LIGHT_SELECTOR)
   const end = stylesheet.indexOf('}', stylesheet.indexOf('{', start))
 
   return stylesheet.slice(start, end)
@@ -67,8 +68,7 @@ const sets = new Map([
 
 /** The stylesheet with both token blocks removed, where no colour may appear. */
 function rules(): string {
-  const media = stylesheet.indexOf(MODE_QUERY)
-  const lightStart = stylesheet.indexOf(':root', media)
+  const lightStart = stylesheet.indexOf(LIGHT_SELECTOR)
   const light = stylesheet.slice(
     lightStart,
     stylesheet.indexOf('}', stylesheet.indexOf('{', lightStart)) + 1,
@@ -148,6 +148,13 @@ describe('the two token sets', () => {
     )
 
     expect(COLOUR_TOKENS.filter((name) => !partial.has(name))).toEqual(['--anansi-dim'])
+  })
+
+  it('selects the light set by the attribute and nothing else', () => {
+    // One authority for the mode (spec 0007): a media query here would be a
+    // second one that the switch could not override.
+    expect(stylesheet).toContain(LIGHT_SELECTOR)
+    expect(stylesheet).not.toContain('prefers-color-scheme')
   })
 
   it('swaps the page between a dark and a light grounding', () => {

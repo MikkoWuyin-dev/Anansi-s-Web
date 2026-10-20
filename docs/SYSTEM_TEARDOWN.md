@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-20 (v3.6)
+- **Last updated:** 2026-10-20 (v3.7)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -59,6 +59,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 
 **v3.6 — 2026-10-20.** Roadmap 7.1 landed: light mode as a swapped token set. `styles.css` now declares a second `:root` inside `@media (prefers-color-scheme: light)`, holding every colour role the base block declares, so a system preference reaches the page before any script runs and nothing silently inherits a dark value. Three roles were added because the token names were hues, not jobs: `--anansi-surface` is the page (so `--anansi-black` can stay the label on the yellow action), `--anansi-action-edge` draws the boundary a yellow fill cannot draw on paper, and `--anansi-lavender-text` lifts the one lavender label from 3.67:1 to 5.74:1 in dark and holds 4.71:1 in light. `src/app/tokens.test.ts` computes WCAG ratios from the stylesheet's own text for both sets and fails on any raw colour outside the two token blocks. The stage no longer reads the palette in three places: `Scene.tsx` resolves it once from a new `mode` prop, `WorldLayer` subscribes to the same media query it already used for motion and width, and the web, the objects, and Anansi receive the palette, so a mode change recolours all three together. Eight new tests (317 in 28 files); the build measures 57.19 kB gzip for the shell, 238.06 kB for the scene, and 2.52 kB for the stylesheet. Verified live in Chromium with the colour scheme emulated in both directions (section 5.6).
 
+**v3.7 — 2026-10-20.** Roadmap 7.2 landed: the sun and moon switch, and with it the relocation of the mode's authority. `styles.css` selects the light set by `:root[data-mode='light']` instead of a media query, because a media query cannot be overridden by a click; `src/state/mode.ts` keeps the choice under `anansi:v1:mode` with the same validate-then-fall-back convention as the journey's four keys; `src/app/mode.ts` resolves a choice against the system preference, follows that preference live while nothing is chosen, and writes the attribute; `ModeSwitch.tsx` is a native button in the top-right cluster; and a short script in `index.html` sets the attribute before the module loads, so a reload never shows the other mode first. `applyMode` also writes the resolved surface into the single `theme-color` meta, which closed an inconsistency the change created: the head had two metas chosen by `prefers-color-scheme`, so a person who chose light on a dark laptop would have had a dark browser chrome around a light page. Twenty new tests bring the suite to 337 in 31 files; the build measures 57.74 kB gzip for the shell, 238.06 kB for the scene, and 2.90 kB for the stylesheet. Verified live in Chromium: the switch worked by pointer and by keyboard, the light page and its canvas arrived together, the choice survived a reload with no flash of the other mode, and reduced motion removed the crossfade (section 5.6).
+
 ---
 
 ## 0. How to read this document
@@ -98,12 +100,12 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 | CI | `.github/workflows/verify.yml` runs on every push and PR; first run green (2026-10-16) |
 | Documentation gate | `npm run docs:check` compares this document's counts, file lists, and tracked-state claims against the repository |
 | The 3D world (`src/world/`) | The lazy canvas, the seeded graph, the authored camera, five object families, Anansi, the search choreography, springs, and the reduced motion and touch tiers (spec 0005, 2026-10-18) |
-| Light mode | **Built** — the light token set, the surface, edge, and readable-lavender roles, and an executable contrast contract (spec 0006, roadmap 7.1, 2026-10-20); the sun and moon switch is 7.2 |
+| Light and dark modes | **Built** — the light token set with surface, edge, and readable-lavender roles and an executable contrast contract (spec 0006, 7.1), and the sun and moon switch with the stored choice applied before the first paint and the system preference followed live (spec 0007, 7.2), both 2026-10-20 |
 | `ui-registry.md`, `memory.md`, `docs/scope/` | Present and tracked (2026-10-16) |
 
-**Headline state:** the foundation is real and honest. All five gates (`typecheck`, `content:check`, `test`, `docs:check`, `build`) exit 0; the content gate has been *proven to fail* on malformed and drifted input, and the documentation gate on a state claim that no longer holds, rather than assumed to. The product now does the thing it exists to do, and keeps a record of it: a person can ask the web for a story, receive a title alone, reroll twice, take the day's story, mark it learned, and find the last thirty days listed by day with a quiet `N / 90` beside them. What it still lacks is the switch between its two modes, the measured quality gates, and the deployment; the world behind it now exists, and it has a daylight reading.
+**Headline state:** the foundation is real and honest. All five gates (`typecheck`, `content:check`, `test`, `docs:check`, `build`) exit 0; the content gate has been *proven to fail* on malformed and drifted input, and the documentation gate on a state claim that no longer holds, rather than assumed to. The product now does the thing it exists to do, and keeps a record of it: a person can ask the web for a story, receive a title alone, reroll twice, take the day's story, mark it learned, and find the last thirty days listed by day with a quiet `N / 90` beside them. What it still lacks is the measured quality gates, the deployment, and a registry that covers everything built since October; the world behind it now exists, a person can choose its daylight or dark reading and keep that choice, and the choice arrives on the first frame.
 
-**Single biggest risk:** the quality claims and the content pool, not the build. The stage is built, but its reduced motion branch and error boundary are not yet observed live, every budget except the bundle sizes still wants a measurement, the pool holds 24 of 300 topics, light mode exists but a manual switch does not, and the deployment is unstarted. The governance gap has narrowed: CI runs the gate on every push and pull request and its first run was green, so the gate no longer depends on someone remembering, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
+**Single biggest risk:** the quality claims and the content pool, not the build. The stage is built, but its reduced motion branch and error boundary are not yet observed live, every budget except the bundle sizes still wants a measurement, the pool holds 24 of 300 topics, and the deployment is unstarted. The governance gap has narrowed: CI runs the gate on every push and pull request and its first run was green, so the gate no longer depends on someone remembering, and the governance files the adopted workflow depends on (`AGENTS.md`, `ui-registry.md`, `memory.md`, `docs/scope/`) were written late on 2026-10-16 and are now tracked, so nothing in the adopted workflow is unversioned; cross-session continuity still rests on documents rather than on an enforced process.
 
 ---
 
@@ -132,10 +134,10 @@ The design is ratified and mature: a Product Requirements Document (PRD v1.1) an
 
 ## 3. Repository map
 
-Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. By 2026-10-20 the 21 installed skill packs are tracked, so the working set and the committed tree are the same 419 files.
+Every file the documentation gate counts, by area: the committed tree plus untracked files that Git does not ignore. By 2026-10-20 the 21 installed skill packs are tracked, so the working set the gate measures is 426 tracked files: 419 committed, and the seven that spec 0007 adds, untracked until the commit that follows this assessment.
 
 ```
-C:\dev\Anansi's Web\                        419 tracked files in the gate's working set (all committed; the 21 skill packs account for 221 of them)
+C:\dev\Anansi's Web\                        426 files in the gate's working set (419 committed; the 21 skill packs account for 221 of them)
 ├── .gitattributes              LF enforced; binaries marked
 ├── .gitignore                  node_modules, dist, .freebuff, generated report html
 ├── .github/
@@ -153,14 +155,16 @@ C:\dev\Anansi's Web\                        419 tracked files in the gate's work
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
 │   ├── MCD.md                  341 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        527 lines   Phases 0 to 11, the build sequence
+│   ├── BUILD_ROADMAP.md        528 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
 │   ├── specs/
 │   │   ├── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
 │   │   ├── 0002-local-state-and-persistence.md   246 lines   The state decision, 2026-10-17
 │   │   ├── 0003-ritual-loop.md   252 lines   The loop decision, 2026-10-17
 │   │   ├── 0004-history-drawer-and-journey-count.md   242 lines   The drawer and count decision, 2026-10-18
-│   │   └── 0005-the-3d-stage.md   the stage decision, 2026-10-18; all twelve stages built
+│   │   ├── 0005-the-3d-stage.md   the stage decision, 2026-10-18; all twelve stages built
+│   │   ├── 0006-the-light-token-set.md   the daylight set, 2026-10-20; activation superseded by 0007
+│   │   └── 0007-the-sun-and-moon-switch.md   the switch and the mode's authority, 2026-10-20
 │   ├── scope/
 │   │   └── scope.md            living scope record
 │   └── system-teardown.html                Generated rendering (gitignored)
@@ -191,10 +195,12 @@ C:\dev\Anansi's Web\                        419 tracked files in the gate's work
 │   │   ├── history.ts          the drawer's view: rows, filters, search, labels, count
 │   │   ├── HistoryPanel.tsx    the drawer's semantic markup
 │   │   ├── WorldLayer.tsx      the lazy scene mount, its guards, and its description
+│   │   ├── mode.ts             the resolved mode: system subscription, resolve, toggle, apply
+│   │   ├── ModeSwitch.tsx      the sun and moon button
 │   │   ├── useJourney.ts       useSyncExternalStore over the vanilla store
 │   │   ├── store.ts            the one journey store the app reads
 │   │   ├── styles.css          palette and motion tokens, layout, reduced motion
-│   │   └── *.test.ts*          71 tests: the controllers, the markup purity, the drawer, the layer, the token sets
+│   │   └── *.test.ts*          85 tests: the controllers, the markup purity, the drawer, the layer, the token sets, the mode, the switch
 │   ├── content/
 │   │   ├── types.ts            THE schema: Domain, Tag, Difficulty, Topic
 │   │   ├── topics.generated.ts GENERATED bundle (committed, drift checked)
@@ -213,7 +219,8 @@ C:\dev\Anansi's Web\                        419 tracked files in the gate's work
 │   │   ├── retention.ts        30 day prune and day arithmetic
 │   │   ├── progress.ts         the accepted day tally and the journey roll
 │   │   ├── dayRng.ts           the per day stream the engine depends on
-│   │   └── *.test.ts           50 tests, including the module boundary
+│   │   ├── mode.ts             the stored mode preference, validated like the rest
+│   │   └── *.test.ts           56 tests, including the module boundary
 │   └── world/                  the 3D stage (spec 0005, built 2026-10-18)
 │       ├── Scene.tsx           the lazy chunk: one canvas, one graph, on demand rendering
 │       ├── Web.tsx             the graph, the wake, and the single reveal filament
@@ -238,9 +245,9 @@ C:\dev\Anansi's Web\                        419 tracked files in the gate's work
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 296 | 135,381 |
-| Project documentation | 4 | 2,660 |
+| Project documentation | 4 | 2,676 |
 | Authoring scripts | 11 | 2,603 |
-| Application source | 64 | 9,537 |
+| Application source | 70 | 10,077 |
 | Content (24 JSON + 1 README) | 25 | 335 |
 | Build config | 6 | ~160 |
 
@@ -294,7 +301,7 @@ exit 0
 
 Covers `src/`, `scripts/`, and `vite.config.ts`. `@types/node@24.19.2` is installed, pinned to the runtime major (Node 24.13), which fixed the v1 failure on `node:url`.
 
-### 5.3 Tests — PASS, 317 of them
+### 5.3 Tests — PASS, 337 of them
 
 ```
 $ npm run test        # vitest run
@@ -302,16 +309,18 @@ $ npm run test        # vitest run
  ✓ scripts/lib/claims.test.ts            ( 35 tests)
  ✓ src/state/journeyStore.test.ts        ( 19 tests)
  ✓ src/app/ritual.test.ts                ( 19 tests)
+ ✓ src/app/mode.test.ts                  (  9 tests)
  ✓ src/app/history.test.ts               ( 14 tests)
  ✓ src/app/RitualScreen.test.tsx         ( 16 tests)
  ✓ scripts/lib/validate.test.ts          ( 21 tests)
  ✓ src/state/shapes.test.ts              ( 14 tests)
+ ✓ src/state/mode.test.ts                (  6 tests)
  ✓ src/world/camera.test.ts              ( 22 tests)
  ✓ src/world/choreography.test.ts        ( 12 tests)
  ✓ src/world/families.test.ts            ( 12 tests)
  ✓ src/world/graph.test.ts               ( 13 tests)
  ✓ src/app/HistoryPanel.test.tsx         ( 10 tests)
- ✓ src/app/tokens.test.ts                (  8 tests)
+ ✓ src/app/tokens.test.ts                (  9 tests)
  ✓ src/state/purity.test.ts              (  5 tests)
  ✓ src/engine/purity.test.ts             (  4 tests)
  ✓ src/world/purity.test.ts              (  8 tests)
@@ -323,15 +332,16 @@ $ npm run test        # vitest run
  ✓ src/world/palette.test.ts             (  5 tests)
  ✓ src/world/stage.test.ts               (  4 tests)
  ✓ src/app/WorldLayer.test.tsx           (  4 tests)
+ ✓ src/app/ModeSwitch.test.tsx           (  4 tests)
  ✓ src/world/density.test.ts             (  4 tests)
  ✓ src/engine/dayKey.test.ts             (  5 tests)
  ✓ src/engine/offer.statistical.test.ts  (  6 tests)
- Test Files  28 passed (28)
-      Tests  317 passed (317)
+ Test Files  31 passed (31)
+      Tests  337 passed (337)
 exit 0
 ```
 
-The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 50 arrive with it in v2.9; the app's 63 arrive with the ritual loop in v3.0, the history drawer in v3.1, the stage layer in v3.2, the celebrating beat in v3.4, and the two token sets in v3.6 (19 controller tests, 16 markup for the ritual, 14 and 10 for the drawer, 4 for the layer, 8 for the tokens; all markup through `react-dom/server`, which needs no DOM environment); the world's 87 arrive across steps 6.1 to 6.10 plus the mode read in 7.1 (13 graph, 22 camera, 5 palette, 8 boundary, 4 beats, 12 families, 12 choreography, 4 density, 7 spider). Twenty mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero), two against the stage (ignoring the graph seed, and giving two beats one sentence), one against the camera (dropping the pointer clamp), and three against the stage's inhabitants (a family sharing another family's form, a phone cap raised to the desktop limit, and reduced motion leaving the hub). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
+The engine's 44 tests are the 30 added in v2.7 plus the 14 primitives; the state layer's 56 arrive with it in v2.9 and the stored mode in v3.7; the app's 85 arrive with the ritual loop in v3.0, the history drawer in v3.1, the stage layer in v3.2, the celebrating beat in v3.4, the two token sets in v3.6, and the switch in v3.7 (19 controller tests, 16 markup for the ritual, 14 and 10 for the drawer, 4 for the layer, 9 for the tokens, 9 for the resolved mode, 4 for the switch; all markup through `react-dom/server`, which needs no DOM environment); the world's 87 arrive across steps 6.1 to 6.10 plus the mode read in 7.1 (13 graph, 22 camera, 5 palette, 8 boundary, 4 beats, 12 families, 12 choreography, 4 density, 7 spider). Twenty-two mutation probes have been run: three against the engine tuning (a widened window, a shortened return absence, a neutered spread), four against the state rules (accepting any schema version, never pruning, ignoring a stale day key, allowing a fourth offer), three against the loop (never recording an offer, refusing to keep the engine's reason, and closing the learned state), four against the drawer (opening the Explored filter to learned rows, titling a missing topic with its id, removing accent folding, and showing the count at zero), two against the stage (ignoring the graph seed, and giving two beats one sentence), one against the camera (dropping the pointer clamp), three against the stage's inhabitants (a family sharing another family's form, a phone cap raised to the desktop limit, and reduced motion leaving the hub), and two against the switch (a press that never flips the mode, and a pre-paint script that leaves the attribute unset). Each failed the suite on the test that pins that rule, and each was reverted, so the source is byte-identical to the committed intent.
 
 ### 5.4 Content gate — PASSES, and fails correctly
 
@@ -353,15 +363,15 @@ Proven to reject bad input rather than assumed to. Three probes were run:
 
 ```
 $ npm run build       # vite build
-dist/index.html                   1.33 kB │ gzip:  0.69 kB
-dist/assets/index-CAyuANxV.css   10.10 kB │ gzip:  2.52 kB
-dist/assets/index-C9c6_5JT.js   177.17 kB │ gzip: 57.19 kB
-dist/assets/Scene-CPL1WyR-.js   864.59 kB │ gzip: 238.06 kB
-✓ built in 9.24s
+dist/index.html                   2.03 kB │ gzip:   1.02 kB
+dist/assets/index-tqOk6PYv.css   11.93 kB │ gzip:   2.90 kB
+dist/assets/index-DIcrfKVd.js   178.91 kB │ gzip:  57.74 kB
+dist/assets/Scene-Ddffp8My.js   864.59 kB │ gzip: 238.06 kB
+✓ built in 7.98s
 exit 0
 ```
 
-The build emits two scripts: the shell (57.19 kB gzip) and the lazy scene (238.06 kB gzip). The scene's 864.59 kB raw is the three.js renderer, the springs, and the world's own modules, and it is fetched only after the shell has painted. Both are inside the MCD §8 budgets with room to spare. The second token set costs 0.55 kB more raw CSS (2.52 kB gzip in total) and nothing in either script.
+The build emits two scripts: the shell (57.74 kB gzip) and the lazy scene (238.06 kB gzip). The scene's 864.59 kB raw is the three.js renderer, the springs, and the world's own modules, and it is fetched only after the shell has painted. Both are inside the MCD §8 budgets with room to spare. Against the single-mode v2.9 build, the second token set and the switch cost 1.83 kB more raw CSS (0.38 kB gzip) and 1.74 kB more raw shell (0.55 kB gzip), and nothing in the scene. The head grew by 0.70 kB raw (0.33 kB gzip): the inline pre-paint script arrived, and one `theme-color` meta left, which is the price of a first paint that honours a stored choice.
 
 ### 5.6 Dev server — SERVES
 
@@ -374,19 +384,24 @@ The rendered shell was inspected in a browser on 2026-10-18: the heading "What s
 
 On 2026-10-20 the colour scheme was emulated in Chromium at 1280 × 800, in both directions, on a page already running: switching to light turned the document to `--anansi-surface: #f2efe4` with `color-scheme: light`, and the mounted canvas recoloured in place, its strands and beads changing from the dark set's pale ink to the light set's dark ink with lavender strands, without a reload or a remount; switching back restored `#08090a` and `#edf1f1`. The action showed its jet boundary on paper, and the history drawer's heading, counts, search field, and empty state all read as dark text on paper. The idle page returned to zero new frames after the switch (two frames drawn for the change itself). The canvas label was read in both modes and now says "A sparse web. Anansi waits at its centre.", having dropped "in the dark" so a screen reader is not told the wrong mode. No console errors and no failed requests.
 
+The switch itself was exercised on 2026-10-20 at `127.0.0.1:5173`, with the stored choice cleared first. The button measured 44 × 44 and was named "Switch to light mode" in dark; a pointer press set `data-mode="light"`, moved `--anansi-surface` to `#f2efe4`, `color-scheme` to `light` and the one `theme-color` meta to `#f2efe4`, stored `{"version":1,"choice":"light"}`, and left focus on the control with the name now "Switch to dark mode". Tab from the body landed on the switch before History, and Enter flipped it back to dark, relabelled it and stored `{"version":1,"choice":"dark"}`. A reload with the stored light choice arrived with `data-mode="light"` already on the document, the moon showing (sun `opacity 0`, moon `1`), the theme colour `#f2efe4` and the label "Switch to dark mode". Layout: at 1280 × 800 the cluster sat at `x 1081–1232, y 40–84` while the hero began at `y 211`; at 390 × 844 it sat at `x 219–370, y 20–64` while the hero began at `y 286`; no horizontal overflow at either width.
+
+Three things could not be observed in that session and rest on the code and its tests instead: the crossfade and the glyph's turn (the preview webview was not being composited, so its CSS transitions sat at `currentTime 0` and no screenshot could be captured), and the focus ring (`:focus-visible` does not match while `document.hasFocus()` is false, which it was). The reduced-motion rules are now pinned by a test that reads the stylesheet, and the ring's contrast by `tokens.test.ts`; the animation itself and the actual first-paint frame remain unobserved (R17).
+
 ### 5.7 Version control — PRESENT
 
 ```
-$ git log --oneline
-f7b5095 Add the content layer: schema, authoring pipeline, and a seed library
-4242762 Complete the scaffold so the app builds, typechecks, and tests
-442a43a Establish repository with ratified specs and build scaffold
+$ git log --oneline -4
+0ee4823 Give the page a daylight token set the stage can follow
+7ca0133 Add the thirteen three.js reference skills beside the workflow toolkit
+6a4a86c Record the Phase 6 state and the reference packs now in the skill folder
+c86edb8 Fill the stage with objects, Anansi, and a search worth watching
 
-$ git ls-remote origin
-f7b5095886d22739801355b171b39c22836f88f9  HEAD   (matches local HEAD)
+$ git rev-list --left-right --count origin/main...main
+0	0
 ```
 
-Branch `main` tracks `origin/main` on GitHub and is level with it as of v2.5; the governance and CI commits `95a8b1e` through `3a00c9a` are on the remote, pushed from this checkout. The documentation gate added in v2.5 is in the working tree and not committed yet. `.gitattributes` enforces `* text=auto eol=lf`, and `git ls-files --eol` reports LF for every tracked file, so the CRLF churn that v1 flagged is gone.
+Branch `main` tracks `origin/main` on GitHub and is level with it: every phase commit through 7.1 is on the remote. The spec 0007 work is the working tree's only uncommitted change, which is why the map above counts 426 files against 419 committed. `.gitattributes` enforces `* text=auto eol=lf`, and `git ls-files --eol` reports LF for every tracked file, so the CRLF churn that v1 flagged is gone.
 
 ### 5.8 Dependency installation — HEALTHY
 
@@ -413,7 +428,7 @@ MISSING  README.md
 | Command | Result |
 |---|---|
 | `npm ci` | exit 0, 221 packages |
-| `npm run verify` | exit 0 — 317 tests passed, 28 files, `dist/` produced |
+| `npm run verify` | exit 0 — 337 tests passed, 31 files, `dist/` produced |
 | `npm run verify` with an injected `TS2322` in `src/app/App.tsx` | exit 2 — the gate fails a broken tree |
 | `npm run docs:check` with a claim edited to be false | exit 1 — the gate fails a drifted document |
 
@@ -425,7 +440,7 @@ MISSING  README.md
 
 ```
 $ npm run docs:check
-docs/SYSTEM_TEARDOWN.md: 196 claims compared against the repository, no drift
+docs/SYSTEM_TEARDOWN.md: 203 claims compared against the repository, no drift
 exit 0
 ```
 
@@ -579,7 +594,7 @@ All ten rules are live, and the build pass that covers them is 6.1 to 6.10:
 
 `src/world/` is still a leaf: it imports the engine's seeded stream, React, three, the renderer, and the springs, never the app, the state layer, or the content, and `purity.test.ts` enforces that, the no-literal rule, the absence of orbit controls, and Anansi's isolation. What the stage does not do: the DOM's searching dots remain as the fallback when WebGL is unavailable, and the CSS strand decoration in the shell is still there, because retiring it is a follow-up rather than a rule.
 
-### 7.8 Design system (MCD §7) — IMPLEMENTED (both token sets, 2026-10-20)
+### 7.8 Design system (MCD §7) — IMPLEMENTED (token sets and switch, 2026-10-20)
 
 | Token | Dark | Light | Status |
 |---|---|---|---|
@@ -595,7 +610,7 @@ All ten rules are live, and the build pass that covers them is 6.1 to 6.10:
 | `--anansi-yellow-glow` | `rgba(250,255,0,0.7)` | `rgba(25,50,60,0.28)` | Derived; the action's shadow |
 | `--anansi-action-edge` | `transparent` | `#19323C` | Derived; the action's boundary on paper |
 
-All colour lives in the two token blocks, honouring the "tokens only" rule: a hex or `rgb()` literal anywhere else in the stylesheet fails `src/app/tokens.test.ts`. Both modes are token sets under `prefers-color-scheme`, as MCD §7 requires, and `tokens.test.ts` computes the WCAG ratio of every text pair and focus ring from the stylesheet's own text: ink 17.51:1 dark and 15.49:1 light, dim 5.62:1 and 5.66:1, the lavender label 5.74:1 and 4.71:1, the focus ring 3.67:1 and 4.71:1, and the action's label on yellow 18.38:1 and 17.62:1. The sun and moon switch (7.2) is what does not exist yet; the mode currently follows the system. `ui-registry.md` now exists, established on 2026-10-16 by an audit of these styles.
+All colour lives in the two token blocks, honouring the "tokens only" rule: a hex or `rgb()` literal anywhere else in the stylesheet fails `src/app/tokens.test.ts`. Both modes are token sets, as MCD §7 requires, selected by `:root[data-mode='light']` since spec 0007 moved the authority from the media query to the attribute so a chosen mode can override the system, and `tokens.test.ts` computes the WCAG ratio of every text pair and focus ring from the stylesheet's own text: ink 17.51:1 dark and 15.49:1 light, dim 5.62:1 and 5.66:1, the lavender label 5.74:1 and 4.71:1, the focus ring 3.67:1 and 4.71:1, and the action's label on yellow 18.38:1 and 17.62:1. The sun and moon switch is built (7.2): a native button in the top-right cluster whose glyph is the mode it moves to, a choice stored under `anansi:v1:mode` and applied by an inline script before the first paint, the system preference followed live when nothing is chosen, and a view transition that reduced motion removes. `ui-registry.md` exists, established on 2026-10-16 by an audit of these styles, with the switch recorded on 2026-10-20.
 
 ### 7.9 Performance budgets (MCD §8) — MEASURED WHERE POSSIBLE
 
@@ -683,8 +698,8 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | `ui-registry.md` | Present | Established 2026-10-16 by `/imprint audit`; tracked |
 | `memory.md` | Present | Written 2026-10-16 by `/remember save`; tracked |
 | `AGENTS.md` | Present | Written by the project owner; tracked |
-| `docs/specs/` | Present | Six specs: the engine, the state, the loop, the drawer with the count, the 3D stage (2026-10-18), and the light token set (2026-10-20) |
-| `docs/scope/` | Present | 6 enrolled and 7 planned features, 10 in progress, 2026-10-18; tracked |
+| `docs/specs/` | Present | Seven specs: the engine, the state, the loop, the drawer with the count, the 3D stage (2026-10-18), the light token set and the sun and moon switch (2026-10-20) |
+| `docs/scope/` | Present | 6 enrolled and 6 planned features, 11 in progress, 2026-10-20; tracked |
 | `README.md` | **Missing** | Repo has a one-line description and no entry point |
 | `.github/workflows/verify.yml` | Present | Runs the gate on push and PR, satisfying MCD §6's "in CI" expectation; first run green 2026-10-16 |
 
@@ -703,14 +718,14 @@ content/topics/<id>.json          human reviewed, one entry per topic
 | Find a story by domain | Deferred (roadmap 5.3) until the pool covers the domains |
 | Render the web, its objects, and Anansi | **Working**: the seeded web, five object families, and a procedural Anansi render behind the shell, framed by the authored camera, with density that follows the journey |
 | Make the search an event | **Working**: a 1400 ms choreography wakes the web, carries Anansi across two strands and home, and holds the reveal for the single yellow filament |
-| Light mode | **Working**: both token sets, the system preference for activation, and the stage following the mode; a manual switch is 7.2 |
+| Both modes, with a switch | **Working**: both token sets, the sun and moon switch, the stored choice applied before the first paint, the system preference followed when nothing is chosen, and the stage following the mode |
 | Ship to a host | Not built |
 
 ### 9.3 Documentation consistency
 
 - **The MCD and this teardown agree as of 2026-10-17.** The MCD's §13 status and its §5 schema were reconciled with the code on 2026-10-16, and §13 was updated again on 2026-10-17 to record the engine as built, so no document now contradicts another.
 - **This document's current-state claims are now enforced.** `npm run docs:check` fails the gate when a count, a file list, a tracked-state statement, a version, or the gate's own composition no longer matches the repository. What remains on trust is what the gate cannot reach: the network and live-install figures, the amendment history, and any fact phrased in a shape the rules do not know.
-- **Roadmap Phases 0 to 5 are now marked complete** (5.3, the optional domain filter, is deferred with its reason recorded), and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
+- **Roadmap Phases 0 to 6 are marked complete, and Phase 7's two build steps are built** (5.3, the optional domain filter, is deferred with its reason recorded), and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
 - **The teardown v1 is superseded** by this document but remains in the git history.
 - **`skills/` has no license or attribution** and is published publicly, a decision made knowingly.
 - **The display font is fetched from Google Fonts**, an external request mildly against PRD §35. Recorded in the roadmap as a decision still to make.
@@ -757,7 +772,7 @@ Re-statused from v1. Three of the original critical risks are closed, and the ri
 **R16 — Two drawer limits a user can meet (LOW).** The list can only show what the store kept, so a learned story older than thirty days leaves the drawer while still counting toward `N / 90`, and a topic retired from the library disappears from history entirely. The written date search also follows the browser locale, so the date form a person can type is the one their locale writes.
 *Action:* recorded in spec 0004's Follow-up, where a future sentence or a wider retention window can address it if use shows it confuses.
 
-**R17 — Some stage paths rest on code and tests, not a deliberate live session (MEDIUM).** The WebGL probe was seen to decline the stage in a browser tab whose contexts were exhausted, and the ritual carried on with no error, which is the probe's path rather than the error boundary's. No session has yet thrown inside the scene, so the boundary rests on its shape. The reduced motion branch has the same standing for all three of its new users: the camera's zero parallax, the objects' zero impulse, and the search that resolves in place are pinned by unit tests, but the media query cannot be flipped from the page, so none has been observed live. The phone tier is now observed: ten objects at sixty days, a touch tilt inside 0.098, and the pulled-back frames.
+**R17 — Some stage paths rest on code and tests, not a deliberate live session (MEDIUM).** The WebGL probe was seen to decline the stage in a browser tab whose contexts were exhausted, and the ritual carried on with no error, which is the probe's path rather than the error boundary's. No session has yet thrown inside the scene, so the boundary rests on its shape. The reduced motion branch has the same standing for all three of its new users: the camera's zero parallax, the objects' zero impulse, and the search that resolves in place are pinned by unit tests, but the media query cannot be flipped from the page, so none has been observed live, and neither has the switch's crossfade (spec 0007), because the preview webview was not compositing frames in the session that exercised it. The phone tier is now observed: ten objects at sixty days, a touch tilt inside 0.098, and the pulled-back frames.
 *Action:* emulate reduce in a browser profile, and force a scene throw in a throwaway build, before Phase 9's accessibility and quality passes claim more than the code and tests support.
 
 **R14 — Claims the documentation gate cannot reach (LOW).** The gate covers the mechanical claims in this document only. The CI run id, `npm ci`'s package count, and `npm audit`'s advisories need the network or a live install, and any fact phrased in a shape `claims.ts` does not recognise is not compared.
@@ -778,7 +793,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 | 4 — The ritual loop | **Complete** (4.1 to 4.7), 31 tests |
 | 5 — History and progress | **Complete** (5.1 and 5.2; 5.3 deferred), 25 new tests |
 | 6 — The 3D world | **Complete** (6.1 to 6.10), 86 world tests |
-| 7 — Modes and design system | **In progress**: 7.1 built (the light token set), 7.2 and 7.3 not started |
+| 7 — Modes and design system | **In progress**: 7.1 and 7.2 built (the light token set, the switch); 7.3 not started |
 | 8 — Evolution and surprises | Not started |
 | 9 — Quality gates | Not started |
 | 10 — Hardening and deployment | Not started |
@@ -786,7 +801,7 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 
 **Recommended order of the next moves:**
 
-1. **Finish Phase 7, the modes and design system.** 7.1's token set is built and both modes pass the contrast contract; what remains is 7.2's sun and moon switch, which persists a manual choice and overrides the system preference, and 7.3's `/imprint` pass over everything built since the registry's first entries.
+1. **Finish Phase 7, the modes and design system.** 7.1's token set and 7.2's switch are built, and both modes pass the contrast contract; the one step left is 7.3's `/imprint` pass over everything built since the registry's first entries.
 2. **Grow the content pool.** The library is 24 topics of the 300 target, and twenty four stories run out in about eight days of daily use; roadmap 5.3 (the optional domain filter) also waits on that coverage.
 3. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
 4. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
@@ -812,7 +827,7 @@ npm install            # 221 packages
 npm run dev            # serves http://127.0.0.1:5173/
 npm run verify         # THE gate: typecheck + content:check + test + docs:check + build
 npm run typecheck      # tsc --noEmit, covers src/, scripts/, vite.config.ts
-npm run test           # vitest run — 317 tests
+npm run test           # vitest run — 337 tests
 npm run docs:check     # fail if this document has drifted from the repository
 npm run build          # vite build → dist/
 npm run content:validate   # validate the library; exits non-zero on error
@@ -826,8 +841,8 @@ npm run content:report     # coverage, difficulty spread, bundle size
 - The project builds, typechecks, tests, and serves cleanly. The content gate is real and proven to fail correctly.
 - The engine is pure by contract, and `src/engine/purity.test.ts` now fails the suite when an import crosses the boundary.
 - The DOM carries the product; the canvas enhances it. The web renders behind the shell as a seeded graph, and the ritual is unchanged when the scene fails or never loads.
-- The stage draws only on demand: an idle page holds at zero frames, and the scene chunk (238.06 kB gzip) loads after the shell (57.19 kB) has painted.
-- Both modes are token sets: the system preference swaps the DOM and the stage together, and every text pair and focus ring is checked against the WCAG minimum by `src/app/tokens.test.ts`.
+- The stage draws only on demand: an idle page holds at zero frames, and the scene chunk (238.06 kB gzip) loads after the shell (57.74 kB) has painted.
+- The mode has one authority: `<html data-mode>`. The switch writes it, a pre-paint script sets it from `anansi:v1:mode` or the system preference, the DOM and the stage both read it, and every text pair and focus ring in both sets is checked against the WCAG minimum by `src/app/tokens.test.ts`.
 - The camera is authored, not driven: five beat frames, a bounded spring tilt (0.098 on touch), and no orbit or scroll travel. A search moves it from the idle frame to the revealing frame and it stops there.
 - The search is the world's search: a 1400 ms choreography across two strands, with the engine's decision made at once and the reveal held for the movement. Under reduced motion there is no wait and Anansi stays at the hub.
 - The world thickens with the journey from the same generators: eleven beads and twenty strands at the start, seventy-one and one hundred and forty at ninety days, five objects at the start and twenty at the end on desktop, thinned for a phone.
@@ -839,4 +854,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v3.6. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v3.7. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*

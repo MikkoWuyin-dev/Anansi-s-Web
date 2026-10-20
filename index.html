@@ -5,7 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Anansi's Web — one intriguing story to find, take, and explain. Every day." />
     <meta name="theme-color" content="#08090A" />
-    <meta name="theme-color" content="#F2EFE4" media="(prefers-color-scheme: light)" />
+    <script>
+      // The mode has to be on the document before the first paint, so a stored
+      // choice never flashes the other page (spec 0007, AC-5). It reads the key
+      // the app writes, accepts only the three known choices, and falls back to
+      // the system and then to dark, which is the base token set.
+      try {
+        var stored = JSON.parse(localStorage.getItem('anansi:v1:mode'))
+        var choice = stored && stored.version === 1 ? stored.choice : 'system'
+        var light =
+          choice === 'light' ||
+          (choice !== 'dark' && matchMedia('(prefers-color-scheme: light)').matches)
+        document.documentElement.dataset.mode = light ? 'light' : 'dark'
+      } catch (error) {
+        document.documentElement.dataset.mode = 'dark'
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

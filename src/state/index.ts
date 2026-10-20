@@ -15,6 +15,16 @@ export {
   type JourneyStoreOptions,
   type StorageEventTarget,
 } from '@/state/journeyStore'
+export {
+  isModeChoice,
+  MODE_CHOICES,
+  MODE_STORAGE_KEY,
+  readChoice,
+  validateMode,
+  writeChoice,
+  type ModeChoice,
+  type StoredMode,
+} from '@/state/mode'
 export { HISTORY_WINDOW_DAYS, pruneHistory } from '@/state/retention'
 export { daysCompleted, JOURNEY_DAYS, isJourneyComplete } from '@/state/progress'
 export {
