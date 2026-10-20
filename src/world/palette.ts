@@ -7,6 +7,13 @@
  * light mode without a second palette written in JavaScript.
  */
 
+/**
+ * Which token set the document is wearing. The app decides it from the system
+ * preference and hands it to the scene, which re-reads the tokens when it
+ * changes (spec 0006, AC-6).
+ */
+export type Mode = 'light' | 'dark'
+
 export interface Palette {
   readonly black: string
   readonly jet: string

@@ -6,19 +6,30 @@
    that matters most in the current moment. Exactly one element here uses it.
 --------------------------------------------------------------------------- */
 :root {
+  /* The page itself. It is a role rather than a hue, because --anansi-black is
+     also the label on the yellow action and the two cannot be swapped together
+     (spec 0006). */
+  --anansi-surface: #08090a;
   --anansi-black: #08090a;
   --anansi-jet: #19323c;
   --anansi-yellow: #faff00;
   --anansi-strawberry: #ff3e41;
   --anansi-lavender: #885a89;
 
-  /* Derived neutrals for text on the dark grounding. The PRD palette carries no
-     light neutral, so ink and dim are mixed from it rather than added to it. */
+  /* Derived neutrals for text on the grounding. The PRD palette carries no
+     neutral, so ink and dim are mixed from it rather than added to it. */
   --anansi-ink: #edf1f1;
   --anansi-dim: #7e8a90;
 
-  /* The action's glow, so no raw colour leaks into a rule below. */
+  /* The action's shadow, and the boundary the fill cannot draw on paper. Both
+     are roles, so no raw colour leaks into a rule below and neither mode needs
+     a rule of its own (spec 0006). */
   --anansi-yellow-glow: rgba(250, 255, 0, 0.7);
+  --anansi-action-edge: transparent;
+
+  /* Lavender carries a link label, and the hue itself is 3.67:1 on the dark
+     page, so text gets its own lifted value (spec 0006, AC-4). */
+  --anansi-lavender-text: #a97aa9;
 
   /* Motion tokens, so the feel is edited in one place (ui-registry.md). */
   --anansi-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -26,6 +37,32 @@
   --anansi-entrance: 620ms;
 
   color-scheme: dark;
+}
+
+/* Light mode as the same token names under the system preference (spec 0006,
+   roadmap 7.1). Every colour token is re-declared, so nothing silently falls
+   back to a dark value, and the browser paints the right mode before any
+   script runs. Dark stays the base and the unexpressed preference. */
+@media (prefers-color-scheme: light) {
+  :root {
+    --anansi-surface: #f2efe4;
+    --anansi-black: #0d1011;
+    --anansi-jet: #19323c;
+    --anansi-yellow: #faff00;
+    --anansi-strawberry: #ff3e41;
+    --anansi-lavender: #885a89;
+
+    /* Re-derived for paper: a warm near-black for text, and a mid neutral that
+       holds 4.5:1 on it. Paper is the palette's warmth carried into daylight. */
+    --anansi-ink: #10191c;
+    --anansi-dim: #55605f;
+
+    --anansi-yellow-glow: rgba(25, 50, 60, 0.28);
+    --anansi-action-edge: #19323c;
+    --anansi-lavender-text: #885a89;
+
+    color-scheme: light;
+  }
 }
 
 *,
@@ -41,7 +78,7 @@ body {
 }
 
 body {
-  background-color: var(--anansi-black);
+  background-color: var(--anansi-surface);
   color: var(--anansi-ink);
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   font-size: 16px;
@@ -170,7 +207,11 @@ body {
   font-size: 1.0625rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 0 0 0 var(--anansi-yellow-glow);
+  /* The inset ring is the light mode boundary; in dark it is transparent, so
+     the button looks exactly as it did. */
+  box-shadow:
+    inset 0 0 0 1px var(--anansi-action-edge),
+    0 0 0 0 var(--anansi-yellow-glow);
   transition:
     transform var(--anansi-duration) var(--anansi-ease),
     box-shadow var(--anansi-duration) var(--anansi-ease);
@@ -178,7 +219,9 @@ body {
 
 .action:hover {
   transform: translateY(-3px);
-  box-shadow: 0 16px 42px -20px var(--anansi-yellow-glow);
+  box-shadow:
+    inset 0 0 0 1px var(--anansi-action-edge),
+    0 16px 42px -20px var(--anansi-yellow-glow);
 }
 
 .action:active {
@@ -301,7 +344,7 @@ body {
 
 .story__back {
   margin: 0;
-  color: var(--anansi-lavender);
+  color: var(--anansi-lavender-text);
   font-size: 0.9375rem;
 }
 

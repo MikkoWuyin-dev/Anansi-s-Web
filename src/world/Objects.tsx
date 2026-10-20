@@ -3,7 +3,7 @@ import { animated, useSpring } from '@react-spring/three'
 import { useThree } from '@react-three/fiber'
 import { Color, Euler, InstancedMesh, Matrix4, Quaternion, Vector3 } from 'three'
 
-import { documentPalette, type Palette } from '@/world/palette'
+import type { Palette } from '@/world/palette'
 import {
   byFamily,
   FAMILIES,
@@ -21,6 +21,8 @@ export interface ObjectsProps {
   readonly mobile: boolean
   readonly beat: Beat
   readonly reducedMotion: boolean
+  /** Resolved once by the scene, so a mode change repaints every family. */
+  readonly palette: Palette
 }
 
 /** The one primitive a family is built from; every instance shares it. */
@@ -144,8 +146,7 @@ function FamilyGroup({
  * The objects hanging from the web (roadmap 6.4, 6.7). They are generated from
  * the graph and the journey count, and they only move when a beat arrives.
  */
-export function Objects({ graph, days, mobile, beat, reducedMotion }: ObjectsProps) {
-  const palette = useMemo(() => documentPalette(), [])
+export function Objects({ graph, days, mobile, beat, reducedMotion, palette }: ObjectsProps) {
   const objects = useMemo(
     () => objectsFor(graph, days, mobile, reducedMotion),
     [graph, days, mobile, reducedMotion],

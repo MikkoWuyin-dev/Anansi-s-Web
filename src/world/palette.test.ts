@@ -7,8 +7,19 @@ import { PALETTE_TOKENS, readPalette } from '@/world/palette'
 
 const stylesheet = readFileSync(fileURLToPath(new URL('../app/styles.css', import.meta.url)), 'utf8')
 
+/**
+ * The base token block only. The light set declares the same names further down
+ * (spec 0006), and the reader must resolve whichever set the document is wearing
+ * rather than whichever appears last in the file.
+ */
+const baseBlock = (() => {
+  const start = stylesheet.indexOf(':root')
+
+  return stylesheet.slice(start, stylesheet.indexOf('}', stylesheet.indexOf('{', start)))
+})()
+
 const declarations = new Map(
-  [...stylesheet.matchAll(/(--anansi-[a-z-]+)\s*:\s*([^;]+);/g)].map((match) => [
+  [...baseBlock.matchAll(/(--anansi-[a-z-]+)\s*:\s*([^;]+);/g)].map((match) => [
     match[1] as string,
     (match[2] as string).trim(),
   ]),
@@ -45,11 +56,13 @@ describe('the token source', () => {
     }
   })
 
-  it('declares them once, in the one token block', () => {
-    const block = stylesheet.slice(stylesheet.indexOf(':root'), stylesheet.indexOf('}'))
-    const hexes = [...block.matchAll(/#[0-9a-f]{6}/gi)].map((match) => match[0].toLowerCase())
+  it('declares each of them once, in the base token block', () => {
+    // Two roles may share a value — the page and the action's label are both
+    // near-black — but no token may be declared twice and quietly win.
+    for (const name of Object.values(PALETTE_TOKENS)) {
+      const count = [...baseBlock.matchAll(new RegExp(`${name}\\s*:`, 'g'))].length
 
-    expect(hexes.length).toBeGreaterThanOrEqual(Object.keys(PALETTE_TOKENS).length)
-    expect(new Set(hexes).size).toBe(hexes.length)
+      expect({ name, count }).toEqual({ name, count: 1 })
+    }
   })
 })

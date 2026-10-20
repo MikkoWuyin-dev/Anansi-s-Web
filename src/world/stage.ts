@@ -40,7 +40,9 @@ export function densityWord(days: number): Density {
 export function descriptionFor(beat: Beat, days: number): string {
   switch (beat) {
     case 'idle':
-      return `A ${densityWord(days)} web in the dark. Anansi waits at its centre.`
+      // No "in the dark": the description has to be true in both token sets
+      // (spec 0006), and the mode is not something the canvas reports.
+      return `A ${densityWord(days)} web. Anansi waits at its centre.`
     case 'searching':
       return 'Anansi is searching the web.'
     case 'revealing':

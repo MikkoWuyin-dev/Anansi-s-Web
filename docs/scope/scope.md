@@ -231,10 +231,14 @@ spec [0005](../specs/0005-the-3d-stage.md)
 
 ## Slice 4: modes
 
-### 12. Light mode and the sun and moon switch · needs a decision
+### 12. Light mode and the sun and moon switch · in progress
 A swapped token set for daylight and a playful switch that belongs to the world rather than sitting on top of it.
 **Done when:** both modes pass contrast checks for text, controls, and focus states; the switch works by keyboard and the choice persists; and its transition respects reduced motion.
-- [ ] Design it (spec): `/architect light mode and the mode switch`
+- [x] Design the token set (spec): `docs/specs/0006-the-light-token-set.md` (2026-10-20), which leaves the switch to its own decisions
+- [x] The light token set, its roles, and the contrast contract (7.1, 2026-10-20): a second set under the system preference, three role tokens, `src/app/tokens.test.ts` over both sets, and the stage recolouring on a mode change
+- [ ] The sun and moon switch (7.2): keyboard operable, persistent, and reduced-motion safe
+- [ ] Verify both modes: `/check verify light mode`
+- [ ] Imprint both token sets: roadmap 7.3
 
 ## Slice 5: the web grows
 

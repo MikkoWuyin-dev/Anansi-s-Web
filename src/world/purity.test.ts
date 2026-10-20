@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 /**
- * The stage's module boundary (spec 0005, AC-8, AC-11, AC-19).
+ * The stage's module boundary (spec 0005, AC-8, AC-11, AC-19; spec 0006, AC-6).
  *
  * Reads the world's own source, for the same reason the engine and state do:
  * a colour literal, an orbit control, or an import back into the app is a
@@ -102,6 +102,20 @@ describe('the world module boundary', () => {
           component: false,
         })
       }
+    }
+  })
+
+  it('reads the palette once, where the mode can move it', () => {
+    for (const { name, source } of sources.filter((entry) => entry.name.endsWith('.tsx'))) {
+      if (name === 'Scene.tsx') {
+        // The scene is the one component allowed to touch the document, and
+        // its read depends on the mode, so a mode change recolours the whole
+        // stage at once (spec 0006, AC-6).
+        expect(source).toContain('useMemo(() => documentPalette(), [mode])')
+        continue
+      }
+
+      expect({ name, reads: /documentPalette\s*\(/.test(source) }).toEqual({ name, reads: false })
     }
   })
 

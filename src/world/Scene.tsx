@@ -7,6 +7,7 @@ import { frameFor } from '@/world/camera'
 import { graphFor } from '@/world/graph'
 import { Objects } from '@/world/Objects'
 import { objectCount } from '@/world/families'
+import { documentPalette, type Mode } from '@/world/palette'
 import { WebGraph } from '@/world/Web'
 import type { Beat } from '@/world/stage'
 
@@ -16,6 +17,8 @@ export interface SceneProps {
   readonly mobile: boolean
   readonly beat: Beat
   readonly reducedMotion: boolean
+  /** The token set to draw with; changing it re-reads the palette (spec 0006). */
+  readonly mode: Mode
 }
 
 /**
@@ -23,8 +26,11 @@ export interface SceneProps {
  * asks for a frame (rule 2). This module is the lazy chunk, so three.js and
  * the renderer never enter the shell's bundle.
  */
-export default function Scene({ seed, days, mobile, beat, reducedMotion }: SceneProps) {
+export default function Scene({ seed, days, mobile, beat, reducedMotion, mode }: SceneProps) {
   const idle = frameFor('idle', mobile)
+  // One read for the whole stage, so a mode change recolours the web, the
+  // objects, and Anansi together (spec 0006, AC-6).
+  const palette = useMemo(() => documentPalette(), [mode])
   const graph = useMemo(() => graphFor({ seed, days, mobile }), [seed, days, mobile])
   const objects = objectCount(days, mobile)
   // The hook is created once, so it reads the count through a ref rather than
@@ -79,15 +85,28 @@ export default function Scene({ seed, days, mobile, beat, reducedMotion }: Scene
       }}
     >
       <CameraRig beat={beat} mobile={mobile} reducedMotion={reducedMotion} />
-      <WebGraph graph={graph} mobile={mobile} beat={beat} reducedMotion={reducedMotion} />
+      <WebGraph
+        graph={graph}
+        mobile={mobile}
+        beat={beat}
+        reducedMotion={reducedMotion}
+        palette={palette}
+      />
       <Objects
         graph={graph}
         days={days}
         mobile={mobile}
         beat={beat}
         reducedMotion={reducedMotion}
+        palette={palette}
       />
-      <Anansi graph={graph} beat={beat} mobile={mobile} reducedMotion={reducedMotion} />
+      <Anansi
+        graph={graph}
+        beat={beat}
+        mobile={mobile}
+        reducedMotion={reducedMotion}
+        palette={palette}
+      />
     </Canvas>
   )
 }

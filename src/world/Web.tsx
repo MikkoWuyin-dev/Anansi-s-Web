@@ -15,7 +15,7 @@ import {
 
 import { webWake } from '@/world/choreography'
 import type { WebGraph as Graph } from '@/world/graph'
-import { documentPalette, type Palette } from '@/world/palette'
+import type { Palette } from '@/world/palette'
 import type { Beat } from '@/world/stage'
 
 export interface WebGraphProps {
@@ -23,6 +23,8 @@ export interface WebGraphProps {
   readonly mobile: boolean
   readonly beat: Beat
   readonly reducedMotion: boolean
+  /** Resolved once by the scene, so both the DOM and the web follow the mode. */
+  readonly palette: Palette
 }
 
 /**
@@ -136,9 +138,8 @@ function paintBeads(mesh: InstancedMesh, graph: Graph, palette: Palette): void {
  * when a search begins and springs back when one ends, and it draws no frames
  * of its own (spec 0005, AC-3, AC-4, AC-12).
  */
-export function WebGraph({ graph, mobile, beat, reducedMotion }: WebGraphProps) {
+export function WebGraph({ graph, mobile, beat, reducedMotion, palette }: WebGraphProps) {
   const invalidate = useThree((state) => state.invalidate)
-  const palette = useMemo(() => documentPalette(), [])
   const geometry = useMemo(() => strandGeometry(graph, palette), [graph, palette])
   const filament = useMemo(() => {
     const line = new Line(

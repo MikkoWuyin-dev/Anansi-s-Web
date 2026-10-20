@@ -6,7 +6,7 @@ import type { Group } from 'three'
 import { bodyDip, EYES, LEG_REACH, LEGS, legGait } from '@/world/spider'
 import { restingPoint, searchPath, searchPose } from '@/world/choreography'
 import type { WebGraph } from '@/world/graph'
-import { documentPalette } from '@/world/palette'
+import type { Palette } from '@/world/palette'
 import type { Beat } from '@/world/stage'
 
 export interface AnansiProps {
@@ -14,6 +14,8 @@ export interface AnansiProps {
   readonly beat: Beat
   readonly mobile: boolean
   readonly reducedMotion: boolean
+  /** Resolved once by the scene, so a mode change recolours him with the web. */
+  readonly palette: Palette
 }
 
 /**
@@ -25,11 +27,10 @@ export interface AnansiProps {
  * this file imports `anansi.ts`, so a modelled asset can take his place by
  * changing this component and nothing else.
  */
-export function Anansi({ graph, beat, mobile, reducedMotion }: AnansiProps) {
+export function Anansi({ graph, beat, mobile, reducedMotion, palette }: AnansiProps) {
   const body = useRef<Group>(null)
   const legs = useRef<Array<Group | null>>([])
   const invalidate = useThree((state) => state.invalidate)
-  const palette = useMemo(() => documentPalette(), [])
   const path = useMemo(() => searchPath(graph), [graph])
   const home = useMemo(() => restingPoint(graph), [graph])
   const scale = mobile ? 1.1 : 1

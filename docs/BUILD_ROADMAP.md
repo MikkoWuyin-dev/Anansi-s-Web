@@ -341,12 +341,13 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 7 — Modes and design system
+## Phase 7 — Modes and design system (7.1 BUILT 2026-10-20)
 
-### 7.1 The light token set
+### 7.1 The light token set — BUILT 2026-10-20
 
 - **Deliverable:** light mode as a swapped token set, with yellow still the single most regulated accent and jet re-cast for structural grounding.
 - **Done when:** both modes pass contrast checks for text, controls, and focus states.
+- **Built:** `styles.css` declares a second `:root` under `@media (prefers-color-scheme: light)` with every colour role re-declared. Three roles were added so the swap is safe: `--anansi-surface` (the page, because `--anansi-black` is the label on the yellow action), `--anansi-action-edge` (the boundary a yellow fill cannot draw on paper), and `--anansi-lavender-text` (the one lavender label, 5.74:1 in dark and 4.71:1 in light). `src/app/tokens.test.ts` computes the WCAG ratio of every text pair, the focus ring, and the action's boundary from the stylesheet's own text, and fails on any raw colour outside the two token blocks. The stage reads the palette once per mode in `Scene.tsx` and `WorldLayer` subscribes to the colour scheme, so the web, the objects, and Anansi recolour together without a reload. Verified live with the scheme emulated in both directions: the mounted canvas recoloured in place, the drawer read as dark text on paper, and the idle page returned to zero frames. `npm run verify` → exit 0, 317 tests in 28 files, shell 57.19 kB and scene 238.06 kB gzip. Spec: `docs/specs/0006-the-light-token-set.md`.
 
 ### 7.2 The sun and moon switch
 

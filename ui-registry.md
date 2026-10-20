@@ -354,6 +354,16 @@ None. Every component matches the baseline it was read from, and the one duplica
 
 **One duplication worth tokenising (resolved 2026-10-17).** The easing curve `cubic-bezier(0.2, 0.8, 0.2, 1)` was written out three separate times in `src/app/styles.css`, and the durations `220ms` and `620ms` were repeated alongside it. The loop's build added the three custom properties (`--anansi-ease`, `--anansi-duration`, `--anansi-entrance`) and pointed every transition and entrance at them, so the motion feel is edited in one place.
 
-**No hardcoded colour outside the tokens.** Every colour in the running app resolves through a custom property, and the raw values appear only in the `:root` block. The one nuance to carry forward: `--anansi-ink` and `--anansi-dim` are derived neutrals, mixed for text on the dark grounding because the product palette carries no light neutral. They are documented as derived in the stylesheet, and they are tokens rather than raw values, so they are legitimate. A future light mode will need its own derivation of both.
+**No hardcoded colour outside the tokens.** Every colour in the running app resolves through a custom property, and the raw values appear only in the token blocks. `--anansi-ink` and `--anansi-dim` are derived neutrals; the palette names hues, and a hue cannot do every job.
+
+**The two modes (spec 0006, 2026-10-20).** Light mode is the same token names under `@media (prefers-color-scheme: light)`, so no component or rule below the tokens knows which mode is running. Dark is the base and the native feel; light is the daylight reading of it. Three roles exist because a hue was standing in for a job:
+
+| Role | Dark | Light | Why it exists |
+|---|---|---|---|
+| `--anansi-surface` | `#08090a` | `#f2efe4` | the page; `--anansi-black` is the label on the yellow action and cannot be the page as well |
+| `--anansi-action-edge` | `transparent` | `#19323c` | the yellow fill is 1.06:1 on paper; the inset ring gives the button a boundary |
+| `--anansi-lavender-text` | `#a97aa9` | `#885a89` | the one lavender label; the hue itself is 3.67:1 on the dark page |
+
+Yellow stays the single regulated accent in both modes: one fill, always with `--anansi-black` on it (18.38:1 dark, 17.62:1 light). The mode is arithmetic, not taste: `src/app/tokens.test.ts` derives every text pair and focus ring from the stylesheet and fails below 4.5:1 for text or 3:1 for the ring, the action's boundary, and the label on yellow. The sun and moon switch (7.2) is not built yet; the mode currently follows the system.
 
 **Not a component.** `dist/assets/*.css` is build output and is ignored by this registry.

@@ -9,6 +9,7 @@ import {
 } from 'react'
 
 import { descriptionFor, type Beat } from '@/world/stage'
+import type { Mode } from '@/world/palette'
 
 const Scene = lazy(() => import('@/world/Scene'))
 
@@ -17,6 +18,9 @@ export const MOBILE_QUERY = '(max-width: 40rem)'
 
 /** The media query the camera rig reads to stay still (spec 0005, AC-14). */
 export const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+
+/** The system preference that swaps the token set (spec 0006, AC-2). */
+export const LIGHT_MODE_QUERY = '(prefers-color-scheme: light)'
 
 export interface WorldLayerProps {
   /** Which ritual beat the stage should frame (spec 0005, AC-9). */
@@ -47,6 +51,17 @@ function subscribeToMotion(onChange: () => void): () => void {
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia(REDUCED_MOTION_QUERY).matches
+}
+
+function subscribeToMode(onChange: () => void): () => void {
+  const query = window.matchMedia(LIGHT_MODE_QUERY)
+  query.addEventListener('change', onChange)
+
+  return () => query.removeEventListener('change', onChange)
+}
+
+function modeNow(): Mode {
+  return window.matchMedia(LIGHT_MODE_QUERY).matches ? 'light' : 'dark'
 }
 
 /** Whether the browser can give the scene a context at all (AC-17). */
@@ -81,6 +96,7 @@ class StageBoundary extends Component<{ readonly children: ReactNode }, { readon
 export function WorldLayer({ beat, days, seed }: WorldLayerProps) {
   const mobile = useSyncExternalStore(subscribeToWidth, isNarrow, () => false)
   const reducedMotion = useSyncExternalStore(subscribeToMotion, prefersReducedMotion, () => false)
+  const mode = useSyncExternalStore(subscribeToMode, modeNow, () => 'dark' as const)
   const [armed, setArmed] = useState(false)
 
   useEffect(() => {
@@ -147,6 +163,7 @@ export function WorldLayer({ beat, days, seed }: WorldLayerProps) {
               mobile={mobile}
               beat={beat}
               reducedMotion={reducedMotion}
+              mode={mode}
             />
           </Suspense>
         </StageBoundary>
