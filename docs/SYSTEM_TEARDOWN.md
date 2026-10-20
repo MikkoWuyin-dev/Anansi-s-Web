@@ -5,7 +5,7 @@
 - **Original audit:** 2026-10-16 (v1.0)
 - **Last updated:** 2026-10-20 (v3.9)
 - **Auditor:** Buffy (automated code agent)
-- **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
+- **Status:** **Snapshot, not maintained.** This document records the repository as it stood at v3.9 (2026-10-20, commit `8635074`). It is no longer updated per task, and `npm run docs:check` no longer checks it. Current state, open risks, and the next step are in `memory.md`, and onboarding starts at `AGENTS.md`. Anything below that refers to `KNOWLEDGE INDEX.md`, to the claim checker, or to counts describes the repository at that date.
 
 ---
 

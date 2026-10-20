@@ -7,7 +7,7 @@
 
 ---
 
-> **This is the canonical context file.** Every session that works on Anansi's Web — human or AI — reads this document first. It carries the ratified decisions, the reasoning behind them, the technical contracts, and the workflow rituals. When a session must choose between momentum and this document, this document wins. If a decision here must change, change it here first, with the product owner's consent — nowhere else.
+> **This is the canonical context file.** Every session that works on Anansi's Web — human or AI — reads the sections of this document its task needs; `AGENTS.md` routes each kind of question to its section. It carries the ratified decisions, the reasoning behind them, the technical contracts, and the workflow rituals. When a session must choose between momentum and this document, this document wins. If a decision here must change, change it here first, with the product owner's consent — nowhere else.
 
 ---
 
@@ -19,6 +19,7 @@
 - **2026-10-16** — §13's verified line updated: `npm run verify` now runs five steps, the added one being `npm run docs:check`, which compares the current-state claims in `docs/SYSTEM_TEARDOWN.md` against the repository and fails the gate when they disagree. A status correction rather than a decision change; it executes the verification half of the maintenance protocol in `AGENTS.md` §11, and the figures it cannot reach are recorded as such in the teardown.
 - **2026-10-17** — §5's local state schema extended to match spec 0002 as built: `Identity` added for the generated client id, and `Progress` gains `acceptedDayKeys`, because a 30 day history cannot carry a 90 day count. The schema now also states the `version: 1` envelope and per key validation. A schema correction, not a change to the day rules, made with the product owner's consent.
 - **2026-10-17** — §13 rewritten again: the selection engine is built and verified against §5 and spec 0001, so it moves from "not built" to "built", the purity convention is now enforced by a test, and the next step becomes state and persistence. A status correction rather than a decision change; no rule, contract or tuning value in §5 changed.
+- **2026-10-20** — §13 reduced to a pointer: the project's current state now lives only in `memory.md`, and the System Teardown became a dated audit snapshot that is no longer kept current. §3 lists `AGENTS.md` and describes the teardown as a snapshot, and the opening note says to read the sections a task needs rather than the whole document. These are documentation changes, made on the product owner's instruction; no decision changed.
 
 ---
 
@@ -104,7 +105,7 @@ No auth, no signup, no profile. All state is per-browser. When accounts eventual
     PRD.md            product truth (v1.1)
     MCD.md            this document
     BUILD_ROADMAP.md  build order: phases, gates, definition of done
-    SYSTEM_TEARDOWN.md  verified state of the repository
+    SYSTEM_TEARDOWN.md  whole-repo audit, a dated snapshot (v3.9, 2026-10-20)
   skills/             workflow skills (architect, imprint, recover, remember, review)
   content/
     topics/           curated library source — versioned, human-reviewed
@@ -117,7 +118,8 @@ No auth, no signup, no profile. All state is per-browser. When accounts eventual
     state/            zustand stores + localStorage persistence
     content/          compiled topic bundle + loader + types
   ui-registry.md      imprinted visual patterns (maintained by /imprint)
-  memory.md           session handoff (maintained by /remember)
+  AGENTS.md           agent entry point: commands, map, invariants, gates (CLAUDE.md imports it)
+  memory.md           the single record of current state and next step (maintained by /remember)
 ```
 
 The `engine/` boundary is the load-bearing one: it imports nothing from `app/`, `world/`, or `state/` — data goes in, decisions come out. This purity is what keeps the accounts-era migration a lift-and-shift.
@@ -333,9 +335,4 @@ Recorded so the future is cheap, not to build it now.
 
 ## 13. Where We Are
 
-- PRD v1.1 and this MCD are ratified.
-- **Built and verified.** The scaffold (Vite + React 18 + TypeScript strict, one component tree), the content layer (schema, validation and compile pipeline, a 24-topic seed library, compiled bundle, loader), the selection engine of §5 (`offerNextStory`, the contract shapes, the frozen tuning object, the day key and the seeded PRNG), the state layer of spec 0002 (four validated stores under `anansi:v1:*`, the day rollover, the 30 day prune, the accepted day tally with the journey roll, the generated client id, the per day stream helper, and cross tab rehydration), the ritual loop of spec 0003 (the search beat, the reveal of a title alone, up to two rerolls, the sealed third story, taking the day's story, the inline learned check, the resurfacing line, the honest states, and the midnight rollover, all keyboard operable and reduced motion safe), and the history drawer and journey count of spec 0004: the last 30 days listed by day, searchable by title or date, filtered by All, Explored and Learned from the one store, with the quiet `N / 90` on the taken story and in the drawer header, and the whole stage of spec 0005: one lazy canvas armed after the shell paints, on demand rendering with no idle frames, a seeded web graph drawn behind the text whose density follows days completed, five seeded object families drawn as five instanced meshes, a procedural Anansi with an alternating gait, a 1400 ms search choreography across two anchors, spring driven tilt, impulses, travel and wake, an authored camera that frames each of the five beats and answers the pointer only within a 0.14 unit bound, and a phone tier with thinner density and a touch tilt, all in the palette tokens and with no colour literal in `src/world/`, and the light token set of spec 0006: a second set selected by `<html data-mode>` with surface, action-edge and readable-lavender roles, an executable contrast contract over both sets, and a stage that resolves the palette once per mode and hands it to the web, the objects and Anansi, the sun and moon switch of spec 0007: a native button in the top-right cluster with a token-drawn sun and moon, a choice stored under `anansi:v1:mode` and applied before the first paint, a live system preference when nothing is chosen, and a view transition that reduced motion removes, and the evolving web of spec 0008: one standing thread and knot per kept day derived from the journey's tally, drawn in two extra calls at any day count, with the reveal filament holding while today's story is kept. `npm run verify` — typecheck, content check, tests, documentation drift check, build — exits 0, with 317 tests passing, the shell at 57.19 kB gzip and the scene chunk at 238.06 kB against their 250 kB and 350 kB budgets.
-- **Not built.** The sun and moon switch (roadmap 7.2), the optional domain filter (roadmap 5.3, deferred until the pool covers the domains), the measured quality gates of Phase 9, and deployment. The stage's reduced motion branch is unit tested but not yet observed in an emulated browser profile (R17).
-- **Weak points.** Engine purity is enforced in the suite rather than by convention: `src/engine/purity.test.ts` fails when an import crosses into the app, state or world layers, or when a source reads a clock, storage, the DOM or the network. CI runs the gate on push and pull requests — `.github/workflows/verify.yml`, committed as `ca1502d`, first run green on 2026-10-16 — so §6's validation is enforced on the remote rather than by memory; its failure path is still proven only locally. The §10 state files (`AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/`, all created on 2026-10-16) are committed as `95a8b1e`, so the rituals can run and their output stays versioned. The teardown's current-state claims are enforced mechanically by `npm run docs:check`, a gate step since 2026-10-16, while its network and live-install figures remain on trust.
-- The build order for what remains, with its gates and acceptance criteria, is `docs/BUILD_ROADMAP.md`. The verified state of the repository is `docs/SYSTEM_TEARDOWN.md`.
-- Next step: **the sun and moon switch** (roadmap 7.2), a manual mode choice that persists and overrides the system preference, then the `/imprint` pass (7.3). The token contract is `docs/specs/0006-the-light-token-set.md`. The stage's rules are fixed by `docs/specs/0005-the-3d-stage.md`, the drawer's by `docs/specs/0004-history-drawer-and-journey-count.md`, the loop's by `docs/specs/0003-ritual-loop.md`, the engine's by `docs/specs/0001-selection-engine.md`, and the store's by `docs/specs/0002-local-state-and-persistence.md`.
+This section no longer tracks status, because status kept in several documents drifted apart. Current state, open risks, and the next step are in `memory.md`, the only record of where the project stands. The build order and each phase's done-when lines are in `docs/BUILD_ROADMAP.md`, and the last whole-repo audit is `docs/SYSTEM_TEARDOWN.md`, a dated snapshot.

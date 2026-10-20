@@ -1,8 +1,8 @@
 name: verify
 
 # The single gate: typecheck, content drift check, tests, production build.
-# AGENTS.md §6 requires this before any work is called done; nothing enforced it
-# on the remote until this workflow existed. MCD §6 expects content validation
+# AGENTS.md (Commands) requires this before any work is called done; nothing
+# enforced it on the remote until this workflow existed. MCD §6 expects content validation
 # to run "in CI".
 
 on:

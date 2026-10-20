@@ -1,108 +1,58 @@
-# Session memory
+# memory.md: where we are
 
-Handoff for the next agent. Read `AGENTS.md` and `KNOWLEDGE INDEX.md` first; this file records
-working state, not requirements.
+Overwrite this file at the end of each task; don't append to it. 80 lines at most (`npm run docs:check`).
+Durable knowledge goes to the document that owns it (see `AGENTS.md`), and the history goes in `git log`.
 
-## Where the project is
+Updated: 2026-10-20, after the documentation restructure.
 
-Phases 0 to 7 are complete, and Phase 8 is half done: 8.1, the evolving web, landed on 2026-10-20
-against spec 0008. 8.2, the hidden interactions, has not started because it is a product decision.
-Everything through 7.3 is committed; the 8.1 work is the commit that follows this handoff.
+## Now
 
-- Specs: `0006-the-light-token-set.md` (built; AC-2 superseded), `0007-the-sun-and-moon-switch.md`
-  (built), and `0008-the-evolving-web.md` (`Built`, 2026-10-20).
-- Code: the mode is one authority on `<html data-mode>`; `src/state/mode.ts` stores the choice,
-  `src/app/mode.ts` resolves and applies it, `src/app/ModeSwitch.tsx` is the button, `index.html`
-  sets the attribute before the module loads.
-- Tests: 347 in 32 files — `src/app/` 86, `src/state/` 56, `src/world/` 96, `src/engine/` 44.
-- Records: teardown v3.9, MCD §§7 and 13, roadmap 8.1, the scope (feature 13 in progress),
-  `ui-registry.md`, and this file were reconciled on 2026-10-20.
+- Phases 0 to 7 are built. Phase 8 is half done: 8.1, the weave, is built against
+  `docs/specs/0008-the-evolving-web.md`. 8.2, the hidden interactions, has not started.
+- Phases 9 (measured quality gates) and 10 (hardening, deployment) have not started. Phase 11, accounts, is deferred.
+- The content library holds a small seed pool against a target of 300 (`npm run content:report`).
+  Roadmap 5.3, the optional domain filter, waits until the pool covers the domains.
 
-## The mode (specs 0006 and 0007)
+## Last done
 
-- `<html data-mode="light|dark">` is the only thing the stylesheet reads. `:root[data-mode='light']`
-  holds the daytime values. Do not reintroduce a `prefers-color-scheme` media query for the tokens:
-  it cannot be overridden by a click, and `tokens.test.ts` fails if one appears.
-- The stored shape is `{version: 1, choice}` under `anansi:v1:mode`, where choice is
-  `system | light | dark`. `system` is what "no choice" means — there is no separate absence state.
-  An unknown or malformed value falls back to `system`, and a refused write is swallowed.
-- `resolveMode(choice, system)` and `toggleChoice(choice, system)` are pure and node-testable;
-  `applyMode` writes the attribute and the one `theme-color` meta (read from `--anansi-surface`, so
-  the colour is never restated in script).
-- The pre-paint script in `index.html` must stay before `/src/main.tsx` and must set the attribute
-  from the resolved value. The test asserts the assignment, not merely the property name — the first
-  version of that test passed with the assignment deleted.
-- `App.tsx` follows the system live only while the choice is `system`, crossfades through
-  `startViewTransition` when it exists, and skips that under `prefers-reduced-motion`.
-- Three roles exist because the palette names hues, not jobs: `--anansi-surface`,
-  `--anansi-action-edge` (the yellow fill is 1.06:1 on paper), `--anansi-lavender-text`.
-
-## The weave (spec 0008)
-
-- `src/world/kept.ts` derives one thread and one knot per day in `acceptedDayKeys`. The tally is the
-  source, never the history: history prunes at 30 days and the world must not lose its earliest marks.
-- The thread's geometry comes from `createRng(`${seed}:kept:${dayKey}`)`, so a day's mark is fixed for
-  a given web and adding a day never rewrites an earlier one. A thread carries a day key and a
-  position only, which is what keeps the hidden selection system out of the geometry.
-- `Web.tsx` draws every thread in one line buffer and every knot in one instanced mesh: two draw
-  calls at any day count (28 with none, 30 with one or forty five). `filamentRest` holds the reveal
-  filament at `0.45` while today is kept, and the description names the weave without a number.
-
-## Phase 6 decisions worth keeping
-
-- `families.ts` and `spider.ts` are not `Objects.ts` or `Anansi.ts`: Windows and TypeScript treat
-  those as the same file as the `.tsx` beside them. Keep a different stem for a pure module.
-- The search is `SEARCH_MS` (1400 ms) from `choreography.ts`, imported by `ritual.ts`; the engine
-  decides and records first, then the reveal waits. `celebrating` is transient (900 ms) and skipped
-  under reduced motion.
-- Anansi's travel is a spring of scalar progress through a keyframed path, reset (not sprung back)
-  when the searching beat ends. `Web.tsx` mounts the yellow filament at zero opacity so its shader
-  compiles with the stage.
-- `@react-spring/three` needs `onChange: () => invalidate()` or the demand frameloop never draws.
-- The world stays a leaf: it imports the engine's seeded stream, React, three, the renderer, and the
-  springs, never the app, state, or content.
-
-## Installed reference skills (2026-10-18)
-
-Thirteen `threejs-*` packs from `CloudAI-X/threejs-skills` sit in `skills/` with the eight earlier
-design packs, all tracked since 2026-10-20. They are reference material, not workflow skills, and
-they target three.js r186 while this project pins 0.169: check an API against the installed version.
-`threejs-react-three-fiber` and `threejs-performance` are the two relevant to the stage.
-
-## Verified on 2026-10-20
-
-- `npm run verify` → exit 0: typecheck, content check, 347 tests in 32 files, documentation check
-  (206 claims), build. Shell 57.81 kB gzip, scene 238.49 kB gzip, stylesheet 2.90 kB gzip.
-- Switch pass (`127.0.0.1:5173`, storage cleared): the button was 44 × 44, named "Switch to light
-  mode"; a press moved the document to light (`--anansi-surface #f2efe4`, `color-scheme: light`,
-  `theme-color #f2efe4`), stored `{"version":1,"choice":"light"}`, kept focus, and renamed itself.
-  Tab landed on the switch before History; Enter flipped it back to dark. A reload with the stored
-  light choice arrived light, with the moon glyph showing (`sun 0`, `moon 1`).
-- Layout: at 1280 × 800 the cluster sat at `x 1081–1232, y 40–84` (hero at `y 211`); at 390 × 844 at
-  `x 219–370, y 20–64` (hero at `y 286`); no horizontal overflow.
-- Colour scheme emulation in both directions still recolours the mounted canvas without a reload
-  (the 7.1 pass), and the canvas label is mode-neutral.
-- The weave: an empty tally drew 28 calls and named no weave in the label; after taking the day's
-  story the label said the thread stays, and a reload drew 30 calls (the two extra are the kept
-  buffer and the knot mesh); forty five day keys written into the progress store drew the same 30
-  calls, so the retroactive path and the two call ceiling both hold. Idle settled back to zero
-  frames each time. Two mutation probes (a filament that never holds, a tally drawing a day twice)
-  each failed the suite and were reverted.
+- 8.1 the weave: one thread and one knot per accepted day, drawn from the tally rather than the
+  history (spec 0008; `src/world/kept.ts`, `src/world/Web.tsx`).
+- The documentation was restructured: `AGENTS.md` is short and holds the navigation the knowledge
+  index used to hold; this file is the only record of where we are; the System Teardown is a dated
+  snapshot that is no longer kept current; and `docs:check` now checks paths and line budgets rather
+  than counts.
 
 ## Not verified, and why
 
-The preview webview in that session produced no frames, so CSS transitions stayed at
-`currentTime 0`, screenshots could not be captured, and `:focus-visible` could not match because
-`document.hasFocus()` was false. The crossfade, the glyph's turn, the focus ring, and the absence of
-a first-paint flash therefore rest on the code and the tests (R17), not on observation. The reduced
-motion media query still cannot be emulated, so its switch branch is CSS-asserted only. The error
-boundary has never caught a real scene throw. The frame-time figure is time inside `gl.render`, not
-a GPU timer. Lighthouse and first usable interaction are Phase 9's. Light mode has not been judged
-on a real phone or in daylight.
+- Stage and switch transitions, the switch's crossfade, the focus ring, and the absence of a
+  first-paint flash: the preview webview composited no frames. These rest on the code and the tests.
+- Reduced motion: the media query can't be emulated there, so its branches are covered only by unit
+  tests and CSS assertions.
+- The error boundary has never caught a real scene throw.
+- Frame time is measured inside `gl.render`, not by a GPU timer.
+- Light mode hasn't been judged on a real phone or in daylight.
+- No broken commit has been seen to fail CI on the remote.
+- Lighthouse and first usable interaction belong to Phase 9.
 
-## Next justified action
+## Open risks
 
-Phase 8.2, the hidden interactions, is the one step left in Phase 8 and it is a product decision:
-which few surprises are worth the ritual's attention, since one that costs the ritual a moment is
-worse than none. Ask the owner, then spec them with one rule (nothing may block or delay the loop).
-Phase 9's measured quality gates and the deployment are the work after that.
+- MEDIUM: topic quality is guarded only by human review; the validator checks shape, not substance.
+- MEDIUM: the pool runs out of fresh stories in about a week of daily use. Grow it before Phase 9.
+- MEDIUM: some stage paths rest on code and tests, not a live session (see above).
+- LOW: the stage's art direction is a first pass. Tune `src/world/families.ts` and
+  `src/world/graph.ts` against screenshots in both modes.
+- LOW: there is no ESLint or Prettier, so the no-hex and hooks rules are enforced only partly, by tests.
+- LOW: the dev-only `npm audit` advisories need breaking Vite and Vitest majors.
+- LOW: React 18 with R3F 8 is fine, but R3F 9 needs React 19. Upgrade them together or not at all.
+- LOW: the history drawer drops learned stories older than 30 days (they still count toward N / 90),
+  and its date search follows the browser locale. See the Follow-up section of spec 0004.
+
+## Decisions owed by the owner
+
+- 8.2: which few hidden interactions are worth the ritual's attention. PRD §32 says they must
+  never interfere with the core task.
+
+## Next justified step
+
+Ask the owner about 8.2, then write its spec with `/architect`. After that: grow the content pool,
+then Phase 9.
