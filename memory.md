@@ -5,10 +5,9 @@ working state, not requirements.
 
 ## Where the project is
 
-Phases 0 to 6 are complete. Phase 7 is two thirds done: 7.1 (the light token set) and 7.2 (the sun
-and moon switch) landed on 2026-10-20; 7.3, the `/imprint` pass over everything built since the
-registry's first entries, has not started. Everything through 7.2 is committed and pushed to
-`origin/main`.
+Phases 0 to 7 are complete. Phase 7 finished on 2026-10-20: 7.1 the light token set, 7.2 the sun
+and moon switch, and 7.3 the `/imprint` pass, which read `ui-registry.md` against the code and fixed
+three drifts. Everything through 7.3 is committed and pushed to `origin/main`.
 
 - Specs: `docs/specs/0006-the-light-token-set.md` (built; AC-2 superseded) and
   `docs/specs/0007-the-sun-and-moon-switch.md` (`Built`, 2026-10-20).
@@ -16,7 +15,7 @@ registry's first entries, has not started. Everything through 7.2 is committed a
   `src/app/mode.ts` resolves and applies it, `src/app/ModeSwitch.tsx` is the button, `index.html`
   sets the attribute before the module loads.
 - Tests: 337 in 31 files — `src/app/` 85, `src/state/` 56, `src/world/` 87, `src/engine/` 44.
-- Records: teardown v3.7, MCD §§7 and 13, roadmap 7.2, the scope (feature 12 in progress),
+- Records: teardown v3.8, MCD §§7 and 13, roadmap 7.1 to 7.3, the scope (feature 12 in progress),
   `ui-registry.md`, and this file were reconciled on 2026-10-20.
 
 ## The mode (specs 0006 and 0007)
@@ -86,9 +85,8 @@ on a real phone or in daylight.
 
 ## Next justified action
 
-Phase 7.3, the `/imprint` pass: read `skills/imprint` and the current `ui-registry.md`, then capture
-every component built since the registry's first entries — the ritual's story and learned states,
-the history drawer, the stage layer, the mode switch (already recorded on 2026-10-20), and both
-token sets — so a later component can be built from the registry alone. After that Phase 8 needs a
-product decision (the evolving web and the hidden interactions) before any code: it is a design
-question for the owner, not an implementation detail.
+Phase 8, the evolving web and hidden interactions, is the next phase and the first since Phase 5
+with no spec. Both of its steps are product decisions for the owner — what accumulated history
+should look like in the world, and which surprises are worth any risk to the ritual — so the next
+move is to ask, not to code. Phase 9's measured quality gates and the deployment are the work after
+that.

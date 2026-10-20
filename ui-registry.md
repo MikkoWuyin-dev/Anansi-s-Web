@@ -12,7 +12,7 @@ The baseline was established on 2026-10-16 via `/imprint audit`, because `ui-reg
 
 | Property | Correct class |
 | -------- | ------------- |
-| Page background | `var(--anansi-black)` |
+| Page background | `var(--anansi-surface)` — near black in dark, paper in light |
 | Text — primary | `var(--anansi-ink)` |
 | Text — secondary | `var(--anansi-dim)` |
 | Structural line | `var(--anansi-jet)` |
@@ -32,9 +32,11 @@ The baseline was established on 2026-10-16 via `/imprint audit`, because `ui-reg
 | Micro motion — active | `translateY(-1px)` |
 | Stage padding | `clamp(2rem, 6vw, 6rem) clamp(1.5rem, 7vw, 8rem)` |
 | Ritual gap | `2.25rem` desktop, `1.75rem` at `40rem` and below |
-| Reduced motion | every entrance animation and the action transition are switched off under `prefers-reduced-motion: reduce` |
+| Reduced motion | every entrance animation, the action transition, the switch's glyph turn, and the view-transition crossfade are switched off under `prefers-reduced-motion: reduce` |
 
 ## Components
+
+Reviewed end to end on 2026-10-20 against the code (roadmap 7.3). The entries that had drifted were corrected: the page background is `--anansi-surface` rather than `--anansi-black` wherever it was named, the corner control now sits inside the `.controls` cluster, and the reduced-motion row covers the switch and the view transition.
 
 ### Shell
 
@@ -43,7 +45,7 @@ Last updated: 2026-10-16
 
 | Property | Class |
 | -------- | ----- |
-| Background | none; `body` supplies `var(--anansi-black)` |
+| Background | none; `body` supplies `var(--anansi-surface)` |
 | Border | none |
 | Border radius | none on the shell itself; the action carries the control radius |
 | Text — primary | `var(--anansi-ink)`, inherited |
@@ -178,7 +180,7 @@ Last updated: 2026-10-18
 | Border | `1px solid var(--anansi-jet)`, turning `var(--anansi-lavender)` on hover |
 | Border radius | `0.85rem 1.6rem 0.85rem 1.6rem`, the control radius at a smaller measure |
 | Text | `var(--anansi-dim)`, `0.875rem`, uppercase, tracked `0.06em` |
-| Position | absolute, pinned to the shell corner with `clamp()` insets, so it is one press away in every state |
+| Position | inside the `.controls` cluster, which is absolute and pinned to the shell corner with `clamp()` insets, so it is one press away in every state |
 | Hover state | the lavender border, ink text, `translateY(-3px)` |
 | Focus state | the baseline focus ring |
 | Accent usage | none; the corner control never takes yellow |
@@ -194,7 +196,7 @@ Last updated: 2026-10-18
 
 | Property | Class |
 | -------- | ----- |
-| Background | none; the panel sits on the page's black |
+| Background | none; the panel sits on the page's surface |
 | Border | a single `1px solid var(--anansi-jet)` above the panel, no box |
 | Border radius | none on the panel; the controls inside carry the radius |
 | Text — heading | `var(--anansi-ink)`, `clamp(1.5rem, 4vw, 2rem)`, weight `500` |
@@ -255,7 +257,7 @@ Last updated: 2026-10-18
 | Property | Class |
 | -------- | ----- |
 | Layer | `position: fixed; inset: 0; z-index: -1; pointer-events: none` |
-| Canvas | transparent clear, so `body` supplies the black; `frameloop="demand"` |
+| Canvas | transparent clear, so `body` supplies the page's surface; `frameloop="demand"` |
 | Strands | one line segment buffer, `var(--anansi-lavender)` mixed toward `var(--anansi-jet)` by depth, opacity `0.44` at rest and up to `0.72` while the web wakes, no depth write |
 | Beads | one instanced mesh; mostly `var(--anansi-ink)` and `var(--anansi-dim)`, `var(--anansi-strawberry)` on every ninth, `var(--anansi-lavender)` on every fourth |
 | Density | 11 beads and 20 strands at day 0, 71 and 140 at day 90; the phone tier draws 9 and 16. Objects are five at day 0 and twenty at day 90 on desktop, ten at day 90 on a phone |

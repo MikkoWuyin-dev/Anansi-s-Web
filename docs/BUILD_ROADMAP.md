@@ -341,7 +341,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 7 — Modes and design system (7.1 and 7.2 BUILT 2026-10-20)
+## Phase 7 — Modes and design system (BUILT 2026-10-20)
 
 ### 7.1 The light token set — BUILT 2026-10-20
 
@@ -355,10 +355,11 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Done when:** the switch works by keyboard, the choice persists, and the transition respects reduced motion.
 - **Built:** the mode moved to one authority, `<html data-mode>`, because a media query cannot be overridden by a click. `src/state/mode.ts` stores the choice under `anansi:v1:mode` and validates it; `src/app/mode.ts` resolves the choice against the system preference, follows that preference live when nothing is chosen, flips what is showing on every press, and writes the attribute; `ModeSwitch.tsx` is a native 44 px button whose sun-in-dark, moon-in-light glyph is drawn from tokens and whose name says which mode it moves to; `index.html` sets the attribute before the module loads, so a reload never flashes the other mode; the change crossfades through the browser's view transition, which `prefers-reduced-motion` removes. `applyMode` also writes the resolved surface into `theme-color`, so the browser chrome follows the page rather than the system. Twenty new tests: six for the stored shape, nine for resolution, toggling, the attribute, the chrome, and the pre-paint script, four for the switch (its markup, and the reduced-motion rules), and one that pins the light set to the attribute rather than a media query. Spec: `docs/specs/0007-the-sun-and-moon-switch.md`.
 
-### 7.3 Imprint the registry
+### 7.3 Imprint the registry — BUILT 2026-10-20
 
 - **Deliverable:** `ui-registry.md` capturing the visual patterns of every component built so far, per the MCD §10 `/imprint` ritual. The registry was established early, on 2026-10-16, with an audit baseline and entries for the shell and the action; this phase extends it to everything built in the meantime.
 - **Done when:** a later component can be built from the registry alone and match what came before.
+- **Built:** the registry was read against the code entry by entry. Every component the app renders now has one — the shell, the action, the story and its return cue, the ghost, the learned confirm, the honest states, the history control and panel, the filter row, the count, the stage, the object families, Anansi, the search choreography, the switch, and the reduced-motion and phone tier — and the two token sets are recorded with the role each one exists for. The pass found three real drifts, all from this week: the page background was still written as `--anansi-black` where it had become `--anansi-surface`, the corner control was described as absolutely positioned after it moved into the `.controls` cluster, and the reduced-motion row predated the switch and the view transition. All three are corrected, and the registry now opens with the date of the review so a later pass knows how stale it may be.
 
 ---
 

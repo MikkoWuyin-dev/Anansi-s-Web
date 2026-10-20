@@ -238,7 +238,7 @@ A swapped token set for daylight and a playful switch that belongs to the world 
 - [x] The light token set, its roles, and the contrast contract (7.1, 2026-10-20): a second set under the system preference, three role tokens, `src/app/tokens.test.ts` over both sets, and the stage recolouring on a mode change
 - [x] The sun and moon switch (7.2, 2026-10-20): one authority on `<html data-mode>`, the choice under `anansi:v1:mode` applied before the first paint, a live system preference when nothing is chosen, and a view transition reduced motion removes (spec `0007`)
 - [ ] Verify both modes: `/check verify light mode`
-- [ ] Imprint both token sets: roadmap 7.3
+- [x] Imprint both token sets: roadmap 7.3, reviewed against the code on 2026-10-20
 
 ## Slice 5: the web grows
 

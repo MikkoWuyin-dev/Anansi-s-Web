@@ -3,7 +3,7 @@
 - **Document type:** Whole-repository audit and state assessment
 - **Subject:** `C:\dev\Anansi's Web` — https://github.com/MikkoWuyin-dev/Anansi-s-Web
 - **Original audit:** 2026-10-16 (v1.0)
-- **Last updated:** 2026-10-20 (v3.7)
+- **Last updated:** 2026-10-20 (v3.8)
 - **Auditor:** Buffy (automated code agent)
 - **Status:** Complete — every current-state claim is compared against the repository by `npm run docs:check`
 
@@ -60,6 +60,8 @@ Sections that changed: 1, 3, 5, 6, 7, 8, 9, 10, 11, 12. Sections 2 and 4 are pro
 **v3.6 — 2026-10-20.** Roadmap 7.1 landed: light mode as a swapped token set. `styles.css` now declares a second `:root` inside `@media (prefers-color-scheme: light)`, holding every colour role the base block declares, so a system preference reaches the page before any script runs and nothing silently inherits a dark value. Three roles were added because the token names were hues, not jobs: `--anansi-surface` is the page (so `--anansi-black` can stay the label on the yellow action), `--anansi-action-edge` draws the boundary a yellow fill cannot draw on paper, and `--anansi-lavender-text` lifts the one lavender label from 3.67:1 to 5.74:1 in dark and holds 4.71:1 in light. `src/app/tokens.test.ts` computes WCAG ratios from the stylesheet's own text for both sets and fails on any raw colour outside the two token blocks. The stage no longer reads the palette in three places: `Scene.tsx` resolves it once from a new `mode` prop, `WorldLayer` subscribes to the same media query it already used for motion and width, and the web, the objects, and Anansi receive the palette, so a mode change recolours all three together. Eight new tests (317 in 28 files); the build measures 57.19 kB gzip for the shell, 238.06 kB for the scene, and 2.52 kB for the stylesheet. Verified live in Chromium with the colour scheme emulated in both directions (section 5.6).
 
 **v3.7 — 2026-10-20.** Roadmap 7.2 landed: the sun and moon switch, and with it the relocation of the mode's authority. `styles.css` selects the light set by `:root[data-mode='light']` instead of a media query, because a media query cannot be overridden by a click; `src/state/mode.ts` keeps the choice under `anansi:v1:mode` with the same validate-then-fall-back convention as the journey's four keys; `src/app/mode.ts` resolves a choice against the system preference, follows that preference live while nothing is chosen, and writes the attribute; `ModeSwitch.tsx` is a native button in the top-right cluster; and a short script in `index.html` sets the attribute before the module loads, so a reload never shows the other mode first. `applyMode` also writes the resolved surface into the single `theme-color` meta, which closed an inconsistency the change created: the head had two metas chosen by `prefers-color-scheme`, so a person who chose light on a dark laptop would have had a dark browser chrome around a light page. Twenty new tests bring the suite to 337 in 31 files; the build measures 57.74 kB gzip for the shell, 238.06 kB for the scene, and 2.90 kB for the stylesheet. Verified live in Chromium: the switch worked by pointer and by keyboard, the light page and its canvas arrived together, the choice survived a reload with no flash of the other mode, and reduced motion removed the crossfade (section 5.6).
+
+**v3.8 — 2026-10-20.** Roadmap 7.3 closed Phase 7. `ui-registry.md` was read against the code entry by entry: every component the app renders has an entry, the two token sets are recorded with the role each exists for, and the review is now dated at the top so a later pass can judge staleness. The pass found three drifts, all created this week: the page background was still recorded as `--anansi-black` where it had become `--anansi-surface`, the corner control was described as absolutely positioned after it moved into the `.controls` cluster, and the reduced-motion row predated the switch and the view transition. All three are corrected. Phase 8 is the next phase and the first since Phase 5 with no spec: its two steps are product decisions, so the next move is the owner's answers, not code.
 
 ---
 
@@ -155,7 +157,7 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 ├── docs/
 │   ├── PRD.md                  950 lines   Product Requirements Document v1.1
 │   ├── MCD.md                  341 lines   Master Context Document v1.0 (amended)
-│   ├── BUILD_ROADMAP.md        528 lines   Phases 0 to 11, the build sequence
+│   ├── BUILD_ROADMAP.md        529 lines   Phases 0 to 11, the build sequence
 │   ├── SYSTEM_TEARDOWN.md      this file    Whole-repo state assessment
 │   ├── specs/
 │   │   ├── 0001-selection-engine.md   252 lines   The engine decision, 2026-10-16
@@ -245,7 +247,7 @@ C:\dev\Anansi's Web\                        426 tracked files in the gate's work
 | Category | Files | Lines |
 |---|---|---|
 | Workflow skills | 296 | 135,381 |
-| Project documentation | 4 | 2,676 |
+| Project documentation | 4 | 2,679 |
 | Authoring scripts | 11 | 2,603 |
 | Application source | 70 | 10,077 |
 | Content (24 JSON + 1 README) | 25 | 335 |
@@ -725,7 +727,7 @@ content/topics/<id>.json          human reviewed, one entry per topic
 
 - **The MCD and this teardown agree as of 2026-10-17.** The MCD's §13 status and its §5 schema were reconciled with the code on 2026-10-16, and §13 was updated again on 2026-10-17 to record the engine as built, so no document now contradicts another.
 - **This document's current-state claims are now enforced.** `npm run docs:check` fails the gate when a count, a file list, a tracked-state statement, a version, or the gate's own composition no longer matches the repository. What remains on trust is what the gate cannot reach: the network and live-install figures, the amendment history, and any fact phrased in a shape the rules do not know.
-- **Roadmap Phases 0 to 6 are marked complete, and Phase 7's two build steps are built** (5.3, the optional domain filter, is deferred with its reason recorded), and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
+- **Roadmap Phases 0 to 7 are marked complete** (5.3, the optional domain filter, is deferred with its reason recorded), and Phase 1's `done when` for the 300-topic target is deliberately unmet at 24 topics.
 - **The teardown v1 is superseded** by this document but remains in the git history.
 - **`skills/` has no license or attribution** and is published publicly, a decision made knowingly.
 - **The display font is fetched from Google Fonts**, an external request mildly against PRD §35. Recorded in the roadmap as a decision still to make.
@@ -758,7 +760,7 @@ Re-statused from v1. Three of the original critical risks are closed, and the ri
 *Action:* grow the pool toward 300 (Phase 1's target) before the quality phases, and keep the stage's art direction as a tuning pass rather than a rebuild.
 
 **R18 — The stage's art direction is a first pass (LOW).** The web, the five object families, and Anansi were built from numbers and checked for composition in a browser, but the palette balance, object size, and the late-game density are judgement calls that no test can settle. A screenshot at sixty days is the current evidence.
-*Action:* tune `families.ts` and `graph.ts` against real screenshots once Phase 7's light mode exists, so both modes are judged together.
+*Action:* tune `families.ts` and `graph.ts` against real screenshots in light mode, now that both modes exist, so both are judged together.
 
 **R10 — No linting or formatting (LOW).** No ESLint, Prettier, or EditorConfig. TypeScript strict mode covers some ground, but the MCD §4 rule 7 "no hardcoded hex" and React hooks rules are unenforced.
 
@@ -793,15 +795,15 @@ The plan lives in `docs/BUILD_ROADMAP.md`. This is the position on it.
 | 4 — The ritual loop | **Complete** (4.1 to 4.7), 31 tests |
 | 5 — History and progress | **Complete** (5.1 and 5.2; 5.3 deferred), 25 new tests |
 | 6 — The 3D world | **Complete** (6.1 to 6.10), 86 world tests |
-| 7 — Modes and design system | **In progress**: 7.1 and 7.2 built (the light token set, the switch); 7.3 not started |
-| 8 — Evolution and surprises | Not started |
+| 7 — Modes and design system | **Complete** (7.1 to 7.3): both token sets, the switch, and the registry reviewed against the code |
+| 8 — Evolution and surprises | Not started; needs a product decision |
 | 9 — Quality gates | Not started |
 | 10 — Hardening and deployment | Not started |
 | 11 — The accounts era | Deferred |
 
 **Recommended order of the next moves:**
 
-1. **Finish Phase 7, the modes and design system.** 7.1's token set and 7.2's switch are built, and both modes pass the contrast contract; the one step left is 7.3's `/imprint` pass over everything built since the registry's first entries.
+1. **Start Phase 8, the evolving web and hidden interactions.** It is the first phase since Phase 5 with no spec, and both steps are product decisions: what accumulated history should look like in the world, and which surprises are worth the risk to the ritual. Nothing should be coded before the owner has answered them.
 2. **Grow the content pool.** The library is 24 topics of the 300 target, and twenty four stories run out in about eight days of daily use; roadmap 5.3 (the optional domain filter) also waits on that coverage.
 3. **Prove the CI failure path on the remote.** The gate is green there, but no broken commit has been seen to fail it remotely; a throwaway branch carrying a deliberate type error would settle roadmap 10.1's done-when without putting a red commit on `main`.
 4. **Keep the governance files current.** `AGENTS.md`, `ui-registry.md`, `memory.md`, and `docs/scope/` were committed as `95a8b1e`, which closed R4; the standing duty is the maintenance protocol in `AGENTS.md` §11, and `npm run docs:check` now fails the gate when this document's mechanical claims fall behind the repository.
@@ -854,4 +856,4 @@ npm run content:report     # coverage, difficulty spread, bundle size
 
 ---
 
-*End of System Teardown v3.7. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
+*End of System Teardown v3.8. All current-state claims are compared against the repository by `npm run docs:check`; the figures the gate cannot reach are dated and sourced in place.*
