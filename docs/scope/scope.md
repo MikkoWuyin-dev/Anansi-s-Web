@@ -33,7 +33,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 10 | Object families, Anansi, and density | Slice 3 | done |
 | 11 | The world without motion, and on mobile | Slice 3 | done |
 | 12 | Light mode and the sun and moon switch | Slice 4 | done |
-| 13 | The evolving web and hidden interactions | Slice 5 | in-progress |
+| 13 | The evolving web and hidden interactions | Slice 5 | done |
 | 14 | Measured performance and accessibility | Quality | planned |
 | 15 | The display face and its network cost | Quality | planned |
 | 16 | Continuous integration and dependency decisions | Release | planned |
@@ -244,13 +244,17 @@ A swapped token set for daylight and a playful switch that belongs to the world 
 
 ## Slice 5: the web grows
 
-### 13. The evolving web and hidden interactions · in-progress
+### 13. The evolving web and hidden interactions · done
 Make accumulated history visible so a returning visitor feels they built this, and add small rewards for curiosity that can never interfere with the ritual.
 **Done when:** a returning visitor can see their history in the world without reading a list; removing every hidden interaction leaves the main path unchanged; and none of them can interrupt the core task.
-- [x] Design the evolving web (spec): `docs/specs/0008-the-evolving-web.md` (2026-10-20); the hidden interactions are still to decide
+
+spec [0008](../specs/0008-the-evolving-web.md) · [0009](../specs/0009-hidden-interactions.md)
+
+- [x] Design the evolving web (spec): `docs/specs/0008-the-evolving-web.md` (2026-10-20)
 - [x] One standing thread and knot per kept day, from the tally, in two extra draw calls (8.1, 2026-10-20)
 - [x] A kept story's filament holds instead of fading, and the canvas description names the weave
-- [ ] Decide the hidden interactions (8.2): which few are worth the ritual's attention, then spec them
+- [x] Decide the hidden interactions (8.2): the word, the `naming` beat, and the two reactions that need no input (spec 0009, 2026-10-22)
+- [x] Build the hidden interactions (8.2): the word, the naming beat, the sealed clocks, and the kept knot (2026-10-22)
 
 ## Quality
 

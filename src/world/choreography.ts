@@ -159,6 +159,10 @@ export function webWake(beat: Beat): number {
       return 0.6
     case 'celebrating':
       return 0.9
+    case 'naming':
+      // The strongest answer the web gives, and the only one nobody earned
+      // (spec 0009, AC-3).
+      return 0.95
     case 'idle':
     case 'resting':
       return 0

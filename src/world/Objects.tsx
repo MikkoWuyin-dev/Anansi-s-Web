@@ -13,7 +13,7 @@ import {
   type WorldObject,
 } from '@/world/families'
 import type { WebGraph } from '@/world/graph'
-import type { Beat } from '@/world/stage'
+import { SEAL_TURN, type Beat, type Notice } from '@/world/stage'
 
 export interface ObjectsProps {
   readonly graph: WebGraph
@@ -23,6 +23,8 @@ export interface ObjectsProps {
   readonly reducedMotion: boolean
   /** Resolved once by the scene, so a mode change repaints every family. */
   readonly palette: Palette
+  /** The day sealed, so the clocks turn toward him once (spec 0009, AC-5). */
+  readonly notice?: Notice
 }
 
 /** The one primitive a family is built from; every instance shares it. */
@@ -85,12 +87,14 @@ function FamilyGroup({
   palette,
   beat,
   reducedMotion,
+  notice,
 }: {
   readonly family: Family
   readonly objects: readonly WorldObject[]
   readonly palette: Palette
   readonly beat: Beat
   readonly reducedMotion: boolean
+  readonly notice: Notice
 }) {
   const mesh = useRef<InstancedMesh>(null)
   const invalidate = useThree((state) => state.invalidate)
@@ -100,6 +104,14 @@ function FamilyGroup({
   const [spring, api] = useSpring(() => ({
     lift: 0,
     config: { tension: 170, friction: 16 },
+    onChange: () => invalidate(),
+  }))
+
+  // The clocks turn toward the hub when the day seals (spec 0009, AC-5).
+  // Nothing else does: it is the one family that reads as looking.
+  const [face, faceApi] = useSpring(() => ({
+    turn: 0,
+    config: { tension: 90, friction: 20 },
     onChange: () => invalidate(),
   }))
 
@@ -125,19 +137,38 @@ function FamilyGroup({
     api.start({ lift: 0 })
   }, [api, beat, reducedMotion])
 
+  useEffect(() => {
+    if (family !== 'clock') {
+      return
+    }
+
+    const turning = notice === 'sealed'
+
+    // Reduced motion keeps the information and drops the movement: the clocks
+    // hold the turn for the notice window instead of swinging through it.
+    if (reducedMotion) {
+      faceApi.set({ turn: turning ? 1 : 0 })
+      return
+    }
+
+    faceApi.start({ turn: turning ? 1 : 0 })
+  }, [faceApi, family, notice, reducedMotion])
+
   return (
-    <animated.group
-      scale={spring.lift.to((lift) => 1 + lift * 0.035)}
-      rotation-z={spring.lift.to((lift) => lift * lean)}
-    >
-      <instancedMesh
-        ref={mesh}
-        args={[undefined, undefined, objects.length]}
-        frustumCulled={false}
+    <animated.group rotation-z={face.turn.to((turn) => -turn * SEAL_TURN)}>
+      <animated.group
+        scale={spring.lift.to((lift) => 1 + lift * 0.035)}
+        rotation-z={spring.lift.to((lift) => lift * lean)}
       >
-        <Form form={family} />
-        <meshBasicMaterial toneMapped={false} />
-      </instancedMesh>
+        <instancedMesh
+          ref={mesh}
+          args={[undefined, undefined, objects.length]}
+          frustumCulled={false}
+        >
+          <Form form={family} />
+          <meshBasicMaterial toneMapped={false} />
+        </instancedMesh>
+      </animated.group>
     </animated.group>
   )
 }
@@ -146,7 +177,15 @@ function FamilyGroup({
  * The objects hanging from the web (roadmap 6.4, 6.7). They are generated from
  * the graph and the journey count, and they only move when a beat arrives.
  */
-export function Objects({ graph, days, mobile, beat, reducedMotion, palette }: ObjectsProps) {
+export function Objects({
+  graph,
+  days,
+  mobile,
+  beat,
+  reducedMotion,
+  palette,
+  notice = null,
+}: ObjectsProps) {
   const objects = useMemo(
     () => objectsFor(graph, days, mobile, reducedMotion),
     [graph, days, mobile, reducedMotion],
@@ -165,6 +204,7 @@ export function Objects({ graph, days, mobile, beat, reducedMotion, palette }: O
             palette={palette}
             beat={beat}
             reducedMotion={reducedMotion}
+            notice={notice}
           />
         )
       })}

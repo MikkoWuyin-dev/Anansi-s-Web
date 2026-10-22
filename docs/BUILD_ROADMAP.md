@@ -35,7 +35,7 @@ Ordering logic: **content feeds the engine, the engine feeds the loop, the loop 
 | 5 | History and progress | built | continuity, the 90-day count | 4 |
 | 6 | The 3D world | built | the stage, Anansi, the search | 4 |
 | 7 | Modes and design system | built | light mode, visual governance | 6 |
-| 8 | Evolution and surprises | in progress | the web that grows | 5, 6 |
+| 8 | Evolution and surprises | built | the web that grows | 5, 6 |
 | 9 | Quality gates | planned | measured, audited product | 7, 8 |
 | 10 | Hardening and deployment | planned | a live, protected, shipped site | 9 |
 | 11 | The accounts era | deferred | cloud sync, cross device | 10 |
@@ -368,7 +368,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 8 — Evolution and surprises (IN PROGRESS: 8.1 BUILT 2026-10-20)
+## Phase 8 — Evolution and surprises (BUILT 2026-10-20, COMPLETE 2026-10-22)
 
 ### 8.1 The evolving web — BUILT 2026-10-20
 
@@ -376,10 +376,12 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Done when:** a returning user can see their history in the world without reading a list.
 - **Built:** `src/world/kept.ts` turns each day in `acceptedDayKeys` into one standing thread and one knot, anchored to an existing node and running outward from the hub, seeded by the day itself so a day's thread never belongs to another. The tally is the source rather than the history, because history prunes at thirty days and the world must not lose its earliest marks: nothing new is stored, and an existing journey shows its past on the first frame. `Web.tsx` draws every thread in one line buffer and every knot in one instanced mesh, so the weave costs two draw calls however many days were kept, and the reveal filament holds at `0.45` while today's story is kept instead of fading to nothing. The canvas description names the weave without a number. Ten new tests (the generator's count, determinism, stability, ceiling, phone tier and filament floor, plus the markup's description). Verified live: an empty journey drew 28 calls, one kept day drew 30, and forty five day keys written into storage appeared immediately at the same 30 calls. Spec: `docs/specs/0008-the-evolving-web.md`.
 
-### 8.2 Hidden interactions — NEEDS A DECISION
+### 8.2 Hidden interactions — BUILT 2026-10-22
 
 - **Deliverable:** small surprises that reward curiosity (PRD §32): unexpected reactions, easter eggs, unusual hover states.
 - **Done when:** none of them can interfere with the core task, and the primary path is unchanged when they are removed.
+- **Spec:** `docs/specs/0009-hidden-interactions.md`.
+- **Built:** three surprises, none announced: typing his name answers once through a `naming` beat of its own; the clock family turns toward the hub when the third story seals the day; and the knot of the story just kept pulses once in the celebrating beat. No new storage key, no draw call while idle, and no pointer on the stage. Reduced motion keeps the information and drops the movement. Hover on the stage and an idle animation were rejected on the pointer rule and the zero idle frames budget. Verified live: the word answered in the description and the live region, the second attempt did nothing, the history search was untouched, and the idle page still drew zero frames.
 
 ---
 

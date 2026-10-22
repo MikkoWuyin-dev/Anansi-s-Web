@@ -10,7 +10,7 @@ import { objectCount } from '@/world/families'
 import { keptThreads } from '@/world/kept'
 import { documentPalette, type Mode } from '@/world/palette'
 import { WebGraph } from '@/world/Web'
-import type { Beat } from '@/world/stage'
+import type { Beat, Notice } from '@/world/stage'
 
 export interface SceneProps {
   readonly seed: string
@@ -24,6 +24,8 @@ export interface SceneProps {
   readonly keptDays: readonly string[]
   /** Whether today's story is kept, which holds its filament (spec 0008). */
   readonly keptToday: boolean
+  /** A one shot thing the stage should notice, such as the day sealing (spec 0009). */
+  readonly notice?: Notice
 }
 
 /**
@@ -40,6 +42,7 @@ export default function Scene({
   mode,
   keptDays,
   keptToday,
+  notice = null,
 }: SceneProps) {
   const idle = frameFor('idle', mobile)
   // One read for the whole stage, so a mode change recolours the web, the
@@ -117,6 +120,7 @@ export default function Scene({
         beat={beat}
         reducedMotion={reducedMotion}
         palette={palette}
+        notice={notice}
       />
       <Anansi
         graph={graph}

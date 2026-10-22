@@ -21,7 +21,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { checkBudget, checkReferences, type DocProblem } from './lib/doc-refs.ts'
-import { checkRoadmap, checkScope, checkSpec } from './lib/doc-status.ts'
+import { checkRoadmap, checkScope, checkSpec, specStatus } from './lib/doc-status.ts'
 import { ROOT } from './lib/load.ts'
 
 /** Read at the start of every session, and each has a line budget. */
@@ -129,8 +129,14 @@ for (const name of readdirSync(join(ROOT, SPECS_DIR)).filter((entry) => entry.en
   }
 
   specCount += 1
-  problems.push(...checkReferences(path, text, repo))
   problems.push(...checkSpec(path, text))
+
+  // A spec that is not built yet names files it intends to create, so only a
+  // built spec has to point at things that exist. The status pair is checked
+  // either way, which is the drift this guard exists for.
+  if (specStatus(text) === 'Built') {
+    problems.push(...checkReferences(path, text, repo))
+  }
 }
 
 if (problems.length > 0) {

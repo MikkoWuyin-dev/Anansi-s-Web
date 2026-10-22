@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import { descriptionFor, type Beat } from '@/world/stage'
+import { descriptionFor, type Beat, type Notice } from '@/world/stage'
 import type { Mode } from '@/world/palette'
 
 const Scene = lazy(() => import('@/world/Scene'))
@@ -32,6 +32,8 @@ export interface WorldLayerProps {
   readonly keptDays: readonly string[]
   /** Whether today's story is kept, which holds its filament (spec 0008). */
   readonly keptToday: boolean
+  /** The day sealed, sent once when the third story resolves (spec 0009). */
+  readonly notice?: Notice
 }
 
 function subscribeToWidth(onChange: () => void): () => void {
@@ -86,7 +88,15 @@ class StageBoundary extends Component<{ readonly children: ReactNode }, { readon
  * of the canvas (spec 0005, AC-1, AC-17, AC-18). The mode arrives resolved
  * from the app, so the switch and the stage cannot disagree (spec 0007).
  */
-export function WorldLayer({ beat, days, seed, mode, keptDays, keptToday }: WorldLayerProps) {
+export function WorldLayer({
+  beat,
+  days,
+  seed,
+  mode,
+  keptDays,
+  keptToday,
+  notice = null,
+}: WorldLayerProps) {
   const mobile = useSyncExternalStore(subscribeToWidth, isNarrow, () => false)
   const reducedMotion = useSyncExternalStore(subscribeToMotion, prefersReducedMotion, () => false)
   const [armed, setArmed] = useState(false)
@@ -158,6 +168,7 @@ export function WorldLayer({ beat, days, seed, mode, keptDays, keptToday }: Worl
               mode={mode}
               keptDays={keptDays}
               keptToday={keptToday}
+              notice={notice}
             />
           </Suspense>
         </StageBoundary>

@@ -7,12 +7,25 @@
  * tested without a renderer.
  */
 
-export const BEATS = ['idle', 'searching', 'revealing', 'celebrating', 'resting'] as const
+export const BEATS = ['idle', 'searching', 'revealing', 'celebrating', 'resting', 'naming'] as const
 
 export type Beat = (typeof BEATS)[number]
 
 /** How full the web should read, from the journey's own count (PRD §20). */
 export type Density = 'sparse' | 'growing' | 'dense'
+
+/**
+ * A thing the stage should notice without a beat of its own (spec 0009).
+ * `sealed` is the day's third story arriving; it is sent once, at the moment
+ * the search resolves, so a reload of an already sealed day sends nothing.
+ */
+export type Notice = 'sealed' | null
+
+/** How far Anansi lifts himself when his name is typed (spec 0009, AC-4). */
+export const NAMING_LIFT = 0.08
+
+/** How far the clock family turns toward the hub on a sealed day (spec 0009). */
+export const SEAL_TURN = 0.35
 
 /** The count where the web stops reading as early (PRD §20). */
 export const GROWING_DAYS = 30
@@ -55,5 +68,9 @@ export function descriptionFor(beat: Beat, days: number): string {
       return 'The story is kept. The web answers.'
     case 'resting':
       return "The story is kept. Its thread stays in the web until tomorrow."
+    case 'naming':
+      // The surprise has to be described like anything else: a screen reader
+      // user gets the same answer the stage gives, in words (spec 0009, AC-10).
+      return 'Anansi has heard his name. The web answers.'
   }
 }

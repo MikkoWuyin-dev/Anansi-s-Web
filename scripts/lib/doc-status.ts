@@ -15,8 +15,12 @@
 
 import type { DocProblem } from './doc-refs.ts'
 
-/** The only statuses a spec may carry, written exactly as they appear. */
-export const SPEC_STATUSES = ['Draft', 'In Progress', 'Built'] as const
+/**
+ * The only statuses a spec may carry, written exactly as they appear. A spec
+ * that is not yet `Built` names files it intends to create, so the path check
+ * only runs over built specs; the status pair is checked for all of them.
+ */
+export const SPEC_STATUSES = ['Proposed', 'Draft', 'In Progress', 'Built'] as const
 
 /** The only statuses a roadmap phase may carry, in its phase map. */
 export const PHASE_STATUSES = ['built', 'in progress', 'planned', 'deferred'] as const
@@ -80,6 +84,13 @@ const findTable = (lines: readonly string[], headers: readonly string[]): Table 
 /** The line number a match starts on, so problems point at the right place. */
 const lineOf = (text: string, index: number): number =>
   text.slice(0, index).split('\n').length
+
+/** The status a spec declares, or null when it declares none. */
+export function specStatus(text: string): string | null {
+  const match = /^\*\*Status\*\*:\s*(.*)$/m.exec(text)
+
+  return match === null ? null : (match[1] ?? '').trim()
+}
 
 /**
  * A spec states its status once and its build once. The two have to agree:

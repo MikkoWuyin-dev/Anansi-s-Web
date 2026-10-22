@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom'
 
 import { HistoryPanel } from '@/app/HistoryPanel'
 import { historyView, type HistoryFilter } from '@/app/history'
+import { namingStep } from '@/app/name'
 import {
   applyMode,
   loadChoice,
@@ -29,6 +30,7 @@ import {
 import { journeyStore } from '@/app/store'
 import { useJourney } from '@/app/useJourney'
 import { getLibrary } from '@/content/loader'
+import { ENGINE_TUNING } from '@/engine/tuning'
 import {
   daysCompleted,
   watchStorageEvents,
@@ -36,6 +38,7 @@ import {
   type ModeChoice,
 } from '@/state'
 import { CELEBRATE_MS } from '@/world/choreography'
+import type { Notice } from '@/world/stage'
 
 /** The search beat is skipped when the person asked for less motion (AC-13). */
 function prefersReducedMotion(): boolean {
@@ -60,6 +63,13 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   // The web answers once when a story is kept, then settles (spec 0005, AC-9).
   const [celebrating, setCelebrating] = useState(false)
   const celebrateTimer = useRef<number | null>(null)
+  // The two surprises (spec 0009): the word, and the day sealing.
+  const [named, setNamed] = useState(false)
+  const [notice, setNotice] = useState<Notice>(null)
+  const namedOnce = useRef(false)
+  const nameTimer = useRef<number | null>(null)
+  const noticeTimer = useRef<number | null>(null)
+  const typed = useRef('')
   // The drawer's narrowing controls are session state: closing keeps them,
   // a reload starts again at All with no query (spec 0004, AC-10).
   const [historyOpen, setHistoryOpen] = useState(false)
@@ -169,6 +179,18 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
       return
     }
 
+    // The day's third story is the one the web answers to, and it is sent
+    // once, at the moment it arrives (spec 0009, AC-5). A reload sends none.
+    if (store.getState().day.offeredTopicIds.length >= ENGINE_TUNING.storiesPerDay) {
+      setNotice('sealed')
+
+      if (noticeTimer.current !== null) {
+        window.clearTimeout(noticeTimer.current)
+      }
+
+      noticeTimer.current = window.setTimeout(() => setNotice(null), CELEBRATE_MS)
+    }
+
     setNewDay(false)
     setUi({
       phase: 'ready',
@@ -182,11 +204,53 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
       if (celebrateTimer.current !== null) {
         window.clearTimeout(celebrateTimer.current)
       }
+
+      if (nameTimer.current !== null) {
+        window.clearTimeout(nameTimer.current)
+      }
+
+      if (noticeTimer.current !== null) {
+        window.clearTimeout(noticeTimer.current)
+      }
     },
     [],
   )
 
   const view = ritualView({ state, library, ui, newDay })
+
+  // The word (spec 0009). There is no element to hang this on, so the page
+  // listens, and only while nothing is asking for keys.
+  useEffect(() => {
+    const listener = (event: KeyboardEvent): void => {
+      const result = namingStep({
+        buffer: typed.current,
+        key: event.key,
+        target: event.target,
+        modifier: event.metaKey || event.ctrlKey || event.altKey,
+        searching: view.kind === 'searching',
+        alreadyNamed: namedOnce.current,
+      })
+
+      typed.current = result.buffer
+
+      if (!result.named) {
+        return
+      }
+
+      namedOnce.current = true
+      setNamed(true)
+
+      if (nameTimer.current !== null) {
+        window.clearTimeout(nameTimer.current)
+      }
+
+      nameTimer.current = window.setTimeout(() => setNamed(false), CELEBRATE_MS)
+    }
+
+    window.addEventListener('keydown', listener)
+
+    return () => window.removeEventListener('keydown', listener)
+  }, [view.kind])
   const take = useCallback((): void => {
     if (view.kind !== 'story') {
       return
@@ -218,12 +282,13 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
   return (
     <main className="shell">
       <WorldLayer
-        beat={beatFor(view, celebrating)}
+        beat={beatFor(view, celebrating, named)}
         days={daysCompleted(state.progress)}
         seed={`${state.identity.clientId}:${state.progress.journeyStart}`}
         mode={mode}
         keptDays={state.progress.acceptedDayKeys}
         keptToday={state.day.acceptedTopicId !== null}
+        notice={notice}
       />
 
       <Web />
@@ -252,7 +317,7 @@ export function App({ store = journeyStore }: { readonly store?: JourneyStore } 
       <Ritual
         view={view}
         persistent={state.persistent}
-        announcement={announcementOf(view)}
+        announcement={announcementOf(view, named)}
         onFind={search}
         onReroll={search}
         onRetry={search}

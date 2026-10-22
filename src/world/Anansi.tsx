@@ -7,7 +7,7 @@ import { bodyDip, EYES, LEG_REACH, LEGS, legGait } from '@/world/spider'
 import { restingPoint, searchPath, searchPose } from '@/world/choreography'
 import type { WebGraph } from '@/world/graph'
 import type { Palette } from '@/world/palette'
-import type { Beat } from '@/world/stage'
+import { NAMING_LIFT, type Beat } from '@/world/stage'
 
 export interface AnansiProps {
   readonly graph: WebGraph
@@ -41,6 +41,14 @@ export function Anansi({ graph, beat, mobile, reducedMotion, palette }: AnansiPr
     onChange: () => invalidate(),
   }))
 
+  // Naming him lifts him toward the viewer once, then he settles (spec 0009).
+  // A separate spring, because a lift is quick where travel is slow.
+  const [lift, liftApi] = useSpring(() => ({
+    y: 0,
+    config: { tension: 170, friction: 18 },
+    onChange: () => invalidate(),
+  }))
+
   useLayoutEffect(() => {
     invalidate()
   }, [palette, mobile, invalidate])
@@ -59,6 +67,17 @@ export function Anansi({ graph, beat, mobile, reducedMotion, palette }: AnansiPr
     invalidate()
   }, [api, beat, invalidate, reducedMotion])
 
+  useEffect(() => {
+    if (beat !== 'naming' || reducedMotion) {
+      return
+    }
+
+    // One lift and back: the kick is set, the spring settles it, the same
+    // shape the object families use for a beat (spec 0005, AC-13).
+    liftApi.set({ y: NAMING_LIFT })
+    liftApi.start({ y: 0 })
+  }, [beat, liftApi, reducedMotion])
+
   useFrame(() => {
     const group = body.current
 
@@ -70,7 +89,7 @@ export function Anansi({ graph, beat, mobile, reducedMotion, palette }: AnansiPr
 
     group.position.set(
       pose.position[0],
-      pose.position[1] + bodyDip(pose.stride),
+      pose.position[1] + bodyDip(pose.stride) + lift.y.get(),
       pose.position[2],
     )
     group.rotation.z = pose.heading - Math.PI / 2

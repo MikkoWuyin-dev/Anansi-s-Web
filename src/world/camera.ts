@@ -1,7 +1,7 @@
 /**
  * The authored camera (MCD §4 rule 3, spec 0005).
  *
- * Five frames, one per beat, designed rather than emergent. The user's pointer
+ * One frame per beat, designed rather than emergent. The user's pointer
  * only tilts the view by a bounded amount: it never orbits, drags, or travels.
  * Everything here is plain data and arithmetic, so the framing and the bounds
  * are tested without a renderer.
@@ -25,6 +25,8 @@ export interface CameraFrame {
  *   story the title names.
  * - `celebrating` is the nearest frame, saved for the acceptance beat in 6.6.
  * - `resting` pulls back and slightly aside, the day settled.
+ * - `naming` sits close and above him, as if the web leaned in to listen
+ *   (spec 0009); it is the one frame that is not part of the daily loop.
  */
 export const CAMERA_FRAMES: Record<Beat, CameraFrame> = {
   idle: { position: [0, 0.35, 7.6], target: [0, 0.1, 0] },
@@ -32,6 +34,7 @@ export const CAMERA_FRAMES: Record<Beat, CameraFrame> = {
   revealing: { position: [0, 0.2, 6.5], target: [0, 0.05, 0] },
   celebrating: { position: [0, -0.1, 6], target: [0, 0.1, 0] },
   resting: { position: [-0.7, 0.45, 8.1], target: [0, 0.15, 0] },
+  naming: { position: [0, 0.85, 6.1], target: [0, 0.15, 0] },
 }
 
 /** The phone tier pulls back so the narrower frame keeps more of the web. */

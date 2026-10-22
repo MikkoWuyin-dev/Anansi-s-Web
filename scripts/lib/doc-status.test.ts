@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { checkRoadmap, checkScope, checkSpec } from './doc-status.ts'
+import { checkRoadmap, checkScope, checkSpec, specStatus } from './doc-status.ts'
 
 /** The shape of the roadmap's phase map, as a fixture. */
 const roadmap = (overrides: { map?: string; heading?: string; header?: string } = {}): string =>
@@ -69,6 +69,15 @@ describe('checkSpec', () => {
 
   it('fails a spec with no Status line at all', () => {
     expect(messages(checkSpec('a.md', '# 0009. Nothing\n'))).toContain('no `**Status**:` line')
+  })
+
+  it('accepts a proposed spec with no Built line, because nothing is built yet', () => {
+    expect(checkSpec('a.md', spec('Proposed', false))).toEqual([])
+  })
+
+  it('reads the declared status back out for the caller', () => {
+    expect(specStatus(spec('Built', true))).toBe('Built')
+    expect(specStatus('# 0009. Nothing\n')).toBeNull()
   })
 })
 

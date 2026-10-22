@@ -31,6 +31,9 @@ export const SEARCH_FAILED_MESSAGE =
 export const MISSING_STORY_MESSAGE =
   'That story is no longer in the web. Nothing was lost, and a new story arrives after midnight.'
 
+/** What the live region says when the word answers (spec 0009, AC-10). */
+export const NAMED_LINE = 'You know his name.'
+
 /** What the page is doing that the store does not record. */
 export interface RitualUi {
   readonly phase: 'ready' | 'searching' | 'failed'
@@ -154,10 +157,15 @@ export function ritualView({ state, library, ui, newDay }: RitualViewInput): Rit
  * Which stage beat a view asks for (spec 0005, AC-9). The stage never owns a
  * transition; it is told the beat the ritual is already in. `celebrating` is
  * reserved for the acceptance choreography in 6.6, so a taken story rests.
+ * `naming` is the one beat the ritual never asks for on its own (spec 0009).
  */
-export function beatFor(view: RitualView, celebrating = false): Beat {
+export function beatFor(view: RitualView, celebrating = false, named = false): Beat {
   if (view.kind === 'searching') {
     return 'searching'
+  }
+
+  if (named) {
+    return 'naming'
   }
 
   if (view.kind !== 'story') {
@@ -172,7 +180,13 @@ export function beatFor(view: RitualView, celebrating = false): Beat {
 }
 
 /** What the live region says for a view. Kept beside the view so they agree. */
-export function announcementOf(view: RitualView): string {
+export function announcementOf(view: RitualView, named = false): string {
+  // The surprise is announced like anything else, so the answer is not
+  // something only a sighted person is told (spec 0009, AC-10).
+  if (named) {
+    return NAMED_LINE
+  }
+
   switch (view.kind) {
     case 'empty':
       return 'The web is empty. There are no stories to bring yet.'

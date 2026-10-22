@@ -373,6 +373,32 @@ history drawer's thirty day window cannot be its source or the earliest marks
 would vanish. A mark that carries a day key and a position cannot leak the
 hidden selection system, which is why nothing about the story travels with it.
 
+### The hidden interactions
+
+File: `src/app/name.ts`, with `src/app/App.tsx`, `src/world/stage.ts`, `src/world/camera.ts`, `src/world/Anansi.tsx`, `src/world/Objects.tsx`, `src/world/Web.tsx`
+Last updated: 2026-10-22
+
+| Property | Class |
+| -------- | ----- |
+| Trigger (the word) | typing `anansi` anywhere outside a field, one keystroke at a time |
+| Suppression | a held modifier, any `input`, `textarea`, `select`, or contenteditable target, or a running search |
+| Cooldown | once per session; the buffer is cleared whenever the attempt is refused |
+| Answer (the word) | the `naming` beat: nearest camera frame, the strongest wake, a `0.08` lift, and its own sentence |
+| Answer (the day) | the clock family turns `0.35` radians toward the hub when the third story seals the day |
+| Answer (the kept story) | a yellow sphere at the newest knot's end, twice its radius, settling to exactly the resting size |
+| Reduced motion | the word and the seal keep their sentence and their state, and drop the lift, the swing, and the pulse |
+| Cost | no stored key, no new draw call while idle, one temporary mesh during the celebrating beat |
+| Removability | delete the module, the listener, the beat, and the notice, and the ritual is unchanged with no migration |
+
+**Pattern notes:**
+
+The word is refused inside a field so the history search keeps its meaning, and
+refused during a search so the surprise never interrupts the one moment the
+product is working. Every answer is described in words as well as drawn, because
+the canvas already carries a description and a surprise is not an exception to
+it. The kept knot settles at the resting radius rather than fading, so its mesh
+can be unmounted without a visible pop.
+
 ### Reduced motion and the phone
 
 File: `src/app/WorldLayer.tsx`, `src/world/camera.ts`, `src/world/Objects.tsx`, `src/world/Anansi.tsx`

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { useSpring } from '@react-spring/three'
+import { animated, useSpring } from '@react-spring/three'
 import { useFrame, useThree } from '@react-three/fiber'
 import {
   BufferGeometry,
@@ -174,6 +174,46 @@ function paintBeads(mesh: InstancedMesh, graph: Graph, palette: Palette): void {
 }
 
 /**
+ * The knot of the story just kept answers once (spec 0009, AC-6).
+ *
+ * The weave's knots are painted once into one instanced buffer, so this is a
+ * single extra mesh that exists for the length of the celebrating beat and is
+ * then unmounted. It settles at exactly the resting knot's radius, so the
+ * unmount cannot be seen, and the idle stage is unchanged.
+ */
+function KeptEmphasis({
+  thread,
+  palette,
+  mobile,
+  invalidate,
+}: {
+  readonly thread: KeptThread
+  readonly palette: Palette
+  readonly mobile: boolean
+  readonly invalidate: () => void
+}) {
+  const spring = useSpring({
+    from: { scale: 0.7 },
+    to: async (next) => {
+      await next({ scale: 2 })
+      await next({ scale: 1 })
+    },
+    config: { tension: 190, friction: 20 },
+    onChange: () => invalidate(),
+  })
+
+  return (
+    <animated.mesh
+      position={[thread.to[0], thread.to[1], thread.to[2]]}
+      scale={spring.scale}
+    >
+      <sphereGeometry args={[thread.knot, mobile ? 6 : 10, mobile ? 4 : 6]} />
+      <meshBasicMaterial color={palette.yellow} toneMapped={false} depthWrite={false} />
+    </animated.mesh>
+  )
+}
+
+/**
  * The web itself, inside the canvas. It derives nothing: the graph arrives
  * from the scene, so the same graph feeds the objects and Anansi. It wakes
  * when a search begins and springs back when one ends, and it draws no frames
@@ -328,6 +368,18 @@ export function WebGraph({
             <meshBasicMaterial color={palette.dim} toneMapped={false} />
           </instancedMesh>
         </>
+      ) : null}
+
+      {/* The kept story's knot answers once, then settles into the weave
+          (spec 0009, AC-6). Reduced motion never mounts it, because the
+          acceptance beat is not started at all in that mode. */}
+      {beat === 'celebrating' && kept.length > 0 ? (
+        <KeptEmphasis
+          thread={kept[kept.length - 1] as KeptThread}
+          palette={palette}
+          mobile={mobile}
+          invalidate={invalidate}
+        />
       ) : null}
 
       {/* The filament is always mounted at zero opacity, so its shader

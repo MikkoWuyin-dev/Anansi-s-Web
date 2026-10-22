@@ -8,6 +8,7 @@ import {
   INITIAL_UI,
   learnStory,
   MISSING_STORY_MESSAGE,
+  NAMED_LINE,
   ritualView,
   SEARCH_FAILED_MESSAGE,
   takeStory,
@@ -384,6 +385,14 @@ describe('announcementOf', () => {
     expect(spoken).toContain(view.topic.title)
     expect(spoken).toContain("This is today's story")
   })
+
+  it('says so when the word answers, and nothing about the story', () => {
+    const { store } = makeStore()
+    const view = viewOf(store, [makeTopic('one')])
+
+    expect(announcementOf(view, true)).toBe(NAMED_LINE)
+    expect(announcementOf(view, true)).not.toMatch(/one/)
+  })
 })
 
 describe('beatFor', () => {
@@ -425,5 +434,21 @@ describe('beatFor', () => {
     })
 
     expect(beatFor(searching)).toBe('searching')
+  })
+
+  it('answers the word with its own beat, but never during a search', () => {
+    const { store } = makeStore()
+    const library = [makeTopic('one')]
+
+    expect(beatFor(viewOf(store, library), false, true)).toBe('naming')
+
+    const searching = ritualView({
+      state: store.getState(),
+      library,
+      ui: { phase: 'searching', failure: null, sealed: false },
+      newDay: false,
+    })
+
+    expect(beatFor(searching, false, true)).toBe('searching')
   })
 })
