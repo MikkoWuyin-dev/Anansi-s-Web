@@ -1,7 +1,7 @@
 # 0006. The light token set
 
 **Date**: 2026-10-20
-**Status**: Complete
+**Status**: Built
 **Built**: 2026-10-20 — roadmap 7.1: the light token set, the surface and action-edge roles, the contrast contract, and the stage re-reading its palette when the mode changes
 
 ## Summary

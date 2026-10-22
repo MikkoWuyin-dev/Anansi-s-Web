@@ -12,6 +12,13 @@ the quality philosophy and the exclusions:
   medical topics, highly technical mathematics, or sensitive subject matter
   that needs specialist handling.
 
+## Layout
+
+- `candidates/` holds one JSON file per candidate, in the same shape as
+  `content/topics/`. Nothing reads this folder at runtime.
+- `BATCH-<date>.md` is the review sheet for one batch: every title grouped by
+  domain, with its difficulty and tags, so a batch can be read in one pass.
+
 ## Promoting a candidate
 
 1. Read the candidate and decide whether it clears the bar above.

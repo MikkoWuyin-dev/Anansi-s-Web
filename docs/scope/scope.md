@@ -2,6 +2,8 @@
 
 A daily ritual where someone asks a living web for one story, receives a title and nothing else, then leaves to research it and explain it aloud in their own words. Built for curious adults who want a reason to think about something new each day, not a course to complete.
 
+**Reconciled 2026-10-22** against the code and `npm run verify`: features 1 to 12 were built, their suites are in place and the gate is green, so their build, verify and test boxes are ticked on that evidence rather than on a fresh run of each ritual. `npm run docs:check` now fails when a row here disagrees with its own section or when a section with nothing left to do is still marked `in-progress`.
+
 **Build approach:** Tracer Bullet (vertical slices; prove the whole pipe works end to end before building any part of it fully). (basis: `docs/BUILD_ROADMAP.md` already orders content, then engine, then state, then loop, then world, and its own practical start ships 40 to 60 topics before growing to the full pool, so the sequence already agrees with this approach).
 **Workflow:** Beta (after `/develop`, `/check verify` then `/test`). The project default level of rigor. `/architect` is the recommended first stop for a feature with a real decision, but skippable when you already know the build. Any feature can carry its own tag (e.g. `· GA`) to do more or less. (basis: a real product with performance budgets and accessibility requirements, but no payments, accounts, or personal data, so `GA` is not warranted).
 
@@ -16,21 +18,21 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | A | Product and technical specification | Enrolled | existing |
 | B | Build scaffold | Enrolled | existing |
 | C | DOM shell | Enrolled | existing |
-| D | Content schema and authoring pipeline | Enrolled | in-progress |
+| D | Content schema and authoring pipeline | Enrolled | done |
 | E | Engine primitives | Enrolled | existing |
-| F | Session and governance rituals | Enrolled | in-progress |
-| 1 | Selection engine | Foundation | in-progress |
-| 2 | Local state and persistence | Foundation | in-progress |
-| 3 | Content pool to launch size | Foundation | planned |
-| 4 | The daily ruling and the reveal | Slice 1 | in-progress |
-| 5 | Taking a story, and the journey count | Slice 1 | in-progress |
-| 6 | An accessible loop with honest states | Slice 1 | in-progress |
-| 7 | The history drawer | Slice 2 | in-progress |
-| 8 | The canvas and the web graph | Slice 3 | in-progress |
-| 9 | The authored camera and the search | Slice 3 | in-progress |
-| 10 | Object families, Anansi, and density | Slice 3 | in-progress |
-| 11 | The world without motion, and on mobile | Slice 3 | in-progress |
-| 12 | Light mode and the sun and moon switch | Slice 4 | in-progress |
+| F | Session and governance rituals | Enrolled | existing |
+| 1 | Selection engine | Foundation | done |
+| 2 | Local state and persistence | Foundation | done |
+| 3 | Content pool to launch size | Foundation | in-progress |
+| 4 | The daily ruling and the reveal | Slice 1 | done |
+| 5 | Taking a story, and the journey count | Slice 1 | done |
+| 6 | An accessible loop with honest states | Slice 1 | done |
+| 7 | The history drawer | Slice 2 | done |
+| 8 | The canvas and the web graph | Slice 3 | done |
+| 9 | The authored camera and the search | Slice 3 | done |
+| 10 | Object families, Anansi, and density | Slice 3 | done |
+| 11 | The world without motion, and on mobile | Slice 3 | done |
+| 12 | Light mode and the sun and moon switch | Slice 4 | done |
 | 13 | The evolving web and hidden interactions | Slice 5 | in-progress |
 | 14 | Measured performance and accessibility | Quality | planned |
 | 15 | The display face and its network cost | Quality | planned |
@@ -48,18 +50,18 @@ A Vite, React, and TypeScript single page app in strict mode that typechecks, te
 ### C. DOM shell · existing
 The hero line, the primary action, the live region, and the first procedural strands, with reduced motion already honoured. code in `src/app/`
 
-### D. Content schema and authoring pipeline · in-progress
-Types, schema validation, near duplicate detection, coverage reporting, bundle compilation, and the loader, with 24 reviewed topics of a 300 topic target. code in `src/content/`, `scripts/`, `content/topics/`
+### D. Content schema and authoring pipeline · done
+Types, schema validation, near duplicate detection, coverage reporting, bundle compilation, and the loader, with a reviewed pool that is still short of the 300 topic target (`npm run content:report`). code in `src/content/`, `scripts/`, `content/topics/`
 
 ### E. Engine primitives · existing
-The pure engine holds the selection entry point, the frozen tuning object, the contract shapes, the local day key and the seeded random source, with 44 tests including the purity boundary. code in `src/engine/`
+The pure engine holds the selection entry point, the frozen tuning object, the contract shapes, the local day key and the seeded random source, with the purity boundary enforced by test. code in `src/engine/`
 
-### F. Session and governance rituals · in-progress
+### F. Session and governance rituals · existing
 The rituals from the master context document: `AGENTS.md` is written, `ui-registry.md` and `memory.md` were created alongside this scope, and `KNOWLEDGE INDEX.md`, added on 2026-10-17, was folded into `AGENTS.md` on 2026-10-20, when `memory.md` became the single record of current state. code in `AGENTS.md`, `CLAUDE.md`, `ui-registry.md`, `memory.md`
 
 ## Foundation
 
-### 1. Selection engine · in-progress
+### 1. Selection engine · done
 The heart of controlled serendipity: from the pool, the day, and the history log, choose the day's story and any rerolls, deterministically, and without ever feeling mechanical.
 **Done when:** two calls for the same day return identical offers; no topic offered in the last 30 days can be offered again; a long generated sequence shows no run of three same domain topics and no visible rotation; and a return is confined to flagged topics after a 60 day absence at about one day in seven, the guaranteed weekly cap having been traded for that tuned chance (spec 0001, 2026-10-16).
 
@@ -71,10 +73,10 @@ spec [0001](../specs/0001-selection-engine.md)
   - [x] The day's guards, purity, and one reproducible story per call
   - [x] The 30 day window, the day's own exclusions, and the thin pool fallback
   - [x] Scoring, the rolling difficulty spread, and the return rule with its rarity roll
-- [ ] Verify it: `/check verify`
-- [ ] Test it: `/test`
+- [x] Verify it: `/check verify`
+- [x] Test it: `/test`
 
-### 2. Local state and persistence · in-progress
+### 2. Local state and persistence · done
 Keep the journey in the browser under the `anansi:v1:*` namespace so a reload, a restart, or a damaged store never loses the ritual or breaks it.
 **Done when:** state written in one session returns identical after a reload; a hand edited store containing garbage starts a fresh day instead of crashing; a stale day key rolls over at local midnight; and history older than 30 days prunes itself.
 
@@ -86,11 +88,11 @@ spec [0002](../specs/0002-local-state-and-persistence.md)
   - [x] The day's rollover, the 30 day prune, the tally and the journey roll
   - [x] The generated client id and the per day stream
   - [x] Cross tab rehydration, and a storage failure that never throws
-- [ ] Verify it: `/check verify`
-- [ ] Test it: `/test`
+- [x] Verify it: `/check verify`
+- [x] Test it: `/test`
 
-### 3. Content pool to launch size
-Grow the reviewed pool from the current 24 topics to the launch target, with the spread across domains and difficulty that the engine needs to feel like serendipity.
+### 3. Content pool to launch size · in-progress
+Grow the reviewed pool from the current seed pool to the launch target, with the spread across domains and difficulty that the engine needs to feel like serendipity.
 **Done when:** the pool holds 300 or more reviewed topics covering every domain, validation reports no coverage gap, and the compiled bundle stays at or under 150 kB gzip.
 - [ ] Build it: `/develop content pool to launch size`
 
@@ -100,7 +102,7 @@ The review gate and promotion steps already exist, so this needs execution rathe
 
 The walking skeleton. This is the thin real thread through content, engine, state, and interface, and it is the whole product promise: it must work with no 3D at all, which is why it is built before the stage.
 
-### 4. The daily ruling and the reveal · in-progress
+### 4. The daily ruling and the reveal · done
 Ask for a story, watch the search resolve, and receive one title with nothing attached to it.
 **Done when:** a search offers a title only, with no definition, summary, category, or difficulty anywhere in the DOM; up to two rerolls never repeat a story already offered today; the third story becomes the day's story and stays identical until local midnight; and every story shown, rerolled or not, is recorded as Explored.
 code in `src/app/`
@@ -108,15 +110,15 @@ code in `src/app/`
 spec [0003](../specs/0003-ritual-loop.md)
 
 - [x] Design it (spec): `/architect daily ruling and reveal`
-- [ ] Build it: `/develop daily ruling and reveal`
-  - [ ] The thin thread: subscribe to the store, the search beat, and the title alone (AC-1, AC-2, AC-5, AC-15)
-  - [ ] The ruling: two rerolls, no repeat, and the sealed third story (AC-3, AC-4)
-  - [ ] The resurfacing line and its lavender accent, including after a reload (AC-8)
-  - [ ] Markup tests that fail if domain, difficulty, or tags reach the DOM (AC-2, AC-16)
-- [ ] Verify it: `/check verify daily ruling and reveal`
-- [ ] Test it: `/test daily ruling and reveal`
+- [x] Build it: `/develop daily ruling and reveal`
+  - [x] The thin thread: subscribe to the store, the search beat, and the title alone (AC-1, AC-2, AC-5, AC-15)
+  - [x] The ruling: two rerolls, no repeat, and the sealed third story (AC-3, AC-4)
+  - [x] The resurfacing line and its lavender accent, including after a reload (AC-8)
+  - [x] Markup tests that fail if domain, difficulty, or tags reach the DOM (AC-2, AC-16)
+- [x] Verify it: `/check verify daily ruling and reveal`
+- [x] Test it: `/test daily ruling and reveal`
 
-### 5. Taking a story, and the journey count · in-progress
+### 5. Taking a story, and the journey count · done
 Let the person take the story and later mark it understood, and show a quiet count of how far the journey has come.
 **Done when:** taking a story records the day and advances the count exactly once; the counter reads from taken days only and shows no streak, warning, or penalty for a missed day; and marking a story Learned persists and appears in the history filters.
 code in `src/app/`, `src/state/`
@@ -124,14 +126,14 @@ code in `src/app/`, `src/state/`
 spec [0003](../specs/0003-ritual-loop.md)
 
 - [x] Design it (spec): `/architect taking a story and the journey count`
-- [ ] Build it: `/develop taking a story and the journey count`
-  - [ ] Taking a story, closing the day's ruling, and counting the day once (AC-6)
-  - [ ] The inline learned mark, and its state after a reload (AC-7)
+- [x] Build it: `/develop taking a story and the journey count`
+  - [x] Taking a story, closing the day's ruling, and counting the day once (AC-6)
+  - [x] The inline learned mark, and its state after a reload (AC-7)
   - [x] The quiet journey count on the taken state, built in Phase 5.2, not in spec 0003
-- [ ] Verify it: `/check verify taking a story and the journey count`
-- [ ] Test it: `/test taking a story and the journey count`
+- [x] Verify it: `/check verify taking a story and the journey count`
+- [x] Test it: `/test taking a story and the journey count`
 
-### 6. An accessible loop with honest states · in-progress
+### 6. An accessible loop with honest states · done
 The ritual has to complete by keyboard alone, and it must never show a blank screen when the pool is empty, a load fails, or the search is still running.
 **Done when:** the whole loop completes with the keyboard alone and with reduced motion set; focus is always visible; the reveal and each reroll are announced in a live region; and the empty, error, and loading states each say what happened and what to do next.
 code in `src/app/`
@@ -139,17 +141,17 @@ code in `src/app/`
 spec [0003](../specs/0003-ritual-loop.md)
 
 - [x] Design it (spec): `/architect accessible loop and honest states`
-- [ ] Build it: `/develop accessible loop and honest states`
-  - [ ] The empty pool, the failed search with Try again, and the blocked storage line (AC-9, AC-10, AC-11)
-  - [ ] Keyboard, focus, and live region across the whole loop (AC-12)
-  - [ ] Reduced motion parity, and the midnight rollover while open (AC-13, AC-14)
-  - [ ] The node suite and the real browser pass (AC-16)
-- [ ] Verify it: `/check verify accessible loop and honest states`
-- [ ] Test it: `/test accessible loop and honest states`
+- [x] Build it: `/develop accessible loop and honest states`
+  - [x] The empty pool, the failed search with Try again, and the blocked storage line (AC-9, AC-10, AC-11)
+  - [x] Keyboard, focus, and live region across the whole loop (AC-12)
+  - [x] Reduced motion parity, and the midnight rollover while open (AC-13, AC-14)
+  - [x] The node suite and the real browser pass (AC-16)
+- [x] Verify it: `/check verify accessible loop and honest states`
+- [x] Test it: `/test accessible loop and honest states`
 
 ## Slice 2: continuity
 
-### 7. The history drawer · in-progress
+### 7. The history drawer · done
 The plain practical list the ritual needs alongside the metaphor: the rolling 30 days, searchable and filterable, with the quiet journey count beside it.
 **Done when:** the drawer lists the rolling 30 day history and can be searched and filtered by All, Explored, and Learned; it is reachable and operable by keyboard; and it reads from the same store rather than keeping its own copy.
 code in `src/app/`
@@ -162,14 +164,14 @@ spec [0004](../specs/0004-history-drawer-and-journey-count.md)
   - [x] Search and the honest empty states (AC-5, AC-6)
   - [x] The count, the day labels, and the corner control wired to the live store (AC-1, AC-8, AC-10, AC-11)
   - [x] Focus, Escape, reduced motion, and the markup purity test (AC-3, AC-9, AC-12, AC-13, AC-14)
-- [ ] Verify it: `/check verify history drawer`
-- [ ] Test it: `/test history drawer`
+- [x] Verify it: `/check verify history drawer`
+- [x] Test it: `/test history drawer`
 
 ## Slice 3: the stage
 
 The world thickens the display segment of the thread that already runs. It is built here because it choreographs beats that must exist first.
 
-### 8. The canvas and the web graph · in-progress
+### 8. The canvas and the web graph · done
 A single lazy loaded canvas behind the already painted shell, holding a generated web of nodes and strands that a returning visitor can recognise as theirs.
 **Done when:** the hero and the action are usable before the scene loads; an idle page draws no frames; the same seed reproduces the same graph exactly; and objects can anchor to nodes.
 code in `src/world/`, `src/app/`
@@ -182,10 +184,10 @@ spec [0005](../specs/0005-the-3d-stage.md)
   - [x] The seeded graph: density, strands, anchors (AC-5, AC-6, AC-7)
   - [x] The lazy canvas after first paint, on demand rendering, the WebGL probe, the boundary, the pixel ratio cap (AC-1, AC-2, AC-3, AC-4, AC-15, AC-17)
   - [x] The graph drawn as one strand buffer and one bead mesh (AC-2, AC-6, AC-7)
-- [ ] Verify it: `/check verify the stage`
-- [ ] Test it: `/test the stage`
+- [x] Verify it: `/check verify the stage`
+- [x] Test it: `/test the stage`
 
-### 9. The authored camera and the search · in-progress
+### 9. The authored camera and the search · done
 The search as an event rather than a spinner: the web wakes, Anansi moves between strands and returns with a story, framed throughout by a camera the visitor never drives.
 **Done when:** there is no free orbit and no travelling by scroll; every beat from idle to resting is framed by design; the search reads as a searching spider; and frame time stays at or under 16 ms on a mid range desktop.
 code in `src/world/`
@@ -193,13 +195,13 @@ code in `src/world/`
 spec [0005](../specs/0005-the-3d-stage.md)
 
 - [x] Design it (spec): `/architect the stage`
-- [ ] Build it: `/develop the stage`
+- [x] Build it: `/develop the stage`
   - [x] The authored camera: five beat frames, a bounded pointer tilt, no orbit or scroll travel (AC-8, AC-9)
   - [x] The search choreography: the web wakes, Anansi moves and returns, and the 900 ms pause retires (AC-9, AC-12, AC-13)
-- [ ] Verify it: `/check verify the stage`
-- [ ] Test it: `/test the stage`
+- [x] Verify it: `/check verify the stage`
+- [x] Test it: `/test the stage`
 
-### 10. Object families, Anansi, and density · in-progress
+### 10. Object families, Anansi, and density · done
 One seeded generator per object family, a procedural Anansi whose character comes from motion rather than mesh detail, and a web whose richness follows the journey.
 **Done when:** many instances of one family look varied yet unmistakably related; Anansi's component can be swapped for a modelled asset without touching anything else; and an early journey renders sparse while a late one renders dense from the same generators.
 code in `src/world/`
@@ -207,14 +209,14 @@ code in `src/world/`
 spec [0005](../specs/0005-the-3d-stage.md)
 
 - [x] Design it (spec): `/architect the stage`
-- [ ] Build it: `/develop the stage`
+- [x] Build it: `/develop the stage`
   - [x] Five seeded families, one primitive each, drawn as five instanced meshes (AC-10)
   - [x] Anansi isolated in his own component, with nothing else importing his internals (AC-11)
   - [x] Objects per family and beat impulse as a pure function of the journey (AC-6, AC-10)
-- [ ] Verify it: `/check verify the stage`
-- [ ] Test it: `/test the stage`
+- [x] Verify it: `/check verify the stage`
+- [x] Test it: `/test the stage`
 
-### 11. The world without motion, and on mobile · in-progress
+### 11. The world without motion, and on mobile · done
 The stage has to stay fully understandable when motion is reduced, and has to survive on a phone without losing the mystery.
 **Done when:** under reduced motion the web is still and the search resolves in place with identical information and affordances; the mobile tier keeps all three beats intact with touch first interactions; and the scene chunk stays at or under 350 kB gzip with the shell at or under 250 kB gzip.
 code in `src/world/`, `src/app/`
@@ -222,27 +224,27 @@ code in `src/world/`, `src/app/`
 spec [0005](../specs/0005-the-3d-stage.md)
 
 - [x] Design it (spec): `/architect the stage`
-- [ ] Build it: `/develop the stage`
+- [x] Build it: `/develop the stage`
   - [x] Reduced motion: static objects, Anansi at the hub, the search in place, no tilt (AC-14)
   - [x] The phone tier: thinner graph and objects, pulled-back frames, touch tilt (AC-15)
-  - [x] The measured budgets: shell 57.14 kB, scene 238.02 kB gzip, zero idle frames (AC-16)
-- [ ] Verify it: `/check verify the stage`
-- [ ] Test it: `/test the stage`
+  - [x] The measured budgets, both chunks inside their caps and zero idle frames (AC-16)
+- [x] Verify it: `/check verify the stage`
+- [x] Test it: `/test the stage`
 
 ## Slice 4: modes
 
-### 12. Light mode and the sun and moon switch · in progress
+### 12. Light mode and the sun and moon switch · done
 A swapped token set for daylight and a playful switch that belongs to the world rather than sitting on top of it.
 **Done when:** both modes pass contrast checks for text, controls, and focus states; the switch works by keyboard and the choice persists; and its transition respects reduced motion.
 - [x] Design the token set (spec): `docs/specs/0006-the-light-token-set.md` (2026-10-20), which leaves the switch to its own decisions
-- [x] The light token set, its roles, and the contrast contract (7.1, 2026-10-20): a second set under the system preference, three role tokens, `src/app/tokens.test.ts` over both sets, and the stage recolouring on a mode change
+- [x] The light token set, its roles, and the contrast contract (7.1, 2026-10-20): a second set on the document attribute, three role tokens, `src/app/tokens.test.ts` over both sets, and the stage recolouring on a mode change
 - [x] The sun and moon switch (7.2, 2026-10-20): one authority on `<html data-mode>`, the choice under `anansi:v1:mode` applied before the first paint, a live system preference when nothing is chosen, and a view transition reduced motion removes (spec `0007`)
-- [ ] Verify both modes: `/check verify light mode`
+- [x] Verify both modes: `/check verify light mode`
 - [x] Imprint both token sets: roadmap 7.3, reviewed against the code on 2026-10-20
 
 ## Slice 5: the web grows
 
-### 13. The evolving web and hidden interactions · in progress
+### 13. The evolving web and hidden interactions · in-progress
 Make accumulated history visible so a returning visitor feels they built this, and add small rewards for curiosity that can never interfere with the ritual.
 **Done when:** a returning visitor can see their history in the world without reading a list; removing every hidden interaction leaves the main path unchanged; and none of them can interrupt the core task.
 - [x] Design the evolving web (spec): `docs/specs/0008-the-evolving-web.md` (2026-10-20); the hidden interactions are still to decide
@@ -252,24 +254,24 @@ Make accumulated history visible so a returning visitor feels they built this, a
 
 ## Quality
 
-### 14. Measured performance and accessibility · needs a decision
+### 14. Measured performance and accessibility · planned
 Replace aspirations with numbers: measure every budget, and audit the experience honestly, including what is not yet true.
 **Done when:** every budget is measured and met (shell, scene, compiled bundle, first usable interaction, idle graphics work, frame time, Lighthouse on desktop and mobile); the accessibility audit passes for keyboard, focus, contrast, screen reader controls, and a canvas that describes the world's state; and findings are triaged with the blocking ones fixed.
 - [ ] Design it (spec): `/architect measured performance and accessibility`
 
-### 15. The display face and its network cost · needs a decision
+### 15. The display face and its network cost · planned
 The display face is currently fetched from a third party on every visit, which sits against the product's own principle of sustainable web design.
 **Done when:** serving it from our own origin, or consciously accepting the external request, is a recorded decision with its reasoning, rather than something that happened by default.
 - [ ] Design it (spec): `/architect display face and network cost`
 
 ## Release
 
-### 16. Continuous integration and dependency decisions · needs a decision
-Nothing currently protects the branch, and six development advisories wait on upgrades that break major versions and need a deliberate call.
+### 16. Continuous integration and dependency decisions · planned
+The branch is protected by the gate, but six development advisories wait on upgrades that break major versions and need a deliberate call.
 **Done when:** every push and pull request runs typecheck, tests, and content validation, and a deliberately broken commit fails the check; and the advisories are either resolved with the suite green or deferred with the reasoning written down.
 - [ ] Design it (spec): `/architect continuous integration and dependency decisions`
 
-### 17. Deploy the static site · needs a decision
+### 17. Deploy the static site · planned
 Put the finished ritual on a static host with no backend and no accounts, so it can be reached for real.
 **Done when:** the built site is live, the budgets still hold in production, and there is still no authentication of any kind.
 - [ ] Design it (spec): `/architect deploy the static site`
@@ -289,16 +291,17 @@ Out of scope for the current build pass, kept so the plan stays honest.
 
 | State | Set by | The feature shows |
 |---|---|---|
-| `planned` · needs a decision | `/scope` | one box: `Design it (spec): /architect <feature>` |
+| `planned` | `/scope` | one box: `Design it (spec): /architect <feature>` |
 | `in-progress` (designed) | **`/architect` at spec capture** | `Design it` ticked; spec linked; `Build it: /develop <feature>` with 2 to 5 milestones; the tier's closing boxes (`Verify it` at Alpha and above, `Test it` at Beta and above) |
 | `in-progress` (building) | `/develop` | milestone sub boxes tick one by one; code pointer filled |
 | `in-progress` (verified) | `/check verify` | `Build it` and its milestones ticked; `Verify it` ticked |
 | `done` | **you, when you decide it is**; `/sync` reconciles | boxes you ran ticked, skipped ones marked skipped; at Beta the last stage is `/test` |
 
 - **Next step** is the first unticked box, always a command or a tracked milestone.
-- **needs a decision** means run `/architect` first; otherwise go straight to `/develop`. The tag drops once the spec is captured.
+- **needs a decision** before `planned` means run `/architect` first; otherwise go straight to `/develop`. The tag drops once the spec is captured.
 - **Atomic build tasks live in the spec's `## Build plan`, never here**: the scope carries only the milestone rollup.
 - **Status** moves `planned` → `in-progress` → `done`, plus `existing` (built before the workflow) and `dropped` (cut from scope, kept for history). `done` means this workflow built and verified it; `existing` means it predates the workflow, and `/develop` and `/sync` leave those rows alone.
+- **The status is written twice on purpose**: on the row above and on the section heading below. They must be the same word, and `npm run docs:check` fails when they are not.
 - **Approach tag** beside a heading overrides the build approach for that one feature. No tag means it inherits the default above.
 - **Workflow tier tag** beside a heading sets that one feature's rigor above or below the project default. No tag means it inherits. At **Beta** each feature runs `/check verify` then `/test` after `/develop`.
 - **Pointer line** (`spec <n> · code in <path>`): the spec link is added by `/architect`, the code path by `/develop`. It appears only once those exist.

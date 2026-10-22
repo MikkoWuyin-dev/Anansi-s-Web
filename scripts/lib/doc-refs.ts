@@ -20,12 +20,21 @@ export interface DocProblem {
 export interface RepoView {
   /** True when the repository-relative path exists, as a file or a directory. */
   exists: (path: string) => boolean
+  /**
+   * True when a bare name, such as `ritual.ts` or `state/`, exists somewhere in
+   * the source tree. Documents name modules by bare name in prose, and those
+   * references rot in exactly the same way as a full path.
+   */
+  existsBare: (name: string) => boolean
   /** The names under `scripts` in package.json. */
   npmScripts: ReadonlySet<string>
 }
 
 /** File extensions that mark an inline-code span as a path to check. */
 const PATH_EXTENSIONS = /\.(md|ts|tsx|mjs|js|json|ya?ml|css|html)$/
+
+/** A bare name worth resolving: a file with a known extension, or a directory. */
+const BARE_NAME = /^[\w.-]+\.(md|ts|tsx|mjs|js|json|ya?ml|css|html)$|^[\w.-]+\/$/
 
 /**
  * Decides whether an inline-code span names a repository path, and returns the
@@ -39,19 +48,27 @@ export const pathIn = (span: string): string | null => {
     return null
   }
 
+  // Home-relative and absolute paths belong to the machine, not the repository.
+  if (text.startsWith('~') || text.startsWith('/')) {
+    return null
+  }
+
   const path = text.replace(/#.*$/, '')
-  const hasSlash = path.includes('/')
+  const name = path.replace(/\/$/, '')
 
-  // A bare extension such as `.tsx` names a kind of file, not a file.
-  if (/^\.\w+$/.test(path)) {
+  // A bare extension such as `.tsx` names a kind of file, and `.test.tsx`
+  // names a kind of file too; neither refers to one.
+  if (/^\.\w+$/.test(name) || (!name.includes('/') && /^\.[\w.-]+$/.test(name))) {
     return null
   }
 
-  if (!hasSlash && !PATH_EXTENSIONS.test(path)) {
-    return null
+  // A bare name is only worth checking when it names a file or a directory;
+  // `crypto.randomUUID` and `Object.keys` are code, not path references.
+  if (!name.includes('/')) {
+    return BARE_NAME.test(path) ? path : null
   }
 
-  if (hasSlash && !PATH_EXTENSIONS.test(path) && !path.endsWith('/')) {
+  if (!PATH_EXTENSIONS.test(name) && !path.endsWith('/')) {
     return null
   }
 
@@ -80,7 +97,15 @@ export const checkReferences = (
 
       const path = pathIn(span)
 
-      if (path !== null && !repo.exists(path.replace(/\/$/, ''))) {
+      if (path === null) {
+        continue
+      }
+
+      const name = path.replace(/\/$/, '')
+      // `app/` and `state/` are shorthand for a source layer, not a root path.
+      const found = name.includes('/') ? repo.exists(name) : repo.existsBare(name)
+
+      if (!found) {
         problems.push({ file, line: index + 1, message: `\`${path}\` does not exist` })
       }
     }

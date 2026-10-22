@@ -1,7 +1,7 @@
 # 0004. A searchable history drawer and the quiet journey count
 
 **Date**: 2026-10-18
-**Status**: In Progress
+**Status**: Built
 **Built**: 2026-10-18 — `src/app/history.ts` and `src/app/HistoryPanel.tsx`, 25 tests, the drawer and the count verified by keyboard in a browser
 
 ## Summary
@@ -59,7 +59,7 @@ The constraint that shapes the drawer is the reveal's own rule. PRD §8 keeps do
 
 ### Option 2: A self contained drawer component
 
-One `HistoryDrawer.tsx` that reads the store, filters with `useMemo`, and renders in one file.
+One self contained drawer component that reads the store, filters with `useMemo`, and renders in one file.
 
 **Pros**:
 - Fewer files and less indirection for a surface this size.

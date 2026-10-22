@@ -1,7 +1,7 @@
 # 0003. Run the day's ritual in the semantic DOM
 
 **Date**: 2026-10-17
-**Status**: In Progress
+**Status**: Built
 **Built**: 2026-10-17 — `src/app/` (four modules), 31 tests, the loop verified by keyboard in a browser
 
 ## Summary
@@ -142,10 +142,10 @@ hero ──find──▶ searching ──story──▶ story ──reroll──
 
 | Module | Function | Key inputs | Key outputs | Errors |
 |---|---|---|---|---|
-| `src/app/ritual.ts` | `createRitual(deps)` | store, library, `dayRng`, `wait(ms)`, `reducedMotion()` | controller with `state`, `find()`, `reroll()`, `take()`, `beginLearned()`, `confirmLearned()`, `cancelLearned()`, `retry()` | catches engine and store throws into `failed` |
+| `src/app/ritual.ts` | `ritualView(input)`, `findStory(deps)` | store, library, `dayRng`, `wait(ms)`, `reducedMotion()` | the derived `RitualView`, a `SearchOutcome` | catches engine and store throws into `failed` |
 | `src/app/useJourney.ts` | `useJourney(store)` | a `JourneyStore` | the snapshot, subscribed with `useSyncExternalStore` | none |
-| `src/app/App.tsx` | `App()` | none | the ritual markup | none |
-| `src/app/story.tsx` | `StoryCard({ topic, because, ... })` | rendered story, reason, actions | title only plus its own actions | none |
+| `src/app/App.tsx` | `App({ store })` | the store | the ritual markup, wired to the store | none |
+| `src/app/RitualScreen.tsx` | `Ritual({ view, ... })`, `Story` | the derived view, the persistent flag, the announcement, the handlers | title only plus its own actions | none |
 
 Every write goes through the store's named actions (`offer`, `accept`, `setStatus`). The app never writes storage, never constructs an offer itself, and never reads a topic field other than `title` for display.
 

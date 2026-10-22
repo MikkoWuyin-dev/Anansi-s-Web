@@ -1,7 +1,7 @@
 # 0001. Select the day's stories with hidden diversity
 
 **Date**: 2026-10-16
-**Status**: In Progress
+**Status**: Built
 **Built**: 2026-10-16 — `src/engine/types.ts`, `tuning.ts`, `offer.ts`, 44 engine tests
 
 ## Summary

@@ -1,7 +1,7 @@
 # 0002. Keep the journey in the browser under a versioned local store
 
 **Date**: 2026-10-17
-**Status**: In Progress
+**Status**: Built
 **Built**: 2026-10-17 — `src/state/` (seven modules), 50 tests
 
 ## Summary

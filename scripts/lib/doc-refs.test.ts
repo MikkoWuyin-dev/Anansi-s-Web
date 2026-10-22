@@ -6,6 +6,8 @@ const onDisk = new Set(['AGENTS.md', 'docs', 'docs/MCD.md', 'src/engine', 'src/e
 
 const repo = {
   exists: (path: string) => onDisk.has(path),
+  // Documents name modules by bare name in prose: `ritual.ts`, `state/`.
+  existsBare: (name: string) => new Set(['ritual.ts', 'purity.test.ts', 'state', 'AGENTS.md']).has(name),
   npmScripts: new Set(['verify', 'test', 'content:check']),
 }
 
@@ -16,6 +18,11 @@ describe('pathIn', () => {
     expect(pathIn('src/engine/')).toBe('src/engine/')
     expect(pathIn('AGENTS.md')).toBe('AGENTS.md')
     expect(pathIn('.github/workflows/verify.yml')).toBe('.github/workflows/verify.yml')
+  })
+
+  it('keeps a bare module or directory name so it can be resolved', () => {
+    expect(pathIn('ritual.ts')).toBe('ritual.ts')
+    expect(pathIn('state/')).toBe('state/')
   })
 
   it('ignores spans that are not paths', () => {
@@ -31,6 +38,10 @@ describe('pathIn', () => {
       '--anansi-surface',
       '.gitignore',
       '.tsx',
+      '.test.tsx',
+      'crypto.randomUUID',
+      '~/.config/freebuff-desktop/skills/',
+      '/src/main.tsx',
       'src/**/*.test.ts',
       '${seed}:kept',
     ]) {
@@ -52,6 +63,13 @@ describe('checkReferences', () => {
     expect(checkReferences('AGENTS.md', text, repo)).toEqual([
       { file: 'AGENTS.md', line: 2, message: '`docs/PLAN.md` does not exist' },
     ])
+  })
+
+  it('resolves a bare module name and names one that is gone', () => {
+    expect(checkReferences('x.md', 'See `ritual.ts` and `state/`.', repo)).toEqual([])
+    expect(checkReferences('x.md', 'See `deleted.ts`.', repo)[0]?.message).toBe(
+      '`deleted.ts` does not exist',
+    )
   })
 
   it('names an npm script that package.json does not define', () => {

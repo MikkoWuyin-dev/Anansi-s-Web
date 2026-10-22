@@ -1,7 +1,7 @@
 # 0005. The 3D stage behind the ritual
 
 **Date**: 2026-10-18
-**Status**: In Progress
+**Status**: Built
 **Built**: 2026-10-18 — steps 6.1 to 6.10: the lazy canvas, the seeded graph, the authored camera, five object families, a procedural Anansi, the search choreography, the springs, the reduced motion and touch tiers, and the measured budget; 86 world tests, 41 of them added after the camera
 
 ## Summary

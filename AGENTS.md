@@ -1,6 +1,6 @@
 # AGENTS.md — Anansi's Web
 
-Loaded at the start of every session, so it holds only what changes rarely. Anything with a number, a date, or "currently" belongs in `memory.md`. `npm run docs:check` keeps this file under 200 lines and its paths real.
+Loaded at the start of every session, so it holds only what changes rarely. Anything with a number, a date, or "currently" belongs in `memory.md`. `npm run docs:check` keeps this file under 200 lines, its paths real, and every status honest.
 
 ## What this is
 
@@ -123,6 +123,7 @@ Everything else in `skills/` is reference material, not process. The `threejs-*`
 - `@react-three/drei` is installed but unused. Don't reach for it without a reason that fits MCD §4.
 - The preview webview may composite no frames: transitions sit at time 0 and screenshots fail. The reduced motion query cannot be emulated there either. Record such checks as unverified rather than guessing.
 - `src/content/topics.generated.ts` is generated: edit `content/topics/` and run `npm run content:build`.
+- A status is written twice in three places: roadmap phase map and phase heading, scope table row and section heading, spec `Status` and its `Built` line. `docs:check` fails unless both halves move together.
 
 ## Finish with
 

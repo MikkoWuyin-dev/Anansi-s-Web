@@ -3,8 +3,9 @@
 
 **Date:** 2026-10-16
 **Companions:** `docs/PRD.md` (v1.1 product truth), `docs/MCD.md` (v1.0 technical truth)
-**Status:** Phases 0 to 5 complete (5.3 deferred); the library is at 24 of 300 topics. Phases 6 onward are planned, not built.
 **Audience:** any engineer or coding agent picking up the build.
+
+Phase status is stated once, in the **Status** column of the phase map below, and each phase heading carries the same word. `npm run docs:check` fails when the two disagree, so this document cannot quietly claim a phase is unbuilt after it ships.
 
 ---
 
@@ -24,26 +25,28 @@ Ordering logic: **content feeds the engine, the engine feeds the loop, the loop 
 
 ## Phase map
 
-| Phase | Name | Unlocks | Depends on |
-|---|---|---|---|
-| 0 | Foundations | a building, testing app | none |
-| 1 | Content layer | a real topic pool | 0 |
-| 2 | Selection engine | deterministic daily stories | 1 |
-| 3 | State and persistence | a journey that survives reloads | 2 |
-| 4 | The ritual loop | the core product experience | 3 |
-| 5 | History and progress | continuity, the 90-day count | 4 |
-| 6 | The 3D world | the stage, Anansi, the search | 4 |
-| 7 | Modes and design system | light mode, visual governance | 6 |
-| 8 | Evolution and surprises | the web that grows | 5, 6 |
-| 9 | Quality gates | measured, audited product | 7, 8 |
-| 10 | Hardening and deployment | a live, protected, shipped site | 9 |
-| 11 | The accounts era | cloud sync, cross device | 10 |
+| Phase | Name | Status | Unlocks | Depends on |
+|---|---|---|---|---|
+| 0 | Foundations | built | a building, testing app | none |
+| 1 | Content layer | in progress | a real topic pool | 0 |
+| 2 | Selection engine | built | deterministic daily stories | 1 |
+| 3 | State and persistence | built | a journey that survives reloads | 2 |
+| 4 | The ritual loop | built | the core product experience | 3 |
+| 5 | History and progress | built | continuity, the 90-day count | 4 |
+| 6 | The 3D world | built | the stage, Anansi, the search | 4 |
+| 7 | Modes and design system | built | light mode, visual governance | 6 |
+| 8 | Evolution and surprises | in progress | the web that grows | 5, 6 |
+| 9 | Quality gates | planned | measured, audited product | 7, 8 |
+| 10 | Hardening and deployment | planned | a live, protected, shipped site | 9 |
+| 11 | The accounts era | deferred | cloud sync, cross device | 10 |
+
+`built` means every step in the phase is delivered; `in progress` means some steps are; `planned` means none is; `deferred` means the phase is deliberately held. The heading of each phase restates the same word, which is what the check compares.
 
 Parallelism: Phase 1 is content work and can run alongside Phase 2 scaffolding. Phase 6 can start once Phase 4's beats are settled, and does not need Phase 5.
 
 ---
 
-## Phase 0 — Foundations (COMPLETE)
+## Phase 0 — Foundations (BUILT)
 
 Recorded so the document is self-contained.
 
@@ -82,9 +85,11 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 1 — Content layer
+## Phase 1 — Content layer (IN PROGRESS: the pipeline is built, the pool is growing)
 
 **Goal:** a reviewed, validated topic pool that ships as a static bundle inside budget.
+
+**Built so far:** the pipeline, the validator, the coverage report, the compiled bundle and the loader are all in place, and the pool grows through the review gate in `content/review/` rather than by direct authoring. The batch of 2026-10-22 took it to five topics per domain at an even difficulty split; the launch target of 300 is what remains, and the bundle is far inside its cap at the current size (`npm run content:report`).
 
 ### 1.1 Define the content types
 
@@ -116,7 +121,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 2 — Selection engine (COMPLETE, 2026-10-16)
+## Phase 2 — Selection engine (BUILT, COMPLETE 2026-10-16)
 
 **Goal:** controlled serendipity that is deterministic per day and feels random.
 
@@ -161,7 +166,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 3 — State and persistence (COMPLETE, 2026-10-17)
+## Phase 3 — State and persistence (BUILT, COMPLETE 2026-10-17)
 
 **Goal:** a journey that survives reloads, restarts, and a corrupt store.
 
@@ -201,7 +206,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 4 — The ritual loop (COMPLETE, 2026-10-17)
+## Phase 4 — The ritual loop (BUILT, COMPLETE 2026-10-17)
 
 **Goal:** the core product experience, fully operable without any 3D.
 
@@ -246,7 +251,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 5 — History and progress (COMPLETE, 2026-10-18)
+## Phase 5 — History and progress (BUILT, COMPLETE 2026-10-18)
 
 **Goal:** continuity. The last thirty days become inspectable, and the journey has a quiet number.
 
@@ -347,7 +352,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 - **Deliverable:** light mode as a swapped token set, with yellow still the single most regulated accent and jet re-cast for structural grounding.
 - **Done when:** both modes pass contrast checks for text, controls, and focus states.
-- **Built:** `styles.css` declares a second `:root` under `@media (prefers-color-scheme: light)` with every colour role re-declared. Three roles were added so the swap is safe: `--anansi-surface` (the page, because `--anansi-black` is the label on the yellow action), `--anansi-action-edge` (the boundary a yellow fill cannot draw on paper), and `--anansi-lavender-text` (the one lavender label, 5.74:1 in dark and 4.71:1 in light). `src/app/tokens.test.ts` computes the WCAG ratio of every text pair, the focus ring, and the action's boundary from the stylesheet's own text, and fails on any raw colour outside the two token blocks. The stage reads the palette once per mode in `Scene.tsx` and `WorldLayer` subscribes to the colour scheme, so the web, the objects, and Anansi recolour together without a reload. Verified live with the scheme emulated in both directions: the mounted canvas recoloured in place, the drawer read as dark text on paper, and the idle page returned to zero frames. `npm run verify` → exit 0, 317 tests in 28 files, shell 57.19 kB and scene 238.06 kB gzip. Spec: `docs/specs/0006-the-light-token-set.md`.
+- **Built:** `styles.css` declares a second `:root` under `:root[data-mode='light']` with every colour role re-declared. Step 7.2 later moved the selector onto the document attribute, so no media query chooses a token set any more; `src/app/tokens.test.ts` fails if one reappears. Three roles were added so the swap is safe: `--anansi-surface` (the page, because `--anansi-black` is the label on the yellow action), `--anansi-action-edge` (the boundary a yellow fill cannot draw on paper), and `--anansi-lavender-text` (the one lavender label, 5.74:1 in dark and 4.71:1 in light). `src/app/tokens.test.ts` computes the WCAG ratio of every text pair, the focus ring, and the action's boundary from the stylesheet's own text, and fails on any raw colour outside the two token blocks. The stage reads the palette once per mode in `Scene.tsx` and `WorldLayer` subscribes to the colour scheme, so the web, the objects, and Anansi recolour together without a reload. Verified live with the scheme emulated in both directions: the mounted canvas recoloured in place, the drawer read as dark text on paper, and the idle page returned to zero frames. `npm run verify` → exit 0, 317 tests in 28 files, shell 57.19 kB and scene 238.06 kB gzip. Spec: `docs/specs/0006-the-light-token-set.md`.
 
 ### 7.2 The sun and moon switch — BUILT 2026-10-20
 
@@ -363,7 +368,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 8 — Evolution and surprises (8.1 BUILT 2026-10-20)
+## Phase 8 — Evolution and surprises (IN PROGRESS: 8.1 BUILT 2026-10-20)
 
 ### 8.1 The evolving web — BUILT 2026-10-20
 
@@ -527,4 +532,4 @@ The product is V1 complete when, on a live static host with no backend and no ac
 
 ---
 
-*End of Build Roadmap. Phases 1 onward are unbuilt; Phase 0 is verified as recorded above.*
+*End of Build Roadmap. Where each phase stands is the Status column of the phase map; what exists is the code and its tests.*
