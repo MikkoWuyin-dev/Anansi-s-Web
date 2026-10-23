@@ -116,6 +116,16 @@ second removes the product's main idea from the devices where it is most used.
 The owner chose the third on 2026-10-23: keep the world immediate, record the
 miss. Desktop clears its floor at 90, so the miss is mobile only.
 
+### On the host
+
+The live site was measured on 2026-10-23 with the same Lighthouse 13, so the
+budgets are answered from the real origin rather than from the local preview:
+desktop **89**, mobile **66 and 70**, accessibility and SEO **100** in every
+run. The bytes are the build measured above, served `immutable` for a year,
+with the font at 22,288 bytes as `font/woff2`. Desktop clears its floor on the
+host; mobile keeps the accepted miss. Spec 0013 carries the full record,
+including the third-party beacon the host injects.
+
 ## Decision
 
 Measure, record, fix what blocks, and write down what was not observed. Do not

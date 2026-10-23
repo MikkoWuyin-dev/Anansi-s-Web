@@ -5,10 +5,15 @@
 
 ## Summary
 
-The deploy is prepared and deliberately not published: the build, the Worker
-entry, the deploy manifest and the analytics decision are in place, the kit
-has been served by workerd locally, and the publishing step waits for the
-owner's word.
+The site is live at `https://anansis-web.pxxl.click/`, published by the owner
+on 2026-10-23 from the build recorded in spec 0010. The first check of the
+live origin found the host injecting its own analytics beacon into the page,
+which the code does not contain and which contradicts the analytics decision
+below; that finding is open.
+
+The kit was prepared before publishing: the build, the Worker entry, the
+deploy manifest and the analytics decision, all served by workerd locally
+first.
 
 The site is served as static assets by a Worker that does nothing but hand
 every request to them. There is no API, no session, no cookie, no third-party
@@ -47,8 +52,12 @@ and a company in the path of a page whose whole idea is local independence.
 
 ## Decision
 
-**Host: Freebuff Sites**, because it serves a prebuilt static tree with an
-isolated preview and production environment and needs no server of our own.
+**Host: a static host that serves a prebuilt tree.** The kit was prepared for
+Freebuff Sites, which serves a prebuilt static tree with isolated preview and
+production environments and needs no server of our own; the owner published
+instead on their own Cloudflare-served domain, `anansis-web.pxxl.click`. The
+Worker and the manifest stayed as prepared, and the host's own routing and
+headers are what the live check above found.
 **Analytics: none for v1.** A later decision may add a privacy-friendly,
 cookieless provider; nothing in the architecture has to change for it, which
 is why it can wait.
@@ -106,15 +115,69 @@ Steps to publish, once approved:
 The manifest's compatibility date is the day the kit was written. Refresh it at
 publish, since the runtime's date should not be older than the code it runs.
 
+## Live check, 2026-10-23
+
+Checked against `https://anansis-web.pxxl.click/` with curl and a real browser
+session, and measured with Lighthouse 13 (headless Chromium) at desktop and
+mobile presets.
+
+**Serving.** The page, `robots.txt`, the font, its licence and the hashed
+bundles all answer 200 with the right content types. The font is `font/woff2`,
+22,288 bytes, so the display face loads. The hashed assets and the font are
+`public, max-age=31536000, immutable`; the HTML is `max-age=3600,
+stale-while-revalidate=86400`. HSTS and `x-content-type-options: nosniff` are
+present. A missing asset answers 404 with the host's error page.
+
+**Unknown paths answer 200 with the ritual**, not 404: the host applies a
+single-page fallback, so `/nope`, `/login`, `/api` and any deep path all serve
+`index.html`. That is good for a mistyped bookmark and wrong for AC-5 as
+written; no route implies an account, so AC-3 still holds.
+
+**No authentication**: there is no session, no cookie (the page sets none), no
+sign-in route, and no account asset anywhere in the bundle.
+
+**Lighthouse 13, live origin.** Desktop: performance **89**, accessibility
+**100**, SEO **100**, best practices **100**; FCP 0.6 s, LCP 0.7 s, TBT 250 ms,
+TTI 1.3 s. Mobile, two runs: performance **66 and 70**, accessibility and SEO
+**100**; FCP 1.7 s both runs, LCP 3.1 s and 2.0 s, TBT 1.65 s and 2.03 s, TTI
+4.3 s and 5.5 s. Desktop clears its floor on the host; mobile repeats the
+accepted miss and the same cause, the scene chunk's parse inside the throttled
+load.
+
+**The ritual itself works live.** A search resolved to a title with no
+definition, the status region announced it, and the day ran find → take →
+understood → confirm → learned with the tallies at 1 / 1 / 1, the learned
+tally at 1, and the story stored under `anansi:v1:*`. Focus falling to `body`
+after the confirm is the known LOW finding, reproduced.
+
+### The host injects analytics (open)
+
+A page load in a browser requests
+`https://static.cloudflareinsights.com/beacon.min.js/...` and posts to
+`/cdn-cgi/rum`. The tag is not in the build: `dist/index.html` contains no
+reference to it, and the host adds it to the HTML response only for requests
+whose `Accept` header asks for HTML, which is why a plain `curl` misses it.
+
+This breaks AC-2 (no third-party request) and contradicts the ratified "no
+analytics for v1" without anyone choosing it. Cloudflare Web Analytics is
+cookieless and reports to the owner's Cloudflare account through the same
+origin, so it is the mildest version of the thing the decision refused; it is
+still a third-party script and still telemetry. Turning it off is a host
+setting, not a change to this repository: Analytics, then Web Analytics, then
+remove or disable the site's entry for the zone.
+
+Until the owner decides, this record stands as found: the site is live, and a
+piece of it is not the thing the code ships.
+
 ## What remains
 
-- Create the site and publish the preview.
-- Verify AC-1 to AC-5 on the live URL and record the results.
-- Measure the production budgets there, including the font's real transfer and
-  the cache headers on the font and the hashed assets, and reconcile spec 0010
-  if the host's numbers differ.
-- Record AC-5's answers from the live origin rather than from the local probe.
-- Decide the production publication itself, which is the owner's act.
+- Decide the analytics finding above, and either remove the beacon at the host
+  or amend the decision with the owner's reasons.
+- Fix AC-5's wording, or configure the host to answer unknown paths with 404.
+- Add the live figures beside spec 0010's, which still carry the local build.
+- Observe the 3D scene on a machine with a working GPU: in the review browser
+  the scene never mounted and the DOM description carried the page, which is
+  the designed fallback and not evidence that the canvas draws.
 
 ## Follow-up
 

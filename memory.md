@@ -3,19 +3,19 @@
 Overwrite this file at the end of each task; don't append to it. 80 lines at most (`npm run docs:check`).
 Durable knowledge goes to the document that owns it (see `AGENTS.md`), and the history goes in `git log`.
 
-Updated: 2026-10-23, after Phase 10.1 to 10.3 and the prepared deploy.
+Updated: 2026-10-23, after the deploy went live and was checked on its own origin.
 
 ## Now
 
 - Phases 0 and 2 to 9 are built. Phase 1 is in progress at 120 of 300 reviewed
-  topics. Phase 10 is **in progress**: 10.1 to 10.3 are built, 10.4 is prepared
-  and deliberately not published.
-- The owner chose Freebuff Sites as the host and ratified **no analytics for
-  v1**. Publishing waits for an explicit instruction.
-- Deploy kit: `deploy/worker.js` (only `env.ASSETS.fetch`),
-  `sites.manifest.json` over the `npm run build` output, and spec
-  `docs/specs/0013-static-deploy.md`. Proved on workerd, never hosted.
-- Next is publishing that deploy, then Phase 11, accounts, which is deferred.
+  topics. Phase 10 is **in progress**: 10.1 to 10.3 are built and 10.4 is live
+  at `https://anansis-web.pxxl.click/` with one open finding.
+- **Open:** the host injects Cloudflare's Web Analytics beacon
+  (`static.cloudflareinsights.com`, posting to `/cdn-cgi/rum`) into the page.
+  Nothing in the build contains it; it contradicts the ratified no-analytics
+  decision. Turning it off is a host setting (Analytics, Web Analytics).
+- The owner published on their own Cloudflare-served domain, not the prepared host.
+- Next is that decision, then Phase 11, accounts, which is deferred.
 
 ## Last done
 
@@ -28,46 +28,46 @@ Updated: 2026-10-23, after Phase 10.1 to 10.3 and the prepared deploy.
   `defineConfig` from `vitest/config`, and `npm ci` reproduced the suite. The
   365-day simulation got an explicit 20 s timeout after flaking at 4.93 s
   against Vitest 5's 5 s default.
-- 10.3: `AGENTS.md` and `memory.md` are current, tracked, and every path and
-  script they name resolves.
-- 10.4 prepared: spec 0013, the Worker, the manifest, and the analytics decision.
-  Wrangler 4.152 served the build on workerd locally: page, robots, font, OFL
-  and assets 200, `/index.html` 307 to `/`, unknown paths 404, and the asset
-  binding present only when the local config declares it. Nothing is hosted.
+- 10.3: `AGENTS.md` and `memory.md` are current and every path resolves.
+- 10.4 live check: page, font (22,288 bytes, `font/woff2`), robots, licence and
+  hashed assets 200 with immutable caching for a year; no cookie, no session,
+  no account route. The day ran find → take → understood → confirm → learned
+  with the tallies right. Unknown paths answer 200 with the ritual (host SPA
+  fallback), a missing asset answers 404. Spec 0013 carries the full record.
 
-## Current numbers (post-upgrade)
+## Current numbers (live origin)
 
+- Lighthouse 13 on the host: desktop **89**, mobile **66 and 70**, accessibility
+  and SEO **100**, best practices **100**. Desktop clears its floor; mobile
+  repeats the accepted miss and its cause, the scene chunk's parse.
+- Desktop: FCP 0.6 s, LCP 0.7 s, TBT 250 ms, TTI 1.3 s. Mobile: FCP 1.7 s,
+  LCP 2.0 to 3.1 s, TBT 1.65 to 2.03 s, TTI 4.3 to 5.5 s.
 - Build: shell 62.54 kB gzip, scene 232.08 kB, CSS 3.04 kB, topic bundle 5.6 kB.
-- Lighthouse 13: desktop 90 performance, mobile 68 to 71, accessibility and SEO
-  100. Mobile is still the accepted miss; its cause is the scene chunk's parse
-  inside the throttled load (TTI 4.2 to 5.6 s; 1.7 s with that chunk blocked).
-- Idle page: 0 draw calls over 2 s, re-checked on the upgraded build.
-- Tests: 360 in 34 files. `npm run verify` exits 0.
+- Idle page: 0 draw calls over 2 s, measured on the local build.
 
 ## What is not true
 
-- The deploy kit has never been run against a host. The local workerd probe
-  proves routing and 404s, not the host's cache headers or origin behaviour.
+- The 3D scene has never been seen drawing. In the review browser it never
+  mounted and the DOM description carried the page: the designed fallback, not
+  proof the canvas works. The first GPU look is still owed.
 - Focus rings have never been seen rendered (the preview page is never focused,
-  so `:focus-visible` cannot match), reduced motion has never been observed
-  running, and the 3D beats have not been seen as pictures here.
+  so `:focus-visible` cannot match), and reduced motion has never been observed.
 - Frame time is a CPU figure inside `gl.render`, not a GPU timer.
 - Light mode hasn't been judged on a real phone or in daylight.
 - No broken commit has been seen to fail CI on the remote.
+- The host's HTML cache is one hour, so a deploy can look stale for that long.
 
 ## Open risks
 
+- MEDIUM: the host injects analytics the decision refused; see Now.
 - MEDIUM: Vite 8 builds with Rolldown, so chunking is new. The sizes above are
   the baseline; watch the split when a large module is added.
 - MEDIUM: topic quality is guarded by human review, and the validator checks
   shape, not substance. The pool is 120 of 300.
-- MEDIUM: several stage paths rest on code and tests, not a live session; the
-  first deploy is the first real-browser look.
-- LOW: the mobile Lighthouse budget is missed by an accepted decision; desktop
-  is now 90, so only mobile carries it.
+- LOW: the mobile Lighthouse budget is missed by an accepted decision.
 - LOW: the History control is 39.9 px tall at 390 px, against the mode switch's 44.
 - LOW: after marking a story learned, focus falls to `body` (the confirm block
-  unmounts); the live region still says so.
+  unmounts); reproduced on the live site, and the live region still says so.
 - LOW: the word is undiscoverable except by knowing his name, which is intended;
   and with no ESLint or Prettier, the no-hex and hooks rules are only partly
   enforced, by tests.
@@ -76,5 +76,5 @@ Updated: 2026-10-23, after Phase 10.1 to 10.3 and the prepared deploy.
 
 ## Next justified step
 
-Publish spec 0013's deploy when the owner asks: verify on a preview first, then
-production, then measure the budgets there and reconcile spec 0010.
+Settle the beacon: remove the Web Analytics entry for the zone, or amend the
+no-analytics decision and record who chose it and why.

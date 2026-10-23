@@ -296,8 +296,9 @@ spec [0013](../specs/0013-static-deploy.md)
 
 - [x] Design it (spec): `docs/specs/0013-static-deploy.md` (2026-10-23)
 - [x] Prepare the host, the asset Worker and the deploy manifest, and ratify no analytics for v1 (10.4, 2026-10-23)
-- [ ] Publish the preview and verify it (10.4)
-- [ ] Publish production, re-measure the budgets there, and record them
+- [x] Publish and verify the live site: serving, no auth, the ritual, Lighthouse desktop 89 and mobile 66 to 70 (10.4, 2026-10-23)
+- [ ] Remove the host's injected analytics beacon, or amend the no-analytics decision
+- [ ] Reconcile AC-5 with the host's 200 single-page fallback for unknown paths
 
 ## Deferred
 
