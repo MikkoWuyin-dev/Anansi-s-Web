@@ -34,8 +34,8 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 11 | The world without motion, and on mobile | Slice 3 | done |
 | 12 | Light mode and the sun and moon switch | Slice 4 | done |
 | 13 | The evolving web and hidden interactions | Slice 5 | done |
-| 14 | Measured performance and accessibility | Quality | planned |
-| 15 | The display face and its network cost | Quality | planned |
+| 14 | Measured performance and accessibility | Quality | done |
+| 15 | The display face and its network cost | Quality | done |
 | 16 | Continuous integration and dependency decisions | Release | planned |
 | 17 | Deploy the static site | Release | planned |
 
@@ -258,15 +258,25 @@ spec [0008](../specs/0008-the-evolving-web.md) · [0009](../specs/0009-hidden-in
 
 ## Quality
 
-### 14. Measured performance and accessibility · planned
+### 14. Measured performance and accessibility · done
 Replace aspirations with numbers: measure every budget, and audit the experience honestly, including what is not yet true.
-**Done when:** every budget is measured and met (shell, scene, compiled bundle, first usable interaction, idle graphics work, frame time, Lighthouse on desktop and mobile); the accessibility audit passes for keyboard, focus, contrast, screen reader controls, and a canvas that describes the world's state; and findings are triaged with the blocking ones fixed.
-- [ ] Design it (spec): `/architect measured performance and accessibility`
+**Done when:** every budget is measured and met or explicitly accepted by the owner (shell, scene, compiled bundle, first usable interaction, idle graphics work, frame time, Lighthouse on desktop and mobile); the accessibility audit passes for keyboard, focus, contrast, screen reader controls, and a canvas that describes the world's state; and findings are triaged with the blocking ones fixed.
+spec [0010](../specs/0010-measured-quality.md)
 
-### 15. The display face and its network cost · planned
-The display face is currently fetched from a third party on every visit, which sits against the product's own principle of sustainable web design.
+- [x] Design it (spec): `docs/specs/0010-measured-quality.md` (2026-10-23)
+- [x] Measure every budget against the production build and record the verdicts (9.1, 2026-10-23)
+- [x] Audit the keyboard path, heading outline, contrast, canvas description and live region (9.2, 2026-10-23)
+- [x] Triage the three-layer review's findings (9.4, 2026-10-23)
+
+One budget is accepted rather than met: Lighthouse mobile scores 69 to 73 against 75, and the owner chose on 2026-10-23 to keep the world immediate and record the miss (`docs/reviews/2026-10-23-phase-9.md`).
+
+### 15. The display face and its network cost · done
+The display face was fetched from a third party on every visit, which sat against the product's own principle of sustainable web design.
 **Done when:** serving it from our own origin, or consciously accepting the external request, is a recorded decision with its reasoning, rather than something that happened by default.
-- [ ] Design it (spec): `/architect display face and network cost`
+spec [0011](../specs/0011-the-display-face.md)
+
+- [x] Design it (spec): `docs/specs/0011-the-display-face.md` (2026-10-23)
+- [x] Self-host the latin variable subset, preload it, and ship its licence (9.3, 2026-10-23)
 
 ## Release
 

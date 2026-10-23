@@ -1,4 +1,22 @@
 /* ---------------------------------------------------------------------------
+   The display face (Phase 9.3). Space Grotesk, self-hosted and preloaded, so
+   the page makes no request to another origin and the title never waits on a
+   third party. The latin subset only: the interface is English, and the file
+   carries the 300 to 700 weight axis. Licensed under the SIL Open Font License
+   (public/fonts/OFL.txt).
+--------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------------------------------------------------------------------------
    Palette tokens (MCD §7). The only place in the app where a raw colour value
    is allowed (MCD §4 rule 7).
 

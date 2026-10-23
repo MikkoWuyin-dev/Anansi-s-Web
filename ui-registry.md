@@ -22,6 +22,7 @@ The baseline was established on 2026-10-16 via `/imprint audit`, because `ui-reg
 | Button primary — text | `var(--anansi-black)` |
 | Button primary — radius | `0.85rem 2.6rem 0.85rem 2.6rem` |
 | Font family | `'Space Grotesk', ui-sans-serif, system-ui, sans-serif` |
+| Font delivery | one self-hosted latin variable file, `public/fonts/space-grotesk-latin.woff2`, declared once at the top of the stylesheet and preloaded; no request leaves the origin (2026-10-23) |
 | Body size | `16px`, line height `1.5` |
 | Body weight | `400`, antialiased |
 | Shadow | none on the page; the action carries a yellow glow, never a neutral drop shadow |
@@ -90,7 +91,7 @@ The asymmetric radius is the control shape. A future primary control should matc
 ### Story
 
 File: `src/app/RitualScreen.tsx` (`.story`, `.story__title`, `.story__note`, `.story__learned`)
-Last updated: 2026-10-17
+Last updated: 2026-10-23
 
 | Property | Class |
 | -------- | ----- |
@@ -108,6 +109,8 @@ Last updated: 2026-10-17
 **Pattern notes:**
 
 The card is the reveal, so it shows a title and one note, nothing else. `text-transform: uppercase` is presentation only: the stored title is natural case, so a screen reader is not handed an all caps string. The heading carries `tabIndex={-1}` and receives focus when a search resolves, which is why its focus ring is drawn even for a script moved focus.
+
+The title is the page's `h1`, not an `h2`. The story replaces the hero as the page's content, so the outline never begins at level two; the hero and every honest state carry one `h1` too, and a test fails if any state loses it (2026-10-23).
 
 The return cue (`.story__return`, `.strand--return`, `.story__back`) is the only lavender text in the app, and it marks a resurfaced story. It must never be reused as general decoration, or the cue stops meaning anything.
 

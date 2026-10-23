@@ -36,7 +36,7 @@ Ordering logic: **content feeds the engine, the engine feeds the loop, the loop 
 | 6 | The 3D world | built | the stage, Anansi, the search | 4 |
 | 7 | Modes and design system | built | light mode, visual governance | 6 |
 | 8 | Evolution and surprises | built | the web that grows | 5, 6 |
-| 9 | Quality gates | planned | measured, audited product | 7, 8 |
+| 9 | Quality gates | built | measured, audited product | 7, 8 |
 | 10 | Hardening and deployment | planned | a live, protected, shipped site | 9 |
 | 11 | The accounts era | deferred | cloud sync, cross device | 10 |
 
@@ -385,29 +385,35 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 9 — Quality gates
+## Phase 9 — Quality gates (BUILT 2026-10-23)
 
 **Goal:** measured, audited, and honest about what is not yet true.
 
-### 9.1 Performance
+**Specs:** `docs/specs/0010-measured-quality.md`, `docs/specs/0011-the-display-face.md`. **Report:** `docs/reviews/2026-10-23-phase-9.md`.
+
+### 9.1 Performance — BUILT 2026-10-23
 
 - **Deliverable:** recorded measurements for every MCD §8 budget.
 - **Done when:** shell ≤ 250 kB gzip, scene ≤ 350 kB gzip, bundle ≤ 150 kB gzip, first usable interaction ≤ 3.5 s on mid-range mobile over 4G, idle GPU ≈ 0, search frames ≤ 16 ms, Lighthouse ≥ 85 desktop and ≥ 75 mobile.
+- **Built:** measured 2026-10-23 against the production build served by `npm run preview`, with Lighthouse 13. Met: shell 62.68 kB gzip, scene 238.81 kB gzip, topic bundle 5.6 kB gzip (14.0 kB projected at 300), idle 0 draw calls over 2.0 s (counted by patching the WebGL prototypes), search frame time 1.0 ms median `gl.render` call, Lighthouse desktop 85. Missed: Lighthouse mobile 69 to 73 over three runs against 75, and mobile time-to-interactive 4.5 to 5.7 s with the scene counted, because the lazy scene chunk's parse lands inside the throttled load; with that chunk blocked the page scores 99 and is interactive at 1.7 s. The owner chose on 2026-10-23 to keep the world immediate and record the miss rather than defer the scene or drop it on narrow screens. Accessibility and SEO scored 100 in every run.
 
-### 9.2 Accessibility audit
+### 9.2 Accessibility audit — BUILT 2026-10-23
 
 - **Deliverable:** an audit against MCD §9 and PRD §36.
 - **Done when:** full keyboard operation, visible focus throughout, sufficient contrast in both modes, screen-reader-friendly controls, and the canvas carrying an accessible description of the world's state.
+- **Built:** one defect found and fixed: the story's title was an `h2` and the story state has no other heading, so the outline began at level two. It is now the page's `h1`, every state keeps exactly one, and `src/app/RitualScreen.test.tsx` fails if either changes. The audit walked the built page by keyboard at 390 by 844 through a whole day, opened and closed the history panel with Escape returning focus to its control, and switched modes with Enter while the attribute, the switch's name, and `theme-color` followed. The canvas description changed with each ritual state and never carried a title. Live light mode measured 15.49:1 for primary text and 5.66:1 for the secondary; the tokens test computes the rest in both modes. Focus rings and the reduced-motion branches could not be observed in the preview webview and are recorded as unverified.
 
-### 9.3 Font and network decisions
+### 9.3 Font and network decisions — BUILT 2026-10-23
 
 - **Deliverable:** a decision on the externally loaded display face, which is currently fetched from Google Fonts and sits mildly against PRD §35.
 - **Done when:** self-hosting or accepting the request is a recorded decision, not an accident.
+- **Built:** self-hosted. Space Grotesk's latin variable subset sits in `public/fonts/` with its OFL licence, `styles.css` declares it once with `font-display: swap`, and `index.html` preloads it with the CORS mode the stylesheet uses, so a visit fetches it once. The two Google preconnects and the stylesheet link are gone and no third-party request remains. `public/robots.txt` was added in the same pass because Lighthouse's robots audit fails on a host that answers 404.
 
-### 9.4 Production review
+### 9.4 Production review — BUILT 2026-10-23
 
 - **Deliverable:** the MCD §10 `/review` three-layer report: plan alignment, system integrity, production readiness.
 - **Done when:** findings are triaged and the blocking ones are fixed.
+- **Built:** `docs/reviews/2026-10-23-phase-9.md`, six findings with severities and dispositions. Both blocking findings are the mobile miss and its interaction cost, accepted by the owner rather than fixed; the rest are two verification gaps and two small keyboard or tap-target issues, recorded with follow-ups. Plan alignment and system integrity pass.
 
 ---
 

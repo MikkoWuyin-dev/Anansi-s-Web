@@ -173,9 +173,12 @@ function Story({ view, headingRef, onReroll, onTake, onMarkLearned }: StoryProps
         </div>
       ) : null}
 
-      <h2 className="story__title" ref={headingRef} tabIndex={-1}>
+      {/* The story is the page once it is revealed, so it carries the top
+          level heading: every state of the ritual has exactly one h1, and the
+          heading outline never starts at level two (Phase 9.2). */}
+      <h1 className="story__title" ref={headingRef} tabIndex={-1}>
         {topic.title}
-      </h2>
+      </h1>
 
       {note === null ? null : <p className="story__note">{note}</p>}
 

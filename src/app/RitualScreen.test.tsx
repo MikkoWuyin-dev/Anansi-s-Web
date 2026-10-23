@@ -92,6 +92,32 @@ describe('the reveal', () => {
   })
 })
 
+describe('the heading outline', () => {
+  it('gives every state exactly one top level heading', () => {
+    const views: RitualView[] = [
+      { kind: 'hero', newDay: false },
+      { kind: 'searching' },
+      { kind: 'empty' },
+      { kind: 'failed', message: 'The search failed.' },
+      { kind: 'missing', message: 'That story is no longer in the web.' },
+      storyView(),
+    ]
+
+    for (const view of views) {
+      const html = render(view)
+
+      expect({ kind: view.kind, h1: html.split('<h1').length - 1 }).toEqual({ kind: view.kind, h1: 1 })
+    }
+  })
+
+  it('makes the story itself the page heading once it is revealed', () => {
+    const html = render(storyView())
+
+    expect(html).toContain('<h1 class="story__title"')
+    expect(html).not.toContain('<h2 class="story__title"')
+  })
+})
+
 describe('the day story', () => {
   it('removes the reroll and says why', () => {
     const html = render(storyView({ offerNumber: 3, dayStory: true, canReroll: false, sealed: true }))
