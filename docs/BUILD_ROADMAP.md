@@ -37,7 +37,7 @@ Ordering logic: **content feeds the engine, the engine feeds the loop, the loop 
 | 7 | Modes and design system | built | light mode, visual governance | 6 |
 | 8 | Evolution and surprises | built | the web that grows | 5, 6 |
 | 9 | Quality gates | built | measured, audited product | 7, 8 |
-| 10 | Hardening and deployment | in progress | a live, protected, shipped site | 9 |
+| 10 | Hardening and deployment | built | a live, protected, shipped site | 9 |
 | 11 | The accounts era | deferred | cloud sync, cross device | 10 |
 
 `built` means every step in the phase is delivered; `in progress` means some steps are; `planned` means none is; `deferred` means the phase is deliberately held. The heading of each phase restates the same word, which is what the check compares.
@@ -417,7 +417,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 10 — Hardening and deployment (IN PROGRESS)
+## Phase 10 — Hardening and deployment (BUILT)
 
 **Specs:** `docs/specs/0012-toolchain-currency.md`, `docs/specs/0013-static-deploy.md`.
 
@@ -438,12 +438,12 @@ src/engine/*.test.ts      14 tests in the node environment
 - **Done when:** a fresh session can start from `AGENTS.md` plus the MCD and continue without re-deriving decisions.
 - **Built:** both are tracked, current, and inside their line budgets, and `docs:check` resolves every path and `npm run` script they name. The session that built Phase 9 and this phase started from `AGENTS.md` and `memory.md` alone and found the phase it was asked for; the only gaps it hit were facts that belonged in `memory.md` and were added there. The Node floor in `AGENTS.md` moved with the upgrade.
 
-### 10.4 Deploy — LIVE 2026-10-23, ONE FINDING OPEN
+### 10.4 Deploy — BUILT 2026-10-23, TWO ACCEPTED DEVIATIONS
 
 - **Deliverable:** the static site on a static host, previously ratifying the privacy-friendly analytics decision (the first thing to add when usage insight is wanted, requiring no architecture change).
 - **Done when:** the built site is live, the budgets hold in production, and auth is still correctly absent.
 - **Live:** the owner published the build at `https://anansis-web.pxxl.click/` on 2026-10-23. Verified on the origin: page, font (22,288 bytes, `font/woff2`), robots and hashed assets 200 with immutable caching for a year, no cookie, no session, no account route. The day ran find → take → understood → confirm → learned with the tallies correct. Lighthouse 13 on the host: desktop **89**, mobile **66 and 70**, accessibility and SEO **100**. The 3D scene did not mount in the review browser, which is the designed DOM fallback and not evidence that the canvas draws.
-- **Open, and why the phase stays in progress:** the host injects Cloudflare's Web Analytics beacon (`static.cloudflareinsights.com`, posted to `/cdn-cgi/rum`) into the HTML response. Nothing in the build contains it, and it contradicts the ratified no-analytics decision and AC-2. Removing it is a host setting; accepting it would need the decision amended. Unknown paths also answer 200 with the ritual rather than 404, because the host applies a single-page fallback.
+- **Two deviations, accepted by the owner on 2026-10-23:** the host injects Cloudflare's Web Analytics beacon (`static.cloudflareinsights.com`, posted to `/cdn-cgi/rum`) into the HTML response. Nothing in the build contains it, it contradicts the ratified no-analytics decision and AC-2, and it was left as it is for now rather than fixed. Unknown paths also answer 200 with the ritual instead of 404 (AC-5), because the host applies a single-page fallback; there are no routes to protect. Spec 0013 records both, and neither is called met.
 - **Prepared:** the owner ratified **no analytics for v1** and held publishing back. `deploy/worker.js` is the whole server (`env.ASSETS.fetch`), `sites.manifest.json` points at the built output, and spec 0013 carries the publish-and-verify steps. The kit was proved on workerd locally with Wrangler 4.152: page, font, robots and assets 200 with the right types, unknown paths 404, and `env.ASSETS` present only when the local config declares the binding. The owner then published on their own Cloudflare-served domain rather than through the prepared host.
 
 ---

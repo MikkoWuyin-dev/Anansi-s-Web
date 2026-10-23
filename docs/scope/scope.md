@@ -37,7 +37,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 14 | Measured performance and accessibility | Quality | done |
 | 15 | The display face and its network cost | Quality | done |
 | 16 | Continuous integration and dependency decisions | Release | done |
-| 17 | Deploy the static site | Release | in-progress |
+| 17 | Deploy the static site | Release | done |
 
 ## Enrolled
 
@@ -289,7 +289,7 @@ spec [0012](../specs/0012-toolchain-currency.md)
 - [x] Prove the failure half of the gate for typecheck, content, tests and docs, without a red commit on `main` (10.1, 2026-10-23)
 - [x] Upgrade to Vite 8, Vitest 5 and plugin-react 6 with the suite green and zero advisories (10.2, 2026-10-23)
 
-### 17. Deploy the static site · in-progress
+### 17. Deploy the static site · done
 Put the finished ritual on a static host with no backend and no accounts, so it can be reached for real.
 **Done when:** the built site is live, the budgets still hold in production, and there is still no authentication of any kind.
 spec [0013](../specs/0013-static-deploy.md)
@@ -297,8 +297,7 @@ spec [0013](../specs/0013-static-deploy.md)
 - [x] Design it (spec): `docs/specs/0013-static-deploy.md` (2026-10-23)
 - [x] Prepare the host, the asset Worker and the deploy manifest, and ratify no analytics for v1 (10.4, 2026-10-23)
 - [x] Publish and verify the live site: serving, no auth, the ritual, Lighthouse desktop 89 and mobile 66 to 70 (10.4, 2026-10-23)
-- [ ] Remove the host's injected analytics beacon, or amend the no-analytics decision
-- [ ] Reconcile AC-5 with the host's 200 single-page fallback for unknown paths
+- [x] Record the host's injected analytics beacon and its 200 single-page fallback as accepted deviations, not met criteria (2026-10-23)
 
 ## Deferred
 

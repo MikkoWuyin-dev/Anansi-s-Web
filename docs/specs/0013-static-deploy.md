@@ -1,7 +1,8 @@
 # 0013. Static deploy
 
 **Date**: 2026-10-23
-**Status**: In Progress
+**Status**: Built
+**Built**: 2026-10-23 — the site is live at `https://anansis-web.pxxl.click/`, served static, with two deviations recorded below.
 
 ## Summary
 
@@ -9,7 +10,9 @@ The site is live at `https://anansis-web.pxxl.click/`, published by the owner
 on 2026-10-23 from the build recorded in spec 0010. The first check of the
 live origin found the host injecting its own analytics beacon into the page,
 which the code does not contain and which contradicts the analytics decision
-below; that finding is open.
+below. The owner chose to leave that as it is for now; it is recorded as a
+deviation rather than closed, since the page a reader gets is not quite the
+page this repository ships.
 
 The kit was prepared before publishing: the build, the Worker entry, the
 deploy manifest and the analytics decision, all served by workerd locally
@@ -76,7 +79,7 @@ forgotten a script tag.
 
 ### Exercised locally, not hosted
 
-The built `dist/` was served by Wrangler 4.152 on workerd at 127.0.0.1:8787,
+The built output directory was served by Wrangler 4.152 on workerd at 127.0.0.1:8787,
 with a temporary config that named `deploy/worker.js`, the same compatibility
 date, the same asset directory, and `"binding": "ASSETS"`. The config was
 removed after the probe.
@@ -104,7 +107,7 @@ check, not something this probe establishes.
 Steps to publish, once approved:
 
 1. `npm ci && npm run verify` on the commit to ship.
-2. `npm run build`, which writes `dist/`.
+2. `npm run build`, which writes the generated output directory.
 3. Create the site, deploy the manifest to **preview** first, and open it.
 4. Check the preview: the ritual runs, the font loads from the same origin,
    the network log has no third-party request, an unknown path answers 404,
@@ -154,7 +157,7 @@ after the confirm is the known LOW finding, reproduced.
 
 A page load in a browser requests
 `https://static.cloudflareinsights.com/beacon.min.js/...` and posts to
-`/cdn-cgi/rum`. The tag is not in the build: `dist/index.html` contains no
+`/cdn-cgi/rum`. The tag is not in the build: the built index file contains no
 reference to it, and the host adds it to the HTML response only for requests
 whose `Accept` header asks for HTML, which is why a plain `curl` misses it.
 
@@ -166,26 +169,42 @@ still a third-party script and still telemetry. Turning it off is a host
 setting, not a change to this repository: Analytics, then Web Analytics, then
 remove or disable the site's entry for the zone.
 
-Until the owner decides, this record stands as found: the site is live, and a
-piece of it is not the thing the code ships.
+The owner decided on 2026-10-23 to leave this as it is for now and move on, so
+the beacon stays until someone revisits it. It is the mildest form of the
+thing the decision refused and it is not hidden; it is simply tolerated, which
+is a different thing from being chosen.
+
+## Deviations
+
+Two acceptance criteria are not met as written. Both are the host's behaviour,
+not the code's, and both are accepted by the owner rather than fixed:
+
+| AC | As written | What the host does | Disposition |
+|---|---|---|---|
+| AC-2 | no request to a third party | injects Cloudflare's Web Analytics beacon and posts to `/cdn-cgi/rum` | accepted for now by the owner, 2026-10-23; open to revisit |
+| AC-5 | unknown paths answer 404 | answers 200 with `index.html` (single-page fallback) | accepted: there are no routes to protect, and a mistyped URL lands on the ritual instead of a blank page |
+
+The analytics decision itself is unchanged: the project adds no analytics. What
+changed is that the host adds some, and the record says so instead of calling
+the criterion met.
 
 ## What remains
 
-- Decide the analytics finding above, and either remove the beacon at the host
-  or amend the decision with the owner's reasons.
-- Fix AC-5's wording, or configure the host to answer unknown paths with 404.
-- Add the live figures beside spec 0010's, which still carry the local build.
+- Revisit the beacon when the owner wants the page to match the decision
+  exactly; removing it is a host setting, not a change to this repository.
 - Observe the 3D scene on a machine with a working GPU: in the review browser
   the scene never mounted and the DOM description carried the page, which is
   the designed fallback and not evidence that the canvas draws.
+- Count idle frames on the host; only the local build has been counted.
 
 ## Follow-up
 
 - [ ] Revisit analytics only if the owner wants usage insight; if it is added,
       it must be cookieless, first-party if possible, and on the MCD §12 list.
-- [ ] Consider a custom domain once the site has been live for a while; the
-      deploy does not need one.
-- [ ] Re-check that `dist/` is never committed after the first deploy.
+      The host's beacon is already that shape, which is why it was tolerated.
+- [ ] Decide whether a custom domain is wanted; `localStorage` is per origin, so
+      moving later leaves every reader's journey on the old hostname.
+- [ ] Re-check that the build output is never committed after the first deploy.
 
 ## References
 

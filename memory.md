@@ -7,15 +7,14 @@ Updated: 2026-10-23, after the deploy went live and was checked on its own origi
 
 ## Now
 
-- Phases 0 and 2 to 9 are built. Phase 1 is in progress at 120 of 300 reviewed
-  topics. Phase 10 is **in progress**: 10.1 to 10.3 are built and 10.4 is live
-  at `https://anansis-web.pxxl.click/` with one open finding.
-- **Open:** the host injects Cloudflare's Web Analytics beacon
-  (`static.cloudflareinsights.com`, posting to `/cdn-cgi/rum`) into the page.
-  Nothing in the build contains it; it contradicts the ratified no-analytics
-  decision. Turning it off is a host setting (Analytics, Web Analytics).
-- The owner published on their own Cloudflare-served domain, not the prepared host.
-- Next is that decision, then Phase 11, accounts, which is deferred.
+- Phases 0 and 2 to 10 are built. Phase 1 is the open one, at 120 of 300
+  reviewed topics. The site is live at `https://anansis-web.pxxl.click/`.
+- **Recorded deviation, accepted 2026-10-23:** the host injects Cloudflare's Web
+  Analytics beacon (`static.cloudflareinsights.com`, posting to `/cdn-cgi/rum`).
+  Nothing in the build contains it, it contradicts the ratified no-analytics
+  decision, and the owner left it for now; turning it off is a host setting.
+- Published on their own Cloudflare host; unknown paths answer 200 too. Next is
+  growing the pool toward 300; Phase 11, accounts, is deferred.
 
 ## Last done
 
@@ -59,7 +58,7 @@ Updated: 2026-10-23, after the deploy went live and was checked on its own origi
 
 ## Open risks
 
-- MEDIUM: the host injects analytics the decision refused; see Now.
+- MEDIUM: the host injects analytics the decision refused, tolerated for now.
 - MEDIUM: Vite 8 builds with Rolldown, so chunking is new. The sizes above are
   the baseline; watch the split when a large module is added.
 - MEDIUM: topic quality is guarded by human review, and the validator checks
@@ -76,5 +75,6 @@ Updated: 2026-10-23, after the deploy went live and was checked on its own origi
 
 ## Next justified step
 
-Settle the beacon: remove the Web Analytics entry for the zone, or amend the
-no-analytics decision and record who chose it and why.
+The pool is the product: 120 of 300 reviewed topics decides how long the
+ritual stays fresh. Grow it through the review gate in `content/review/`
+rather than around it, then re-read the engine tuning at the new size.
