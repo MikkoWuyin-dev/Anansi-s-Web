@@ -65,22 +65,29 @@ taking the ritual with it, which is what makes an honest audit possible.
 ## Measurement record
 
 Measured 2026-10-23 from the production build (`npm run build`) served by
-`npm run preview`, Lighthouse 13, headless Chromium, at 127.0.0.1.
+`npm run preview`, Lighthouse 13, headless Chromium, at 127.0.0.1. The figures
+below are from the build the project ships: Vite 8, after the same-day
+toolchain upgrade in spec 0012.
 
 | MCD §8 budget | Target | Measured | Verdict |
 |---|---|---|---|
-| App shell JS, gzip, before the scene | ≤ 250 kB | 62.68 kB | met |
-| Scene chunk, gzip, lazy | ≤ 350 kB | 238.81 kB | met |
+| App shell JS, gzip, before the scene | ≤ 250 kB | 62.54 kB | met |
+| Scene chunk, gzip, lazy | ≤ 350 kB | 232.08 kB | met |
 | Topic bundle, gzip | ≤ 150 kB | 5.6 kB at 120 topics, projected 14.0 kB at 300 | met |
-| First usable interaction, mid-range mobile over 4G | ≤ 3.5 s | 1.7 s without the scene chunk; 4.5 to 5.7 s with it (Lighthouse TTI) | missed with the scene counted |
-| Idle steady-state GPU | ≈ 0 | 0 draw calls over 2.0 s | met |
+| First usable interaction, mid-range mobile over 4G | ≤ 3.5 s | 1.7 s without the scene chunk; 4.2 to 5.6 s with it (Lighthouse TTI) | missed with the scene counted |
+| Idle steady-state GPU | ≈ 0 | 0 draw calls over 2.0 s, before and after the upgrade | met |
 | Search-animation frame time, mid-range desktop | ≤ 16 ms | 1.0 ms median render call | met |
-| Lighthouse desktop | ≥ 85 | 85 | met, at the floor |
-| Lighthouse mobile | ≥ 75 | 69 to 73 over three runs | missed |
+| Lighthouse desktop | ≥ 85 | 90 | met |
+| Lighthouse mobile | ≥ 75 | 68 to 71 over three runs | missed |
 
-Supporting figures: the built page's largest contentful paint is 1.6 s, first
-contentful paint 1.4 s, and total blocking time 1.45 to 2.48 s on mobile;
-desktop TBT is 350 ms. Accessibility and SEO scored 100 in every run.
+Supporting figures: the built page's largest contentful paint is 1.5 to 2.8 s
+(first run of the set was the slow one), first contentful paint 1.4 s, and
+total blocking time 2.13 to 2.44 s on mobile; desktop TBT is 260 ms.
+Accessibility and SEO scored 100 in every run.
+
+The first pass, before the upgrade, measured shell 62.68 kB, scene 238.81 kB,
+desktop 85 and mobile 69 to 73. Chunk sizes moved by under 7 kB and desktop
+left its floor; no verdict changed except that one.
 
 Methods, so the numbers can be judged:
 
@@ -97,9 +104,9 @@ Methods, so the numbers can be judged:
 
 ### The mobile miss
 
-The gap is the scene's bootup, not the product. With the 238.81 kB scene chunk
-blocked, the same page scores 99 and is interactive at 1.7 s; with it, the
-four-times-throttled CPU spends 1.45 to 2.48 s parsing and compiling a module
+The gap is the scene's bootup, not the product. With the 232.08 kB scene chunk
+blocked, the page scores 99 and is interactive at 1.7 s; with it, the
+four-times-throttled CPU spends 2.13 to 2.44 s parsing and compiling a module
 that is only needed once the first paint is done.
 
 Three ways to close it were weighed: delay the world behind a second
@@ -107,7 +114,7 @@ interaction, omit the world on narrow screens, or ship it as it is and accept
 the score. The first changes when the product appears on every phone; the
 second removes the product's main idea from the devices where it is most used.
 The owner chose the third on 2026-10-23: keep the world immediate, record the
-miss. The desktop floor of 85 holds.
+miss. Desktop clears its floor at 90, so the miss is mobile only.
 
 ## Decision
 

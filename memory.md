@@ -3,77 +3,78 @@
 Overwrite this file at the end of each task; don't append to it. 80 lines at most (`npm run docs:check`).
 Durable knowledge goes to the document that owns it (see `AGENTS.md`), and the history goes in `git log`.
 
-Updated: 2026-10-23, after Phase 9.
+Updated: 2026-10-23, after Phase 10.1 to 10.3 and the prepared deploy.
 
 ## Now
 
-- Phases 0 and 2 to 9 are built. Phase 1 remains in progress: the pool holds 120
-  reviewed topics, five per domain, at a 40/40/40 difficulty split. The target is
-  300 (`npm run content:report`).
-- Phase 9 closed on 2026-10-23 with specs `docs/specs/0010-measured-quality.md` and
-  `docs/specs/0011-the-display-face.md`, and the three-layer report
-  `docs/reviews/2026-10-23-phase-9.md`.
-- Next is Phase 10: continuous integration's failure half, the dev advisories,
-  governance files, then deploy. Phase 11, accounts, is deferred.
+- Phases 0 and 2 to 9 are built. Phase 1 is in progress at 120 of 300 reviewed
+  topics. Phase 10 is **in progress**: 10.1 to 10.3 are built, 10.4 is prepared
+  and deliberately not published.
+- The owner chose Freebuff Sites as the host and ratified **no analytics for
+  v1**. Publishing waits for an explicit instruction.
+- Deploy kit: `deploy/worker.js` (only `env.ASSETS.fetch`),
+  `sites.manifest.json` over the `npm run build` output, and spec
+  `docs/specs/0013-static-deploy.md`. Proved on workerd, never hosted.
+- Next is publishing that deploy, then Phase 11, accounts, which is deferred.
 
 ## Last done
 
-- 9.1: measured every MCD §8 budget against the production build. Shell 62.68 kB
-  gzip, scene 238.81 kB, topic bundle 5.6 kB (14.0 kB projected at 300), idle 0
-  draw calls over 2 s, search frame time 1.0 ms median, Lighthouse desktop 85.
-  Lighthouse mobile is 69 to 73 against 75: the lazy scene's 238.81 kB parse
-  lands inside the throttled load. With that chunk blocked the page scores 99 and
-  is interactive at 1.7 s. The owner chose to keep the world immediate and record
-  the miss; mobile TTI with the scene is 4.5 to 5.7 s for the same reason.
-- 9.2: the story title became the page's `h1` (it was an `h2`, so the story state's
-  outline began at level two), with a test that every state keeps exactly one.
-  Keyboard walk, drawer, mode switch, canvas description, light-mode contrast
-  (15.49:1 and 5.66:1) verified live. Focus rings and reduced motion stay
-  unobserved in this environment.
-- 9.3: Space Grotesk is self-hosted as one latin variable woff2 in `public/fonts/`
-  with its OFL licence, preloaded, declared once. No third-party request remains.
-  `public/robots.txt` added because Lighthouse's robots audit fails on a 404.
-- `ENGINE_TUNING` was re-read at 120 and none of its values changed; the comment
-  now records that, and that resurfacing needs roughly 180 topics to be reachable.
+- 10.1: proved the failure half of the gate for every step, locally, without a
+  red commit: type error → gate exit 2; bad topic → `content:check` exit 1;
+  failing test → `test` exit 1; flipped spec status → `docs:check` exit 1; clean
+  tree → 0. The workflow already runs the same command on every push.
+- 10.2: upgraded Vite 5.4 → 8.3.5, Vitest 2.1 → 5.0.5, plugin-react 4.7 → 6.1.2,
+  Node floor 22.6 → 22.12; `npm audit` is zero. `vite.config.ts` imports
+  `defineConfig` from `vitest/config`, and `npm ci` reproduced the suite. The
+  365-day simulation got an explicit 20 s timeout after flaking at 4.93 s
+  against Vitest 5's 5 s default.
+- 10.3: `AGENTS.md` and `memory.md` are current, tracked, and every path and
+  script they name resolves.
+- 10.4 prepared: spec 0013, the Worker, the manifest, and the analytics decision.
+  Wrangler 4.152 served the build on workerd locally: page, robots, font, OFL
+  and assets 200, `/index.html` 307 to `/`, unknown paths 404, and the asset
+  binding present only when the local config declares it. Nothing is hosted.
+
+## Current numbers (post-upgrade)
+
+- Build: shell 62.54 kB gzip, scene 232.08 kB, CSS 3.04 kB, topic bundle 5.6 kB.
+- Lighthouse 13: desktop 90 performance, mobile 68 to 71, accessibility and SEO
+  100. Mobile is still the accepted miss; its cause is the scene chunk's parse
+  inside the throttled load (TTI 4.2 to 5.6 s; 1.7 s with that chunk blocked).
+- Idle page: 0 draw calls over 2 s, re-checked on the upgraded build.
+- Tests: 360 in 34 files. `npm run verify` exits 0.
 
 ## What is not true
 
-- The mobile Lighthouse budget is missed, by an accepted decision, not by
-  oversight. Desktop sits exactly on its floor of 85, so it has no headroom.
-- Focus rings have never been seen rendered: the preview webview's page is never
-  the focused window, so `:focus-visible` cannot match. CSS and the contrast test
-  are the evidence.
-- Reduced motion has never been observed running, in any phase.
-- The 3D beats and transitions have not been seen as pictures here; their
-  descriptions, state, and draw counts are what was checked.
-- Frame time is a CPU submission figure inside `gl.render`, not a GPU timer.
+- The deploy kit has never been run against a host. The local workerd probe
+  proves routing and 404s, not the host's cache headers or origin behaviour.
+- Focus rings have never been seen rendered (the preview page is never focused,
+  so `:focus-visible` cannot match), reduced motion has never been observed
+  running, and the 3D beats have not been seen as pictures here.
+- Frame time is a CPU figure inside `gl.render`, not a GPU timer.
 - Light mode hasn't been judged on a real phone or in daylight.
 - No broken commit has been seen to fail CI on the remote.
-- The error boundary has never caught a real scene throw.
 
 ## Open risks
 
-- MEDIUM: topic quality is guarded by human review, and the validator checks shape,
-  not substance. The 2026-10-22 batch was reviewed as a title sheet, not read one
-  by one.
-- MEDIUM: several stage paths rest on code and tests; Phase 10's deploy is the
-  first chance to see them in a real browser.
-- MEDIUM: the pool is 120 of 300, so every content decision still carries launch
-  risk. Resurfacing, tested and inert, only becomes reachable near 180.
-- LOW: the History control measures 39.9 px tall at 390 px, against the mode
-  switch's 44. No documented rule is violated; watch it on a phone.
-- LOW: after marking a story learned, focus falls to `body` because the confirm
-  block unmounts; the live region still says so.
-- LOW: the word is undiscoverable except by knowing his name, which is intended.
-- LOW: the stage has six beats, and a seventh must answer three mappings before
-  TypeScript compiles it; no ESLint or Prettier, so the no-hex and hooks rules are
-  enforced only partly, by tests.
-- LOW: the dev-only `npm audit` advisories need breaking Vite and Vitest majors,
-  and R3F 9 needs React 19. Upgrade the pairs together or not at all.
+- MEDIUM: Vite 8 builds with Rolldown, so chunking is new. The sizes above are
+  the baseline; watch the split when a large module is added.
+- MEDIUM: topic quality is guarded by human review, and the validator checks
+  shape, not substance. The pool is 120 of 300.
+- MEDIUM: several stage paths rest on code and tests, not a live session; the
+  first deploy is the first real-browser look.
+- LOW: the mobile Lighthouse budget is missed by an accepted decision; desktop
+  is now 90, so only mobile carries it.
+- LOW: the History control is 39.9 px tall at 390 px, against the mode switch's 44.
+- LOW: after marking a story learned, focus falls to `body` (the confirm block
+  unmounts); the live region still says so.
+- LOW: the word is undiscoverable except by knowing his name, which is intended;
+  and with no ESLint or Prettier, the no-hex and hooks rules are only partly
+  enforced, by tests.
+- LOW: TypeScript 7 and `@types/node` 26 exist and were deliberately not taken;
+  R3F 9 needs React 19, so upgrade those pairs together or not at all.
 
 ## Next justified step
 
-Phase 10: run the gate's failure half without leaving `main` red, decide the six
-dev advisories, and deploy the static site with the budgets re-checked on the real
-host. Before deploy, ratify the privacy-friendly analytics decision that 10.4 asks
-for, or record that it stays absent.
+Publish spec 0013's deploy when the owner asks: verify on a preview first, then
+production, then measure the budgets there and reconcile spec 0010.

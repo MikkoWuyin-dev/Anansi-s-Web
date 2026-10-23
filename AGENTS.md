@@ -10,7 +10,7 @@ V1 is static, accountless, local-first, no backend: React 18 + strict TypeScript
 
 ## Commands
 
-- Install: `npm ci` (Node ≥ 22.6)
+- Install: `npm ci` (Node ≥ 22.12)
 - Dev server: `npm run dev` (http://127.0.0.1:5173)
 - **Gate:** `npm run verify` must exit 0 before work is called done. It runs typecheck, `content:check`, tests, `docs:check`, build. CI runs it on every push (`.github/workflows/verify.yml`).
 - One test file: `npx vitest run src/engine/offer.test.ts`
@@ -41,6 +41,7 @@ src/world/    the 3D stage: graph, camera, object families, Anansi, choreography
 src/content/  topic types, compiled bundle (topics.generated.ts, never hand-edited), loader
 content/      topics/ is the reviewed library; review/ holds AI candidates, never shipped
 scripts/      content pipeline and docs:check; rules in scripts/lib/, each with a test
+deploy/       the host's entry point: env.ASSETS.fetch and nothing else (spec 0013)
 ```
 
 Boundaries: `src/engine/` imports nothing from app, state or world, and reads no clock, DOM, storage or network (`src/engine/purity.test.ts`). `src/world/` is a leaf: it never imports app, state or content (`src/world/purity.test.ts`). The DOM carries the product; the canvas only enhances it, so the ritual works when the scene fails or never loads.
@@ -123,6 +124,7 @@ Everything else in `skills/` is reference material, not process. The `threejs-*`
 - `@react-three/drei` is installed but unused. Don't reach for it without a reason that fits MCD §4.
 - The preview webview may composite no frames: transitions sit at time 0 and screenshots fail. The reduced motion query cannot be emulated there either. Record such checks as unverified rather than guessing.
 - `src/content/topics.generated.ts` is generated: edit `content/topics/` and run `npm run content:build`.
+- `deploy/worker.js` needs `env.ASSETS`, which the host injects. A local `wrangler dev` probe must declare `"assets": { "binding": "ASSETS" }` or every unmatched path answers 500 instead of 404.
 - A status is written twice in three places: roadmap phase map and phase heading, scope table row and section heading, spec `Status` and its `Built` line. `docs:check` fails unless both halves move together.
 
 ## Finish with

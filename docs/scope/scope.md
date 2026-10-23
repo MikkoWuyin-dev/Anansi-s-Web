@@ -36,8 +36,8 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | 13 | The evolving web and hidden interactions | Slice 5 | done |
 | 14 | Measured performance and accessibility | Quality | done |
 | 15 | The display face and its network cost | Quality | done |
-| 16 | Continuous integration and dependency decisions | Release | planned |
-| 17 | Deploy the static site | Release | planned |
+| 16 | Continuous integration and dependency decisions | Release | done |
+| 17 | Deploy the static site | Release | in-progress |
 
 ## Enrolled
 
@@ -280,15 +280,24 @@ spec [0011](../specs/0011-the-display-face.md)
 
 ## Release
 
-### 16. Continuous integration and dependency decisions · planned
+### 16. Continuous integration and dependency decisions · done
 The branch is protected by the gate, but six development advisories wait on upgrades that break major versions and need a deliberate call.
 **Done when:** every push and pull request runs typecheck, tests, and content validation, and a deliberately broken commit fails the check; and the advisories are either resolved with the suite green or deferred with the reasoning written down.
-- [ ] Design it (spec): `/architect continuous integration and dependency decisions`
+spec [0012](../specs/0012-toolchain-currency.md)
 
-### 17. Deploy the static site · planned
+- [x] Design it (spec): `docs/specs/0012-toolchain-currency.md` (2026-10-23)
+- [x] Prove the failure half of the gate for typecheck, content, tests and docs, without a red commit on `main` (10.1, 2026-10-23)
+- [x] Upgrade to Vite 8, Vitest 5 and plugin-react 6 with the suite green and zero advisories (10.2, 2026-10-23)
+
+### 17. Deploy the static site · in-progress
 Put the finished ritual on a static host with no backend and no accounts, so it can be reached for real.
 **Done when:** the built site is live, the budgets still hold in production, and there is still no authentication of any kind.
-- [ ] Design it (spec): `/architect deploy the static site`
+spec [0013](../specs/0013-static-deploy.md)
+
+- [x] Design it (spec): `docs/specs/0013-static-deploy.md` (2026-10-23)
+- [x] Prepare the host, the asset Worker and the deploy manifest, and ratify no analytics for v1 (10.4, 2026-10-23)
+- [ ] Publish the preview and verify it (10.4)
+- [ ] Publish production, re-measure the budgets there, and record them
 
 ## Deferred
 

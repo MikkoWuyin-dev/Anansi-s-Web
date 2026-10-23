@@ -21,9 +21,9 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          # package.json declares node >= 22.6.0, the floor the authoring
-          # scripts' type stripping needs. 24.x is the line the gate has been
-          # verified on.
+          # package.json declares node >= 22.12.0: the authoring scripts need
+          # type stripping, and Vitest 5 raises the floor above it. 24.x is the
+          # line the gate has been verified on.
           node-version: '24.x'
           cache: npm
 

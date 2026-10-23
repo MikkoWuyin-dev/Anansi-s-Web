@@ -179,26 +179,38 @@ describe('the engine over a long sequence', () => {
     }
   })
 
-  it('brings a story back on between 8 and 20 percent of days', () => {
-    for (const seed of SEEDS) {
-      const { daysWithReturn } = simulate(seed, 365)
-      const share = daysWithReturn / 365
+  // A year of three offers a day over 300 topics is the heaviest simulation
+  // here, and the first test to ask for it pays for it. The timeout is the
+  // simulation's, not the assertion's: Vitest 5's five second default is a
+  // tool setting, and this run sits close enough to it to flake.
+  it(
+    'brings a story back on between 8 and 20 percent of days',
+    () => {
+      for (const seed of SEEDS) {
+        const { daysWithReturn } = simulate(seed, 365)
+        const share = daysWithReturn / 365
 
-      expect(share).toBeGreaterThanOrEqual(0.08)
-      expect(share).toBeLessThanOrEqual(0.2)
-    }
-  })
-
-  it('allows no return until a topic is 60 days old', () => {
-    for (const seed of SEEDS) {
-      const { returnDays } = simulate(seed, 365)
-
-      for (const day of returnDays) {
-        // The first legal return is sixty days after the first presentation.
-        expect(day).toBeGreaterThanOrEqual(ENGINE_TUNING.resurfaceAbsenceDays)
+        expect(share).toBeGreaterThanOrEqual(0.08)
+        expect(share).toBeLessThanOrEqual(0.2)
       }
-    }
-  })
+    },
+    20_000,
+  )
+
+  it(
+    'allows no return until a topic is 60 days old',
+    () => {
+      for (const seed of SEEDS) {
+        const { returnDays } = simulate(seed, 365)
+
+        for (const day of returnDays) {
+          // The first legal return is sixty days after the first presentation.
+          expect(day).toBeGreaterThanOrEqual(ENGINE_TUNING.resurfaceAbsenceDays)
+        }
+      }
+    },
+    20_000,
+  )
 
   it('returns only flagged topics, long after they were last shown', () => {
     const library = makeLibrary()

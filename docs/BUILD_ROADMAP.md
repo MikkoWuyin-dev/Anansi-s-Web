@@ -37,7 +37,7 @@ Ordering logic: **content feeds the engine, the engine feeds the loop, the loop 
 | 7 | Modes and design system | built | light mode, visual governance | 6 |
 | 8 | Evolution and surprises | built | the web that grows | 5, 6 |
 | 9 | Quality gates | built | measured, audited product | 7, 8 |
-| 10 | Hardening and deployment | planned | a live, protected, shipped site | 9 |
+| 10 | Hardening and deployment | in progress | a live, protected, shipped site | 9 |
 | 11 | The accounts era | deferred | cloud sync, cross device | 10 |
 
 `built` means every step in the phase is delivered; `in progress` means some steps are; `planned` means none is; `deferred` means the phase is deliberately held. The heading of each phase restates the same word, which is what the check compares.
@@ -417,27 +417,32 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 10 — Hardening and deployment
+## Phase 10 — Hardening and deployment (IN PROGRESS)
 
-### 10.1 Continuous integration
+**Specs:** `docs/specs/0012-toolchain-currency.md`, `docs/specs/0013-static-deploy.md`.
 
-- **Deliverable:** a GitHub Actions workflow running typecheck, tests, and content validation on every push and pull request. Built ahead of this phase on 2026-10-16 as `.github/workflows/verify.yml`, which runs the whole `npm run verify` gate rather than a subset of its steps; it is committed and pushed, and its first remote run came back green on 2026-10-16 (run 38947782059), so it is delivered and running. The gate gained a fifth step on 2026-10-16 — `npm run docs:check`, which fails when the current-state claims in `docs/SYSTEM_TEARDOWN.md` no longer match the repository — and the same workflow runs it.
-- **Done when:** a deliberately broken commit fails the check, and main stays green. The green half now holds on the remote. The failure half holds locally only — the gate exits 2 on an injected type error and 0 on the clean tree — because pushing a broken commit to `main` in order to watch it fail would leave a red commit on `main`.
+### 10.1 Continuous integration — BUILT 2026-10-23
 
-### 10.2 Dependency hygiene
+- **Deliverable:** a GitHub Actions workflow running typecheck, tests, and content validation on every push and pull request. Built ahead of this phase on 2026-10-16 as `.github/workflows/verify.yml`, which runs the whole `npm run verify` gate rather than a subset of its steps; it is committed and pushed, and its first remote run came back green on 2026-10-16 (run 38947782059), so it is delivered and running. The gate gained a fifth step on 2026-10-16 — `npm run docs:check` — and the same workflow runs it.
+- **Done when:** a deliberately broken commit fails the check, and main stays green. The green half holds on the remote. The failure half now has evidence for every step, proved locally without putting a red commit on `main`: an injected type error made the whole gate exit 2, an invalid topic made `content:check` exit 1 naming the file and the allowed domains, a failing test made `test` exit 1 naming the test, and flipped spec status made `docs:check` exit 1 naming the spec; the clean tree exits 0. The probes were removed and nothing was committed.
+
+### 10.2 Dependency hygiene — BUILT 2026-10-23
 
 - **Deliverable:** a decision on the six dev-only advisories (esbuild via Vite 5, tinypool via Vitest 2), whose fixes require breaking major upgrades.
 - **Done when:** upgrades are either performed with the suite green, or consciously deferred with the reasoning recorded.
+- **Built:** upgraded rather than deferred, on the owner's decision before deploy. Vite 5.4.21 → 8.3.5, Vitest 2.1.9 → 5.0.5, `@vitejs/plugin-react` 4.7.0 → 6.1.2, and the Node floor 22.6 → 22.12 for Vitest 5; CI already runs 24.x. `npm audit` now reports zero. `vite.config.ts` takes `defineConfig` from `vitest/config`, the lockfile was regenerated and a clean `npm ci` reproduced the suite, and the 365-day statistical simulation was given an explicit twenty second timeout after it failed at 4.93 s against Vitest 5's five second default — the assertions did not change. `npm run verify` exits 0 with 360 tests; the build is 62.54 kB shell and 232.08 kB scene, and Lighthouse desktop moved to 90 while mobile stayed 68 to 71. Spec 0012.
 
-### 10.3 Project governance files
+### 10.3 Project governance files — BUILT 2026-10-23
 
 - **Deliverable:** `AGENTS.md` filled with the ratified stack and conventions, plus `memory.md` for session handoff, per MCD §10. Both were written on 2026-10-16 and need to stay current and tracked.
 - **Done when:** a fresh session can start from `AGENTS.md` plus the MCD and continue without re-deriving decisions.
+- **Built:** both are tracked, current, and inside their line budgets, and `docs:check` resolves every path and `npm run` script they name. The session that built Phase 9 and this phase started from `AGENTS.md` and `memory.md` alone and found the phase it was asked for; the only gaps it hit were facts that belonged in `memory.md` and were added there. The Node floor in `AGENTS.md` moved with the upgrade.
 
-### 10.4 Deploy
+### 10.4 Deploy — PREPARED 2026-10-23
 
 - **Deliverable:** the static site on a static host, previously ratifying the privacy-friendly analytics decision (the first thing to add when usage insight is wanted, requiring no architecture change).
 - **Done when:** the built site is live, the budgets hold in production, and auth is still correctly absent.
+- **Prepared:** the owner chose Freebuff Sites as the host and ratified **no analytics for v1**; publishing was explicitly held back. `deploy/worker.js` is the whole server (`env.ASSETS.fetch`), `sites.manifest.json` points at the built output (`./dist`), and spec 0013 carries the publish-and-verify steps. The kit was proved on workerd locally with Wrangler 4.152: page, font, robots and assets 200 with the right types, unknown paths 404, and `env.ASSETS` present only when the local config declares the binding. Nothing is live, so the done-when line is not met and the phase stays in progress.
 
 ---
 
