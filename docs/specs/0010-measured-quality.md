@@ -77,8 +77,8 @@ toolchain upgrade in spec 0012.
 | First usable interaction, mid-range mobile over 4G | ≤ 3.5 s | 1.7 s without the scene chunk; 4.2 to 5.6 s with it (Lighthouse TTI) | missed with the scene counted |
 | Idle steady-state GPU | ≈ 0 | 0 draw calls over 2.0 s, before and after the upgrade | met |
 | Search-animation frame time, mid-range desktop | ≤ 16 ms | 1.0 ms median render call | met |
-| Lighthouse desktop | ≥ 85 | 90 | met |
-| Lighthouse mobile | ≥ 75 | 68 to 71 over three runs | missed |
+| Lighthouse desktop | ≥ 85 | 90 at 120 topics; median 92 at 300 (80, 92, 96) | met |
+| Lighthouse mobile | ≥ 75 | 68 to 71 at 120 topics; 70 and 71 at 300 | missed |
 
 Re-measured on 2026-10-24 from the same build command once the pool reached
 its 300-topic launch size: the shell is 70.14 kB gzip and the topic bundle 13.2
@@ -131,6 +131,12 @@ run. The bytes are the build measured above, served `immutable` for a year,
 with the font at 22,288 bytes as `font/woff2`. Desktop clears its floor on the
 host; mobile keeps the accepted miss. Spec 0013 carries the full record,
 including the third-party beacon the host injects.
+
+Re-measured on 2026-10-24 against the live 300-topic build with Lighthouse
+13.5: desktop **80, 92 and 96** (median 92, the 80 being the first cold run)
+and mobile **70 and 71**, so neither verdict changes — desktop keeps its floor,
+mobile keeps the accepted miss. FCP is 0.6 s on desktop and 1.8 s on mobile;
+LCP 0.6 to 2.0 s; TBT 140 to 300 ms desktop and 1.67 to 1.78 s mobile.
 
 ## Decision
 

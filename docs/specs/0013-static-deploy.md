@@ -2,7 +2,7 @@
 
 **Date**: 2026-10-23
 **Status**: Built
-**Built**: 2026-10-23 — the site is live at `https://anansis-web.pxxl.click/`, served static, with two deviations recorded below.
+**Built**: 2026-10-23 — the site is live at `https://anansis-web.pxxl.click/`, served static, with two deviations recorded below. Re-published 2026-10-24 with the 300-topic build; both deviations stand.
 
 ## Summary
 
@@ -173,6 +173,44 @@ The owner decided on 2026-10-23 to leave this as it is for now and move on, so
 the beacon stays until someone revisits it. It is the mildest form of the
 thing the decision refused and it is not hidden; it is simply tolerated, which
 is a different thing from being chosen.
+
+## Live check, 2026-10-24 (the 300-topic build)
+
+After Phase 1 closed at 300 topics, the owner published that build. The site
+now serves the freshly hashed shell bundle `/assets/index-*.js` (hash
+`Bfvzwxqm`), 241,708 bytes, byte for byte the local build: 300 titles across
+24 domains, CSS 12,039 bytes, the font
+still 22,288 bytes as `font/woff2`, `robots.txt` and the font licence 200.
+The HTML's `last-modified` is 16:54:04Z and the response carries
+`x-pxxl-deployment-id: dep_v917nwye9vcwdm81xxb9p`.
+
+**Serving.** Hashed assets and the font are `public, max-age=31536000,
+immutable`; the HTML is `max-age=3600, stale-while-revalidate=86400` with HSTS
+and `x-content-type-options: nosniff`. One thing moved since 2026-10-23:
+`/index.html` now answers 200 rather than 307 to `/`. `/nope` and `/login`
+still answer 200 with the ritual (AC-5, accepted), and a missing asset answers
+404 with the host's own 7,199-byte error page.
+
+**The ritual works.** From cleared storage: find → reroll → reroll → the third
+story sealed with *"This is today's story. It stays until midnight."* → take →
+understood → learned, the count at `1 of 90 days`, and the history drawer
+showing three stories as All 3, Explored 2, Learned 1. The third story came
+from the new batch (*Why a Fireplace Sits in the Middle of an Old House*), so
+the live pool is the one this repository ships. At 390 by 844 there is no
+horizontal scroll, Space Grotesk loads from the same origin, the mode switch is
+44 by 44, and the History control is 40 px tall — the known LOW, reproduced.
+
+**Lighthouse 13.5 on the live origin.** Desktop, three runs: **80, 92, 96**
+(median 92); FCP 0.6 s, LCP 0.6 to 1.4 s, TBT 140 to 300 ms, TTI 1.0 to 1.4 s.
+The 80 was the first, cold run. Mobile, two runs: **70 and 71**; FCP 1.8 s, LCP
+1.8 to 2.0 s, TBT 1.67 to 1.78 s, TTI 4.1 to 4.3 s. Accessibility, best
+practices and SEO scored 100 in every run. Desktop clears its floor, mobile
+keeps the accepted miss and the same cause.
+
+**The beacon is still there.** A navigation request gets 2,420 bytes of HTML
+where the build's own file is 2,053: the host still injects the Cloudflare Web
+Analytics tag, which a `curl` without navigation headers does not see. AC-2 is
+still not met, and the disposition below is unchanged.
 
 ## Deviations
 
