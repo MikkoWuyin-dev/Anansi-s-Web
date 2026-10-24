@@ -71,14 +71,20 @@ toolchain upgrade in spec 0012.
 
 | MCD §8 budget | Target | Measured | Verdict |
 |---|---|---|---|
-| App shell JS, gzip, before the scene | ≤ 250 kB | 62.54 kB | met |
+| App shell JS, gzip, before the scene | ≤ 250 kB | 62.54 kB at 120 topics; 70.14 kB at 300 | met |
 | Scene chunk, gzip, lazy | ≤ 350 kB | 232.08 kB | met |
-| Topic bundle, gzip | ≤ 150 kB | 5.6 kB at 120 topics, projected 14.0 kB at 300 | met |
+| Topic bundle, gzip | ≤ 150 kB | 5.6 kB at 120 topics; 13.2 kB at 300 | met |
 | First usable interaction, mid-range mobile over 4G | ≤ 3.5 s | 1.7 s without the scene chunk; 4.2 to 5.6 s with it (Lighthouse TTI) | missed with the scene counted |
 | Idle steady-state GPU | ≈ 0 | 0 draw calls over 2.0 s, before and after the upgrade | met |
 | Search-animation frame time, mid-range desktop | ≤ 16 ms | 1.0 ms median render call | met |
 | Lighthouse desktop | ≥ 85 | 90 | met |
 | Lighthouse mobile | ≥ 75 | 68 to 71 over three runs | missed |
+
+Re-measured on 2026-10-24 from the same build command once the pool reached
+its 300-topic launch size: the shell is 70.14 kB gzip and the topic bundle 13.2
+kB, so the bundle's earlier projection was close and both rows stay met. The
+shell figure includes the topics, since the compiler inlines them into it;
+nothing else moved, and the scene chunk and CSS are unchanged.
 
 Supporting figures: the built page's largest contentful paint is 1.5 to 2.8 s
 (first run of the set was the slow one), first contentful paint 1.4 s, and
@@ -92,8 +98,8 @@ left its floor; no verdict changed except that one.
 Methods, so the numbers can be judged:
 
 - Chunk sizes are Vite's own gzip output. The topic bundle is the compiled
-  `src/content/topics.generated.ts`, gzipped, and the 300-topic projection is
-  `npm run content:report`'s.
+  `src/content/topics.generated.ts`, gzipped, and its size is the figure
+  `npm run content:report` prints, measured at 120 and again at 300.
 - Idle frames were counted by patching `WebGLRenderingContext.prototype` and
   its WebGL2 equivalent to count `drawElements`, `drawArrays`, and their
   instanced forms, then reading the count after a quiet 2 s.

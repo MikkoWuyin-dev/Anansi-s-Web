@@ -1,6 +1,8 @@
 # Candidate batch — 2026-10-24 (final)
 
-84 AI-authored title candidates, staged for human review before promotion into `content/topics/` (MCD §6). They are not in the library and the runtime cannot see them. This batch takes the pool from 216 to the 300 target if it is promoted whole.
+84 AI-authored title candidates, staged for human review before promotion into `content/topics/` (MCD §6).
+
+**Promoted 2026-10-24:** the owner read the sheet and moved all 84 into `content/topics/`, taking the pool from 216 to the 300 target. The rows below are the record of what was reviewed; the `added` date is the promotion date.
 
 Schema validation: 84 candidates, 0 errors, 0 warnings, including a near-duplicate pass against both the batch and the 216 shipped topics.
 

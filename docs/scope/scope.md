@@ -23,7 +23,7 @@ Phase order mirrors `docs/BUILD_ROADMAP.md`, so this scope and the roadmap read 
 | F | Session and governance rituals | Enrolled | existing |
 | 1 | Selection engine | Foundation | done |
 | 2 | Local state and persistence | Foundation | done |
-| 3 | Content pool to launch size | Foundation | in-progress |
+| 3 | Content pool to launch size | Foundation | done |
 | 4 | The daily ruling and the reveal | Slice 1 | done |
 | 5 | Taking a story, and the journey count | Slice 1 | done |
 | 6 | An accessible loop with honest states | Slice 1 | done |
@@ -91,10 +91,15 @@ spec [0002](../specs/0002-local-state-and-persistence.md)
 - [x] Verify it: `/check verify`
 - [x] Test it: `/test`
 
-### 3. Content pool to launch size · in-progress
+### 3. Content pool to launch size · done
 Grow the reviewed pool from the current seed pool to the launch target, with the spread across domains and difficulty that the engine needs to feel like serendipity.
 **Done when:** the pool holds 300 or more reviewed topics covering every domain, validation reports no coverage gap, and the compiled bundle stays at or under 150 kB gzip.
-- [ ] Build it: `/develop content pool to launch size`
+- [x] Build it: `/develop content pool to launch size`
+  - [x] Three batches read and promoted through the review gate, 300 in all (AC: every domain, 12 or 13 each; 100 per difficulty level)
+  - [x] `npm run content:validate` clean at 300, and `npm run content:build` regenerating the bundle
+  - [x] The bundle measured at 13.2 kB gzip against the 150 kB cap (`npm run content:report`)
+- [x] Verify it: `npm run verify`
+- [x] Test it: the content scripts' own suites, plus the engine's simulations re-read at 300
 
 The review gate and promotion steps already exist, so this needs execution rather than a new decision. (basis: `content/review/README.md` documents the reading against the quality philosophy and the exclusions, and the four promotion steps).
 

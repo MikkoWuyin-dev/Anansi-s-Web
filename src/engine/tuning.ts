@@ -2,14 +2,15 @@
  * Every number the selection engine uses, in one frozen object (spec 0001).
  *
  * None of these values has been measured. They are judgement calls made against
- * a 24 topic pool, and they were re-read at 120 on 2026-10-22 and at 216 on
- * 2026-10-24: none changed. The exclusion window fits, since neither pool
- * repeats a topic inside 30 days, and the spread terms still behave. Resurfacing
- * is now reachable where it was mostly not at 120: a year of three offers a day
- * over the shipped library returns a topic after a median 70 days and fires the
- * intentional return 132 times, against 38 days and 7 times at 120. Read the
- * values again at 300. Keeping them here makes that a one line change with a
- * test behind it instead of a hunt through the rules.
+ * a 24 topic pool, and they were re-read at 120 on 2026-10-22, at 216 on
+ * 2026-10-24 and at the full 300 on 2026-10-24: none changed. The exclusion
+ * window fits, since no pool repeats a topic inside 30 days, and the spread
+ * terms still behave. Resurfacing is now reachable where it was mostly not at
+ * 120: a year of three offers a day over the shipped library returns a topic
+ * after a median 108 days, against 70 at 216 and 38 at 120. Every day finds a
+ * story, and no three offers in a row share a domain. Keeping the values here
+ * makes a change one line with a test behind it instead of a hunt through the
+ * rules.
  */
 
 import type { Difficulty } from '@/content/types'

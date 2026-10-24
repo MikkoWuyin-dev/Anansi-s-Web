@@ -28,7 +28,7 @@ Ordering logic: **content feeds the engine, the engine feeds the loop, the loop 
 | Phase | Name | Status | Unlocks | Depends on |
 |---|---|---|---|---|
 | 0 | Foundations | built | a building, testing app | none |
-| 1 | Content layer | in progress | a real topic pool | 0 |
+| 1 | Content layer | built | a real topic pool | 0 |
 | 2 | Selection engine | built | deterministic daily stories | 1 |
 | 3 | State and persistence | built | a journey that survives reloads | 2 |
 | 4 | The ritual loop | built | the core product experience | 3 |
@@ -85,11 +85,11 @@ src/engine/*.test.ts      14 tests in the node environment
 
 ---
 
-## Phase 1 — Content layer (IN PROGRESS: the pipeline is built, the pool is growing)
+## Phase 1 — Content layer (BUILT, COMPLETE 2026-10-24)
 
 **Goal:** a reviewed, validated topic pool that ships as a static bundle inside budget.
 
-**Built so far:** the pipeline, the validator, the coverage report, the compiled bundle and the loader are all in place, and the pool grows through the review gate in `content/review/` rather than by direct authoring. The batches of 2026-10-22 and 2026-10-24 took it to nine topics per domain at an even difficulty split, 216 in all; nothing entered the pool unread, and each batch's sheet stays in `content/review/` as the record of what was reviewed. The launch target of 300 is what remains, and the bundle is far inside its cap at the current size (`npm run content:report`).
+**Built so far:** the pipeline, the validator, the coverage report, the compiled bundle and the loader are all in place, and every topic entered through the review gate in `content/review/` rather than by direct authoring. Three batches — 2026-10-22 and the two of 2026-10-24 — took the pool to 300: twelve or thirteen topics in each of the 24 domains, exactly 100 at each difficulty level, and each batch's sheet stays in `content/review/` as the record of what was reviewed. `npm run content:report` measures the bundle at 13.2 kB gzip against the 150 kB cap.
 
 ### 1.1 Define the content types
 
