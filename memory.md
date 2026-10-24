@@ -3,17 +3,17 @@
 Overwrite this file at the end of each task; don't append to it. 80 lines at most (`npm run docs:check`).
 Durable knowledge goes to the document that owns it (see `AGENTS.md`), and the history goes in `git log`.
 
-Updated: 2026-10-24, after a second candidate batch was staged for review.
+Updated: 2026-10-24, after the second candidate batch was reviewed and promoted.
 
 ## Now
 
-- Phases 0 and 2 to 10 are built. Phase 1 is open at 120 of 300 reviewed
-  topics. The site is live at `https://anansis-web.pxxl.click/`; unknown paths
-  answer 200 too. Phase 11, accounts, is deferred.
-- 96 candidates wait in `content/review/candidates/` beside
-  `content/review/BATCH-2026-10-24.md`: four per domain, an even difficulty
-  split, zero validator errors and no near duplicate of a shipped title. The
-  pool stays at 120 until the owner reads them and promotes what clears the bar.
+- Phases 0 and 2 to 10 are built. Phase 1 is open at 216 of 300 reviewed
+  topics, nine per domain and seventy-two at each difficulty level. The site is
+  live at `https://anansis-web.pxxl.click/`; unknown paths answer 200 too.
+  Phase 11, accounts, is deferred.
+- The 2026-10-24 batch was promoted whole, so the review queue is empty again
+  and the pool grew by 96 in one step. `content/review/BATCH-2026-10-24.md`
+  keeps the record of what was read.
 - **Recorded deviation, accepted 2026-10-23:** the host injects Cloudflare's Web
   Analytics beacon (`static.cloudflareinsights.com`, posting to `/cdn-cgi/rum`).
   Nothing in the build contains it, it contradicts the ratified no-analytics
@@ -61,7 +61,8 @@ Updated: 2026-10-24, after a second candidate batch was staged for review.
 - MEDIUM: Vite 8 builds with Rolldown, so chunking is new. The sizes above are
   the baseline; watch the split when a large module is added.
 - MEDIUM: topic quality is guarded by human review, and the validator checks
-  shape, not substance. The pool is 120 of 300.
+  shape, not substance. The pool is 216 of 300, and this batch was read in one
+  sitting rather than topic by topic.
 - LOW: the mobile Lighthouse budget is missed by an accepted decision.
 - LOW: the History control is 39.9 px tall at 390 px, against the mode switch's 44.
 - LOW: after marking a story learned, focus falls to `body` (the confirm block
@@ -74,7 +75,6 @@ Updated: 2026-10-24, after a second candidate batch was staged for review.
 
 ## Next justified step
 
-The owner reads the batch sheet and promotes the candidates that clear PRD §10,
-§11 and §14; each promotion moves a file into `content/topics/` with `added`
-reset, then `content:validate` and `content:build`. The pool is the product, so
-re-read the engine tuning at the new size once the batch is absorbed.
+Author the next batch of 84 candidates to reach 300. The tuning was re-read at
+216 and no value changed; read it again at 300, and until then the pool is what
+decides how fresh the ritual feels.

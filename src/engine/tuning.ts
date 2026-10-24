@@ -2,14 +2,14 @@
  * Every number the selection engine uses, in one frozen object (spec 0001).
  *
  * None of these values has been measured. They are judgement calls made against
- * a 24 topic pool, and they were re-read at 120 on 2026-10-22: none changed.
- * The exclusion window fits, since 120 topics hold 270 offers without a repeat
- * inside 30 days, and the spread terms still behave. Intentional resurfacing
- * cannot fire yet at all, because a return needs 60 days of absence and 120
- * topics come back about every 40; the pool has to pass roughly 180 before the
- * chance is reachable. Read them again at 300, when it is. Keeping them here
- * makes that a one line change with a test behind it instead of a hunt through
- * the rules.
+ * a 24 topic pool, and they were re-read at 120 on 2026-10-22 and at 216 on
+ * 2026-10-24: none changed. The exclusion window fits, since neither pool
+ * repeats a topic inside 30 days, and the spread terms still behave. Resurfacing
+ * is now reachable where it was mostly not at 120: a year of three offers a day
+ * over the shipped library returns a topic after a median 70 days and fires the
+ * intentional return 132 times, against 38 days and 7 times at 120. Read the
+ * values again at 300. Keeping them here makes that a one line change with a
+ * test behind it instead of a hunt through the rules.
  */
 
 import type { Difficulty } from '@/content/types'

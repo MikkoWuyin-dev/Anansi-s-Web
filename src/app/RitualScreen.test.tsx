@@ -8,6 +8,19 @@ import type { Topic } from '@/content/types'
 
 const noop = (): void => undefined
 
+/**
+ * The five entities React writes when it renders text into markup. Titles are
+ * natural language, so a title with an apostrophe or an ampersand is rendered
+ * escaped and is still correct; compare against the escaped form.
+ */
+const escapeText = (value: string): string =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+
 function render(view: RitualView, persistent = true): string {
   return renderToStaticMarkup(
     <Ritual
@@ -64,7 +77,7 @@ describe('the reveal', () => {
     for (const libraryTopic of getLibrary()) {
       const html = render(storyView({ topic: libraryTopic }))
 
-      expect(html).toContain(libraryTopic.title)
+      expect(html).toContain(escapeText(libraryTopic.title))
 
       for (const tag of libraryTopic.tags) {
         expect(html).not.toContain(tag)
