@@ -89,7 +89,7 @@ src/engine/*.test.ts      14 tests in the node environment
 
 **Goal:** a reviewed, validated topic pool that ships as a static bundle inside budget.
 
-**Built so far:** the pipeline, the validator, the coverage report, the compiled bundle and the loader are all in place, and the pool grows through the review gate in `content/review/` rather than by direct authoring. The batch of 2026-10-22 took it to five topics per domain at an even difficulty split; the launch target of 300 is what remains, and the bundle is far inside its cap at the current size (`npm run content:report`).
+**Built so far:** the pipeline, the validator, the coverage report, the compiled bundle and the loader are all in place, and the pool grows through the review gate in `content/review/` rather than by direct authoring. The batch of 2026-10-22 took it to five topics per domain at an even difficulty split; a second batch of 96 candidates (`content/review/BATCH-2026-10-24.md`) is staged and awaits a human read, since nothing enters the pool unread. The launch target of 300 is what remains, and the bundle is far inside its cap at the current size (`npm run content:report`).
 
 ### 1.1 Define the content types
 

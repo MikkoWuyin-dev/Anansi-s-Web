@@ -3,54 +3,53 @@
 Overwrite this file at the end of each task; don't append to it. 80 lines at most (`npm run docs:check`).
 Durable knowledge goes to the document that owns it (see `AGENTS.md`), and the history goes in `git log`.
 
-Updated: 2026-10-23, after the deploy went live and was checked on its own origin.
+Updated: 2026-10-24, after a second candidate batch was staged for review.
 
 ## Now
 
-- Phases 0 and 2 to 10 are built. Phase 1 is the open one, at 120 of 300
-  reviewed topics. The site is live at `https://anansis-web.pxxl.click/`.
+- Phases 0 and 2 to 10 are built. Phase 1 is open at 120 of 300 reviewed
+  topics. The site is live at `https://anansis-web.pxxl.click/`; unknown paths
+  answer 200 too. Phase 11, accounts, is deferred.
+- 96 candidates wait in `content/review/candidates/` beside
+  `content/review/BATCH-2026-10-24.md`: four per domain, an even difficulty
+  split, zero validator errors and no near duplicate of a shipped title. The
+  pool stays at 120 until the owner reads them and promotes what clears the bar.
 - **Recorded deviation, accepted 2026-10-23:** the host injects Cloudflare's Web
   Analytics beacon (`static.cloudflareinsights.com`, posting to `/cdn-cgi/rum`).
   Nothing in the build contains it, it contradicts the ratified no-analytics
   decision, and the owner left it for now; turning it off is a host setting.
-- Published on their own Cloudflare host; unknown paths answer 200 too. Next is
-  growing the pool toward 300; Phase 11, accounts, is deferred.
 
 ## Last done
 
-- 10.1: proved the failure half of the gate for every step, locally, without a
-  red commit: type error → gate exit 2; bad topic → `content:check` exit 1;
-  failing test → `test` exit 1; flipped spec status → `docs:check` exit 1; clean
-  tree → 0. The workflow already runs the same command on every push.
-- 10.2: upgraded Vite 5.4 → 8.3.5, Vitest 2.1 → 5.0.5, plugin-react 4.7 → 6.1.2,
-  Node floor 22.6 → 22.12; `npm audit` is zero. `vite.config.ts` imports
-  `defineConfig` from `vitest/config`, and `npm ci` reproduced the suite. The
-  365-day simulation got an explicit 20 s timeout after flaking at 4.93 s
-  against Vitest 5's 5 s default.
-- 10.3: `AGENTS.md` and `memory.md` are current and every path resolves.
+- 10.1: proved the failure half of the gate for every step locally without a red
+  commit: type error → exit 2, bad topic → `content:check` exit 1, failing test
+  → exit 1, flipped spec status → `docs:check` exit 1, clean tree → 0.
+- 10.2: Vite 5.4 → 8.3.5, Vitest 2.1 → 5.0.5, plugin-react 4.7 → 6.1.2, Node
+  floor 22.6 → 22.12; `npm audit` is zero, `vite.config.ts` imports
+  `defineConfig` from `vitest/config`, and the 365-day simulation got a 20 s
+  timeout after flaking at 4.93 s against Vitest 5's 5 s default.
 - 10.4 live check: page, font (22,288 bytes, `font/woff2`), robots, licence and
   hashed assets 200 with immutable caching for a year; no cookie, no session,
   no account route. The day ran find → take → understood → confirm → learned
-  with the tallies right. Unknown paths answer 200 with the ritual (host SPA
-  fallback), a missing asset answers 404. Spec 0013 carries the full record.
+  with the tallies right. Spec 0013 carries the full record.
 
 ## Current numbers (live origin)
 
-- Lighthouse 13 on the host: desktop **89**, mobile **66 and 70**, accessibility
-  and SEO **100**, best practices **100**. Desktop clears its floor; mobile
-  repeats the accepted miss and its cause, the scene chunk's parse.
+- Lighthouse 13 on the host: desktop **89**, mobile **66 and 70**,
+  accessibility and SEO **100**, best practices **100**. Desktop clears its
+  floor; mobile repeats the accepted miss and its cause, the scene chunk.
 - Desktop: FCP 0.6 s, LCP 0.7 s, TBT 250 ms, TTI 1.3 s. Mobile: FCP 1.7 s,
   LCP 2.0 to 3.1 s, TBT 1.65 to 2.03 s, TTI 4.3 to 5.5 s.
-- Build: shell 62.54 kB gzip, scene 232.08 kB, CSS 3.04 kB, topic bundle 5.6 kB.
+- Build: shell 62.54 kB gzip, scene 232.08 kB, CSS 3.04 kB, topics 5.6 kB.
 - Idle page: 0 draw calls over 2 s, measured on the local build.
 
 ## What is not true
 
 - The 3D scene has never been seen drawing. In the review browser it never
   mounted and the DOM description carried the page: the designed fallback, not
-  proof the canvas works. The first GPU look is still owed.
-- Focus rings have never been seen rendered (the preview page is never focused,
-  so `:focus-visible` cannot match), and reduced motion has never been observed.
+  proof the canvas works.
+- Focus rings have never been seen rendered, and reduced motion has never been
+  observed.
 - Frame time is a CPU figure inside `gl.render`, not a GPU timer.
 - Light mode hasn't been judged on a real phone or in daylight.
 - No broken commit has been seen to fail CI on the remote.
@@ -75,6 +74,7 @@ Updated: 2026-10-23, after the deploy went live and was checked on its own origi
 
 ## Next justified step
 
-The pool is the product: 120 of 300 reviewed topics decides how long the
-ritual stays fresh. Grow it through the review gate in `content/review/`
-rather than around it, then re-read the engine tuning at the new size.
+The owner reads the batch sheet and promotes the candidates that clear PRD §10,
+§11 and §14; each promotion moves a file into `content/topics/` with `added`
+reset, then `content:validate` and `content:build`. The pool is the product, so
+re-read the engine tuning at the new size once the batch is absorbed.
