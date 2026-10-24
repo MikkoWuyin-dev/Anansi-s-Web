@@ -11,9 +11,10 @@ Updated: 2026-10-24, after the second candidate batch was reviewed and promoted.
   topics, nine per domain and seventy-two at each difficulty level. The site is
   live at `https://anansis-web.pxxl.click/`; unknown paths answer 200 too.
   Phase 11, accounts, is deferred.
-- The 2026-10-24 batch was promoted whole, so the review queue is empty again
-  and the pool grew by 96 in one step. `content/review/BATCH-2026-10-24.md`
-  keeps the record of what was read.
+- The 96 of 2026-10-24 were promoted whole; `BATCH-2026-10-24.md` is the
+  record. The final 84 sit staged and unread beside `BATCH-2026-10-24-final.md`
+  (28 at each level, zero errors) and reach 300 only once the owner has read
+  them.
 - **Recorded deviation, accepted 2026-10-23:** the host injects Cloudflare's Web
   Analytics beacon (`static.cloudflareinsights.com`, posting to `/cdn-cgi/rum`).
   Nothing in the build contains it, it contradicts the ratified no-analytics
@@ -61,8 +62,7 @@ Updated: 2026-10-24, after the second candidate batch was reviewed and promoted.
 - MEDIUM: Vite 8 builds with Rolldown, so chunking is new. The sizes above are
   the baseline; watch the split when a large module is added.
 - MEDIUM: topic quality is guarded by human review, and the validator checks
-  shape, not substance. The pool is 216 of 300, and this batch was read in one
-  sitting rather than topic by topic.
+  shape, not substance. The pool is 216 of 300, read quickly not topic by topic.
 - LOW: the mobile Lighthouse budget is missed by an accepted decision.
 - LOW: the History control is 39.9 px tall at 390 px, against the mode switch's 44.
 - LOW: after marking a story learned, focus falls to `body` (the confirm block
@@ -75,6 +75,5 @@ Updated: 2026-10-24, after the second candidate batch was reviewed and promoted.
 
 ## Next justified step
 
-Author the next batch of 84 candidates to reach 300. The tuning was re-read at
-216 and no value changed; read it again at 300, and until then the pool is what
-decides how fresh the ritual feels.
+The owner reads the final sheet; then promote all 84, rebuild, verify and
+deploy. Read the tuning again at 300.
